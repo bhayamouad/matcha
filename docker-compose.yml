@@ -12,6 +12,7 @@ services:
         restart: on-failure
         networks:
             - default
+        command: nodemon --legacy-watch app.js
     db:
         build: ./db
         ports: 
