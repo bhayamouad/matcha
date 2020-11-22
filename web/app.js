@@ -1,20 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mysql = require('mysql')
+const mysql = require('mysql2')
 const connection = mysql.createConnection({
   host: 'db',
   user: 'tirach',
   password: 'rach',
-  database: 'test'
+  database: 'db_matcha'
 })
 
 connection.connect()
 const app = express();
-connection.query('SELECT * FROM hello', function (err, rows, fields) {
-  if (err) throw err
-
-  console.log('The solution is: ', rows)
-})
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("matcha Connected!");
+});
 
 connection.end()
 
