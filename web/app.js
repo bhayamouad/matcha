@@ -1,25 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mysql = require('mysql2')
-const connection = mysql.createConnection({
-  host: 'db',
-  user: 'tirach',
-  password: 'rach',
-  database: 'db_matcha'
-})
 
-connection.connect()
-const app = express();
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("matcha Connected!");
-});
-
-connection.end()
-
-
+const app = express()
 app.use(bodyParser.json());
 app.get('/',(req,res,next) => {
-    res.send("hello worldsssss");
+    res.send("hello world");
 })
 app.listen(3000);
