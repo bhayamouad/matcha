@@ -12,6 +12,12 @@ services:
         restart: on-failure
         networks:
             - default
+    client:
+        build: ./client
+        ports: 
+            - "8080:8080"
+        volumes:
+            - ./client:/usr/src/client
     db:
         build: ./db
         ports: 
