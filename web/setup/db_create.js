@@ -5,7 +5,6 @@ let connection = mysql.createConnection({
       password: 'rach'
 });
 
-connection.connect(); 
 connection.connect(function(err) {
       if (err) throw err;
       connection.query("CREATE DATABASE matcha_db", (err) => {
@@ -14,8 +13,8 @@ connection.connect(function(err) {
                   connection.query(`USE matcha_db`);
                   connection.query(`CREATE TABLE users (
                         id_user int(11) NOT NULL,
-                        f_name varchar(40) NOT NULL,
-                        l_name varchar(40) NOT NULL,
+                        fname varchar(40) NOT NULL,
+                        lname varchar(40) NOT NULL,
                         email varchar(255) NOT NULL UNIQUE,
                         login varchar(25) NOT NULL,
                         password varchar(255) NOT NULL,

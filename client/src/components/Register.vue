@@ -4,32 +4,32 @@
     <div>
         <label>First Name:</label>
         <input type="text" v-model="user.fname" />
-        <div>{{ errors.fname }}</div>
+        <div v-if="errors.fname">{{ errors.fname }}</div>
     </div>
     <div>
         <label>Last Name:</label>
         <input type="text" v-model="user.lname" />
-        <div>{{ errors.lname }}</div>
+        <div v-if="errors.lname">{{ errors.lname }}</div>
     </div>
     <div>
         <label>Email:</label>
         <input type="email" v-model="user.email" />
-        <div>{{ errors.email }}</div>
+        <div v-if="errors.email">{{ errors.email }}</div>
     </div>
     <div>
         <label>Login:</label>
         <input type="text" v-model="user.login"/>
-        <div>{{ errors.login }}</div>
+        <div v-if="errors.login">{{ errors.login }}</div>
     </div>
     <div>
         <label>Password:</label>
         <input type="password" v-model="user.password" />
-        <div>{{ errors.password }}</div>
+        <div v-if="errors.password">{{ errors.password }}</div>
     </div>
     <div>
         <label>Confirm Password:</label>
         <input type="password" v-model="user.cpassword" />
-        <div>{{ errors.cpassword }}</div>
+        <div v-if="errors.cpassword">{{ errors.cpassword }}</div>
     </div>
     <button @click="register">Register</button>
   </div>
@@ -63,7 +63,6 @@ const validatePassword = password => {
   return { valid: true, error: null }
 }
 const validateCpassword = (cpassword,password) => {
-  if (!cpassword) return { valid: false, error: 'the Confirm Password is required' }
   if (cpassword !== password) return { valid:false, error: 'The the passwords do not match' }
   return { valid: true, error: null }
 }
@@ -92,23 +91,36 @@ export default {
       const validFname = validateFname(this.user.fname)
       this.errors.fname = validFname.error
       if (this.valid) this.valid = validFname.valid
-
+      console.log(this.valid)
+      console.log(this.errors.fname)
+      
       const validLname = validateLname(this.user.lname)
       this.errors.lname = validLname.error
       if (this.valid) this.valid = validLname.valid
-      
+      console.log(this.valid)
+      console.log(this.errors.lname)
+
       const validEmail = validateEmail(this.user.email)
       this.errors.email = validEmail.error
       if (this.valid) this.valid = validEmail.valid
-      
+      console.log(this.valid)
+      console.log(this.errors.email)
+
       const validLogin = validateLogin(this.user.login)
       this.errors.login = validLogin.error
       if (this.valid) this.valid = validLogin.valid
-      
+      console.log(this.valid)
+      console.log(this.errors.login)
+
       const validPassword = validatePassword(this.user.password)
       this.errors.password = validPassword.error
       if (this.valid) this.valid = validPassword.valid
-      else this.user.password = ''
+      else {
+        this.user.password = ''
+        this.user.cpassword = ''
+      }
+      console.log(this.valid)
+      console.log(this.errors.password)
 
       const validCpassword = validateCpassword(this.user.cpassword,this.user.password)
       this.errors.cpassword = validCpassword.error
@@ -117,12 +129,17 @@ export default {
         this.user.password = ''
         this.user.cpassword = ''
       }
-      
+      console.log(this.valid)
+      console.log(this.errors.cpassword)
+
       if (this.valid) {
         const response = await Authentication.register({
-          login: this.user.login,
+          fname: this.user.fname,
+          lname: this.user.lname,
           email: this.user.email,
-          password: this.user.password
+          login: this.user.login,
+          password: this.user.password,
+          cpassword: this.user.cpassword
         })
         console.log(response.data)
         this.user = {
