@@ -141,7 +141,7 @@ export default {
           password: this.user.password,
           cpassword: this.user.cpassword
         })
-        console.log(response.data)
+        console.log("hello")
         this.user = {
           fname: '',
           lname: '',

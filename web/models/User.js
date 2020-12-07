@@ -1,4 +1,4 @@
-const mysql = require('./db_connection')
+const db = require('./db_connection')
 
 const  User = function (user) {
     this.fname = user.fname
@@ -10,16 +10,24 @@ const  User = function (user) {
 }
 
 User.create = (user, result) => {
-    //res.send({message:`hello ${req.body.login} your account was created try to login with this ${req.body.email}:${req.body.password}`})
-    mysql.mysql_pool.getConnection(function (err, connection) {
-        connection.query(`INSERT INTO users  SET ?`, user, (err, res) => {
-            if (err) {
-                console.log('error: ', err)
-                result(err, null)
-                return
-            }
-            result(null, { id_user: res.insertId, ...user })
+    db((err,conn) => {
+        if(err) throw err
+
+        conn.query(`INSERT INTO users  SET ?`, user, (queryErr, row) => {  
+            if (queryErr) throw queryErr
+            result(null, { id_user: row.intertId, ...user })
         })
-    });
+    })
 }
+
+User.verify = (token, result) => {
+    db((err,conn) =>{
+        if (err) throw err
+        conn.query(`UPDATE users SET status = 1 WHERE token = ?`, token, (queryErr, row) => {
+            if (queryErr) throw queryErr
+            result(null, {row})
+        })
+    })
+}
+
 module.exports = User;

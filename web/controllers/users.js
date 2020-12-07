@@ -1,21 +1,28 @@
+require('dotenv').config()
+
 const bcrypt = require('bcrypt')
 const cryptoRandomString = require('crypto-random-string')
 const nodemailer = require('nodemailer')
 
 
 const User = require('../models/User')
+const e = require('express')
 const mailConf = nodemailer.createTransport({
     service: 'gmail',
     auth:{
-        user: 'matcha1337.no.reply@gmail.com',
-        pass:'tirachrach'
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD
     }
 })
 
-exports.register = (req,res) => {
+exports.registerValidation = (req, res, next) => {
     if(!req.body) res.status('400').send({message: `content prob`}) //validation input server side
+    next()
+}
 
-    const token = cryptoRandomString({length: 64, type: 'url-safe'}); //generate token
+exports.registerAccount = (req, res, next) => {
+
+    let token = cryptoRandomString({length: 64, type: 'url-safe'}); //generate token
     const hashPassword = bcrypt.hashSync(req.body.password, 10); //hash password
     const user = new User({
         fname: req.body.fname,
@@ -25,22 +32,36 @@ exports.register = (req,res) => {
         password: hashPassword,
         token: token
     })
-    User.create(user, (err,data) => {
+    User.create(user, (err, data) => {
+        req.data = data
         if(err) res.status('500').send({ message: err.message ||`Internal server error` })
-        else {
-            let mailOptions = {
-                from:'matcha1337.no.reply@gmail.com',
-                to: data.email,
-                subject: 'Email verification',
-                html: `<p>Hello ${data.login} Your account was created successfuly you need to verify your account to login please <a href="http://192.168.99.17:3000/account/verify/${data.token}/">click here</a>`
-            }
-            mailConf.sendMail(mailOptions, (error) => {
-                if(error)   console.log('error ',error)
-                else  console.log('user register success')
-            })
-        }
+        else    next()
     })
 }
+
+exports.sendEmailVerification = (req, res) => {
+    let mailOptions = {
+        from: process.env.EMAIL,
+        to: req.data.email,
+        subject: 'Email verification',
+        html: `<p>Hello ${req.data.login} Your account was created successfuly you need to verify your account to login please <a href="http://192.168.99.17:3000/account/verify/${req.data.token}/">click here</a>`
+    }
+    mailConf.sendMail(mailOptions, (error) => {
+        if(error)   res.send({ message:`error ${error}` })
+        else    res.send({ message: 'user register success' })
+    })
+    
+}
+
+exports.verifyAccount = (req,res) => {
+    token = req.params.token
+    console.log(token)
+    User.verify(token, (err, data) => {
+        if(err) res.status('500').send({ message: err.message || `Internal server error` })
+        else    res.send({ message: `your account is active you can login now` })
+    })
+}
+
 //login dyal lay7ssan 3wan
 exports.login = (req,res) => {
     if(req.body.login === 'mbhaya' && req.body.password === '123456')
