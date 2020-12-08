@@ -4,15 +4,19 @@ const bcrypt = require('bcrypt')
 const cryptoRandomString = require('crypto-random-string')
 const nodemailer = require('nodemailer')
 
-
+let token = null
 const User = require('../models/User')
-const e = require('express')
+
 const mailConf = nodemailer.createTransport({
     service: 'gmail',
     auth:{
         user: process.env.EMAIL,
         pass: process.env.PASSWORD
-    }
+    },
+    tls:{
+        rejectUnauthorized:false
+    },
+    secure: false
 })
 
 exports.registerValidation = (req, res, next) => {
@@ -22,7 +26,7 @@ exports.registerValidation = (req, res, next) => {
 
 exports.registerAccount = (req, res, next) => {
 
-    let token = cryptoRandomString({length: 64, type: 'url-safe'}); //generate token
+    token = cryptoRandomString({length: 64, type: 'url-safe'}); //generate token
     const hashPassword = bcrypt.hashSync(req.body.password, 10); //hash password
     const user = new User({
         fname: req.body.fname,
@@ -32,34 +36,30 @@ exports.registerAccount = (req, res, next) => {
         password: hashPassword,
         token: token
     })
-    User.create(user, (err, data) => {
-        req.data = data
-        if(err) res.status('500').send({ message: err.message ||`Internal server error` })
-        else    next()
-    })
+    User.create(user)
+        .then( () => next())
+        .catch(err => res.status('500').send({ message: err.message ||`Internal server error` }))
 }
 
 exports.sendEmailVerification = (req, res) => {
     let mailOptions = {
         from: process.env.EMAIL,
-        to: req.data.email,
+        to: req.body.email,
         subject: 'Email verification',
-        html: `<p>Hello ${req.data.login} Your account was created successfuly you need to verify your account to login please <a href="http://192.168.99.17:3000/account/verify/${req.data.token}/">click here</a>`
+        html: `<p>Hello ${req.body.login} Your account was created successfuly you need to verify your account to login please <a href="http://localhost:3000/account/verify/${token}/">click here</a>`
     }
+    console.log(mailConf)
     mailConf.sendMail(mailOptions, (error) => {
         if(error)   res.send({ message:`error ${error}` })
         else    res.send({ message: 'user register success' })
     })
-    
 }
 
 exports.verifyAccount = (req,res) => {
     token = req.params.token
-    console.log(token)
-    User.verify(token, (err, data) => {
-        if(err) res.status('500').send({ message: err.message || `Internal server error` })
-        else    res.send({ message: `your account is active you can login now` })
-    })
+    User.verify(token)
+            .then( () => res.send({ message: `your account is active you can login now` }) )
+            .catch( (err) => res.status('500').send({ message: err.message || `Internal server error` }))
 }
 
 //login dyal lay7ssan 3wan
