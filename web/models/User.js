@@ -10,11 +10,9 @@ module.exports = class  User {
     this.token = user.token
 }
 
-static create (user) {
+create () {
     return db.query(
-        'INSERT INTO users  (fname, lname, email, login, password, token) VALUES (?,?,?,?,?,?)',
-        [user.fname, user.lname, user.email, user.login, user.password, user.token]
-      )
+        'INSERT INTO users SET ?', this)
 }
 
 static verify (token) {
