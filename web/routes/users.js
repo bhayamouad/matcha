@@ -9,4 +9,6 @@ router.get('/verify/:token', usersController.verifyAccount)
 
 router.post('/login', usersController.login)
 
+router.post('/verify',usersController.updateToken, usersController.sendEmailVerification)
+
 module.exports = router

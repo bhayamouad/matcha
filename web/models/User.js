@@ -11,14 +11,23 @@ module.exports = class  User {
 }
 
 create () {
-    return db.query(
-        'INSERT INTO users SET ?', this)
-}
+    return db.query('INSERT INTO users SET ?', this)
+  }
 
-static verify (token) {
-        return db.execute(
-            'UPDATE users SET status = 1 WHERE token = ?',
-            [token]
-          )
-    }
+static updateStatusByToken (token) {
+    return db.execute('UPDATE users SET status = 1 WHERE token = ?', [token])
+  }
+
+static getByToken (token) {
+    return db.execute('SELECT * FROM users WHERE token = ?', [token])
+  }
+
+
+static getByEmail (email) {
+    return db.execute('SELECT * FROM users WHERE email = ?', [email])
+  }
+static updateToken(email) {
+    return db.execute('UPDATE users SET token = ? WHERE amail = ?', [email])
+  }
+
 }
