@@ -1,0 +1,58 @@
+.visitorpage{
+    height: 100%;
+    display: flex;
+}
+
+.welcome-msg{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    background-color: white;
+}
+.action-box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    background-color: rgb(232,232,232);
+}
+.the-msg{
+    padding: 10px;
+    /* border: solid 2px black; */
+    height: 600px;
+    max-width: 500px;
+    width: 100%;
+}
+
+#msg-txt{
+    color: black;
+    font-size: 19px;
+    font-weight: 400;
+}
+
+#slogan{
+    font-family: 'Nerko One', cursive;
+    color: black;
+    font-size: 60px;
+    line-height: 90%;
+}
+
+.the-box{
+    padding: 10px 0px;
+    border-radius: 20px;
+    background-color: white;
+    height: 600px;
+    max-width: 450px;
+    width: 100%;
+}
+#blogo{
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+#blogo-container{
+    border-bottom: solid 1.5px rgb(232,232,232);
+}

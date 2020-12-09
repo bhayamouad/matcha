@@ -65,7 +65,7 @@ exports.sendEmailVerification = (req, res) => {
         from: process.env.EMAIL,
         to: req.body.email,
         subject: 'Email verification',
-        html: `<p>Hello ${req.body.login} Your account was created successfuly you need to verify your account to login please <a href="http://192.168.99.117:3000/account/verify/${token}/">click here</a>`
+        html: `<p>Hello ${req.body.login} Your account was created successfuly you need to verify your account to login please <a href="http://localhost:3000/account/verify/${token}/">click here</a>`
     }
     mailConf.sendMail(mailOptions, (error) => {
         if(error)   res.send({ message:`error ${error}` })
