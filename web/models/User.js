@@ -26,8 +26,8 @@ static getByToken (token) {
 static getByEmail (email) {
     return db.execute('SELECT * FROM users WHERE email = ?', [email])
   }
-static updateToken(email) {
-    return db.execute('UPDATE users SET token = ? WHERE amail = ?', [email])
+static updateToken(token, email) {
+    return db.execute('UPDATE users SET token = ? WHERE email = ?', [token,email])
   }
 
 }

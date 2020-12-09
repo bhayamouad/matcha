@@ -55,9 +55,11 @@ exports.registerAccount = async (req, res, next) => {
 
 exports.updateToken = (req, res, next) => {
     token = cryptoRandomString({length: 64, type: 'alphanumeric'});
-    User.updateToken(req.body.email)
-        .then( () => next())
-        .catch( err => res.status('500').send({ message : 'email not found '} ))
+    User.updateToken(token, req.body.email)
+        .then( (check) => { 
+         res.send(check)   
+        })
+        .catch( err => res.status('500').send({ message : err.message || 'email not found '} ))
 }
 
 exports.sendEmailVerification = (req, res) => {
@@ -79,12 +81,14 @@ exports.verifyAccount = (req,res) => {
         .then( ([[user]]) => {
             if(user.status == 0) {
                 const now = new Date().getTime()
-                const update = new Date(user.updated_at).getTime()
-                const difference = Math.round((update - now) / 60000)
-                res.json({difference, now, update})
-                // User.updateStatusByToken(token)
-                //         .then( () => res.send({ message: `your account is active you can login now` }))
-                //         .catch( (err) => res.status('500').send({ message: err.message || `Internal server error` }))
+                const update = new Date(user.updated_at)
+                const diff = Math.floor((now - update)/60000)
+                if(diff <= 10){
+                    User.updateStatusByToken(token)
+                    .then( () => res.send({ message: `your account is active you can login now` }))
+                    .catch( (err) => res.status('500').send({ message: err.message || `Internal server error` }))
+                }
+                else res.status('200').send({ message: `Link expired` })
             }
             else res.status('200').send({ message: `user already verified` })
         })
