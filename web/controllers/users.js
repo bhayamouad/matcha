@@ -50,16 +50,24 @@ exports.registerAccount = async (req, res, next) => {
                 .catch(err => res.status('500').send({ message: err.message ||`Internal server error` }))
                 //redirect and flash
         })
-        .catch(err => res.status('500').send({message: err.message || `hash prob`})) //hash password
+        .catch(err => res.status('500').send({message: err.message || `hash prob`}))
 }
 
 exports.updateToken = (req, res, next) => {
     token = cryptoRandomString({length: 64, type: 'alphanumeric'});
-    User.updateToken(token, req.body.email)
-        .then( (check) => { 
-         res.send(check)   
+    User.getByEmail(req.body.email)
+        .then( ([[user]]) => {
+            if (user.status == 0) {
+                User.updateToken(token, req.body.email)
+                    .then( () => { 
+                        next()   
+                    })
+                    .catch( err => res.status(500).send( { message : err.message } ))
+            }
+            else res.status(200).send({ message: 'user alredy verified'})
+
         })
-        .catch( err => res.status('500').send({ message : err.message || 'email not found '} ))
+        .catch( () => res.status(200).send( {message: 'email not found'} ))
 }
 
 exports.sendEmailVerification = (req, res) => {
@@ -85,14 +93,14 @@ exports.verifyAccount = (req,res) => {
                 const diff = Math.floor((now - update)/60000)
                 if(diff <= 10){
                     User.updateStatusByToken(token)
-                    .then( () => res.send({ message: `your account is active you can login now` }))
-                    .catch( (err) => res.status('500').send({ message: err.message || `Internal server error` }))
+                    .then( () => res.send({ message: 'your account is active you can login now' }))
+                    .catch( (err) => res.status('500').send({ message: err.message || 'Internal server error' }))
                 }
-                else res.status('200').send({ message: `Link expired` })
+                else res.status('200').send({ message: 'Link expired' })
             }
-            else res.status('200').send({ message: `user already verified` })
+            else res.status('200').send({ message: 'user already verified' })
         })
-        .catch( (err) => res.status('200').send({ message: err.message || `user not found` }))
+        .catch( () => res.status('200').send({ message: 'user not found' }))
 }
 
 //login dyal lay7ssan 3wan
@@ -112,12 +120,5 @@ exports.login = (req,res) => {
             }
             else res.status(200).send({ message : 'please verify your account'})
         })
-        .catch(err => res.status(200).send({ message: `user not found` }))
-    // if(user)
-    // {
-    // }
-    // if(test)
-    //     res.send({message:`hello ${req.body.login} your are logged in with ${req.body.email}:${req.body.password}`})
-    // else
-    //     res.send({message:`Error try to login`})
+        .catch( () => res.status(200).send({ message: `user not found` }))
 }
