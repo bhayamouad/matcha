@@ -14,5 +14,8 @@ app.use(cors())
 const usersRouter = require('./routes/users')
 
 app.use('/account',usersRouter)
+app.get('/test', (req, res)=>{
+    res.send({test:"Good!"})
+})
 
 app.listen(3000);
