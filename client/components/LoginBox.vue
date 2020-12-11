@@ -15,12 +15,11 @@
       <b-button @click="login" type="is-primary" expanded>Login</b-button>
 
     </div>
-    <div>{{test}}</div>
   </div>
 </template>
 
 <script>
-// import Authentication from '@/services/Authentication'
+
 export default {
     data(){
         return{
@@ -28,16 +27,13 @@ export default {
                 email: '',
                 password: ''
                 },
-              // test: this.login()
             }
     },
     methods:{
         async login(){
             const res = await this.$axios.$post('/account/login', this.user)
-            // console.log(res.data.message);
             if(res.message)
                 this.loginError(res.message);
-            // this.test = res.message
         },
         loginError(msg) {
             this.$buefy.toast.open({
