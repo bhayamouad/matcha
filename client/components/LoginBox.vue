@@ -2,7 +2,7 @@
   <div class="the-box">
     <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
     <div id="login-form">
-      <b-field label="Username">
+      <b-field label="Username or Email">
         <b-input v-model="user.email" placeholder="eg. tirachrach"></b-input>
       </b-field>
       <b-field label="Password">

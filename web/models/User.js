@@ -23,11 +23,18 @@ static getByToken (token) {
   }
 
 
-static getByEmail (email) {
-    return db.execute('SELECT * FROM users WHERE email = ?', [email])
+static getByLogin (email) {
+    return db.execute('SELECT * FROM users WHERE email = ? OR login = ? ', [email, email])
   }
 static updateToken(token, email) {
     return db.execute('UPDATE users SET token = ? WHERE email = ?', [token,email])
   }
+
+static ifEmailexits(email, login){
+    const ret1 =  db.execute('SELECT id_user FROM users WHERE email = ?', [email])
+    const ret2 =  db.execute('SELECT id_user FROM users WHERE login = ?', [login])
+
+    return Promise.all([ret1, ret2])
+}
 
 }

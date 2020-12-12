@@ -27,7 +27,25 @@ const createToken = (id) => {
 
 exports.registerValidation = (req, res, next) => {
     if(!req.body) res.status('400').send({message: `content prob`}) //validation input server side
-        next()
+    const {email, login} = req.body;
+    User.ifEmailexits(email, login)
+    .then((ret)=>{
+       if(ret[0][0][0] || ret[1][0][0])
+       {
+           let emailerr = false
+           let loginerr = false
+            if(ret[0][0][0])
+                emailerr = true;
+            if(ret[1][0][0])
+                loginerr = true;
+            res.status(200).send({emailerr, loginerr})
+            return
+       }
+       else
+            next()
+    })
+    .catch(err => res.status(500).send( { message : err.message }))
+
 }
 
 exports.registerAccount = async (req, res, next) => {
@@ -106,7 +124,7 @@ exports.verifyAccount = (req,res) => {
 //login dyal lay7ssan 3wan
 exports.login = (req,res) => {
     const {email, password} = req.body
-    User.getByEmail(email)
+    User.getByLogin(email)
         .then( async ([[user]]) => {
             if(user.status != 0) // to discuss
             {
@@ -114,11 +132,14 @@ exports.login = (req,res) => {
                 if(passCompare) {
                     const jwt = createToken(user.id_user)
                     res.cookie('jwt', jwt, {httpOnly: true, maxAge: tokenExprire * 1000 })
-                    res.status(200).send({ message : 'you re logged in' }) // redirect to complete registration
+                    res.status(200).send({ message : 'you re logged in' }) 
+                    // redirect to complete registration
+
+                    // redirection a sat should be done on the client side
                 }
-                else res.status(200).send({ message : 'incorrect password' })
+                else res.status(200).send({ message : 'The username or password is incorrect' })
             }
-            else res.status(200).send({ message : 'please verify your account'})
+            else res.status(200).send({ message : 'You need to verify your account first'})
         })
-        .catch( () => res.status(200).send({ message: `user not found` }))
+        .catch( () => res.status(200).send({ message: `The username or password is incorrect` }))
 }

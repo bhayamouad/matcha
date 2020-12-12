@@ -122,7 +122,13 @@ export default {
     }
   },
   methods: {
-
+    myconsole(msg) {
+            this.$buefy.toast.open({
+                duration: 5000,
+                message: msg,
+                type: 'is-danger',
+            })
+            },
     async register () {
       this.errors = {}
       this.valid = true
@@ -168,14 +174,27 @@ export default {
           password: this.user.password,
           cpassword: this.user.cpassword
         })
-        console.log(response)
+  
+        if(response.emailerr || response.loginerr)
+        {
+            this.valid = false;
+            this.errors.email = "This email already exists"
+        }
+        else if(response.loginerr)
+        {
+            this.valid = false;
+            this.errors.login = "This username already exists"
+        }
+        else {
+          //redirect here to login page with a flash message (telling user to verify the email)
+        }
         this.user = {
-          fname: '',
-          lname: '',
-          email: '',
-          login: '',
-          password: '',
-          cpassword: ''
+          fname: this.user.fname,
+          lname: this.user.lname,
+          email: this.user.email,
+          login: this.user.login,
+          password: this.user.password,
+          cpassword: this.user.cpassword
           }
       }
     }

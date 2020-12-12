@@ -35,6 +35,11 @@ export default {
 
   components: {
     loginbox
+  },
+  head(){
+    return{
+      title: "Matcha - Welcome"
+    }
   }
 }
 </script>
