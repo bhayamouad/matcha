@@ -3,7 +3,7 @@
     <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
     <div id="login-form">
       <b-field label="Username or Email">
-        <b-input v-model="user.email" placeholder="eg. tirachrach"></b-input>
+        <b-input v-model="user.email" placeholder="e.g. tirachrach@gmail.com"></b-input>
       </b-field>
       <b-field label="Password">
         <b-input
@@ -15,6 +15,7 @@
       <b-button @click="login" type="is-primary" expanded>Login</b-button>
 
     </div>
+    <NuxtLink to="/register">Register</NuxtLink>
   </div>
 </template>
 

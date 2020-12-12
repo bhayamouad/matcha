@@ -14,3 +14,8 @@ html, body{
 #__nuxt{
     height: 100%;
 }
+
+::placeholder {
+    color:#807d77!important;
+    opacity: 1; 
+  }

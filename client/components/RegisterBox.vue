@@ -2,52 +2,53 @@
   <div class="the-box">
     <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
     <div id="login-form">
-      <b-field label="First Name" 
+      <b-field label="" 
         v-bind:type="{'is-danger': errors.fname}"
         v-bind:message="errors.fname"
         >
-        <b-input v-model="user.fname" placeholder="eg. Anas"></b-input>
+        <b-input v-model="user.fname" placeholder="First Name"></b-input>
       </b-field>
-      <b-field label="Last Name" 
+      <b-field label="" 
         v-bind:type="{'is-danger': errors.lname}"
         v-bind:message="errors.lname"
       >
-        <b-input v-model="user.lname" placeholder="eg. Benani"></b-input>
+        <b-input v-model="user.lname" placeholder="Last Name"></b-input>
       </b-field>
-      <b-field label="Email" 
+      <b-field label="" 
         v-bind:type="{'is-danger': errors.email}"
         v-bind:message="errors.email"
         >
-        <b-input v-model="user.email" placeholder="eg. tirachrach@example.com"></b-input>
+        <b-input v-model="user.email" placeholder="Email Address"></b-input>
       </b-field>
-      <b-field label="Username"  
+      <b-field label=""  
         v-bind:type="{'is-danger': errors.login}"
         v-bind:message="errors.login"
         >
-        <b-input v-model="user.login" placeholder="eg. tirachrach"></b-input>
+        <b-input v-model="user.login" placeholder="Username"></b-input>
       </b-field>
-      <b-field label="Password" 
+      <b-field label="" 
         v-bind:type="{'is-danger': errors.password}"
         v-bind:message="errors.password"
         >
         <b-input
           type="password"
           v-model="user.password"
-          placeholder="********"
+          placeholder="Password"
         ></b-input>
       </b-field>
-      <b-field label="Confirm Password" 
+      <b-field label="" 
         v-bind:type="{'is-danger': errors.cpassword}"
         v-bind:message="errors.cpassword"
         >
         <b-input
           type="password"
           v-model="user.cpassword"
-          placeholder="********"
+          placeholder="Confirm Password"
         ></b-input>
       </b-field>
       <b-button @click="register" type="is-primary" expanded>Register</b-button>
     </div>
+        <NuxtLink to="/">Login</NuxtLink>
   </div>
 </template>
 
@@ -122,13 +123,6 @@ export default {
     }
   },
   methods: {
-    myconsole(msg) {
-            this.$buefy.toast.open({
-                duration: 5000,
-                message: msg,
-                type: 'is-danger',
-            })
-            },
     async register () {
       this.errors = {}
       this.valid = true
