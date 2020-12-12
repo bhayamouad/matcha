@@ -175,12 +175,12 @@ export default {
           cpassword: this.user.cpassword
         })
   
-        if(response.emailerr || response.loginerr)
+        if(response.emailerr)
         {
             this.valid = false;
             this.errors.email = "This email already exists"
         }
-        else if(response.loginerr)
+        if(response.loginerr)
         {
             this.valid = false;
             this.errors.login = "This username already exists"
