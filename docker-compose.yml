@@ -1,12 +1,12 @@
 version: "3.1"
 services:
-    web:
-        build: ./web
+    api:
+        build: ./api
         ports: 
             - "3000:3000"
             - "443:443"
         volumes:
-            - ./web:/usr/src/app
+            - ./api:/usr/src/app
         links:
             - db
         restart: on-failure

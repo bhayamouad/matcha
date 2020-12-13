@@ -44,10 +44,16 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL: 'http://localhost:3000'
+    baseURL: 'http://192.168.99.122:3000'
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
+  },
+  watchers: {
+    webpack: {
+      aggregateTimeout: 300,
+      poll: 1000
+    }
   }
 }

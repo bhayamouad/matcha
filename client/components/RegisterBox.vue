@@ -48,7 +48,7 @@
       </b-field>
       <b-button @click="register" type="is-primary" expanded>Register</b-button>
     </div>
-        <NuxtLink to="/">Login</NuxtLink>
+    <NuxtLink to="/">Login</NuxtLink>
   </div>
 </template>
 
@@ -104,7 +104,7 @@
   };
   const validateCpassword = (cpassword, password) => {
     if (cpassword !== password)
-      return { valid: false, error: "The the passwords do not match" };
+      return { valid: false, error: "The passwords do not match" };
     return { valid: true, error: null };
   };
 export default {
@@ -129,35 +129,35 @@ export default {
       
       const validFname = validateFname(this.user.fname)
       this.errors.fname = validFname.error
+      console.log(this.errors.fname)
       if (this.valid) this.valid = validFname.valid
       
       const validLname = validateLname(this.user.lname)
       this.errors.lname = validLname.error
+      console.log(this.errors.lname)
       if (this.valid) this.valid = validLname.valid
 
       const validEmail = validateEmail(this.user.email)
       this.errors.email = validEmail.error
+      console.log(this.errors.email)
       if (this.valid) this.valid = validEmail.valid
-
+      console.log(this.user.login)
       const validLogin = validateLogin(this.user.login)
       this.errors.login = validLogin.error
+      console.log(this.errors.login)
       if (this.valid) this.valid = validLogin.valid
-
+      
+      console.log(this.user.password)
       const validPassword = validatePassword(this.user.password)
       this.errors.password = validPassword.error
+      console.log(this.errors.password)
       if (this.valid) this.valid = validPassword.valid
-      else {
-        this.user.password = ''
-        this.user.cpassword = ''
-      }
 
+      console.log(this.user.cpassword)
       const validCpassword = validateCpassword(this.user.cpassword,this.user.password)
       this.errors.cpassword = validCpassword.error
+      console.log(this.errors.cpassword)
       if (this.valid) this.valid = validCpassword.valid
-      else {
-        this.user.password = ''
-        this.user.cpassword = ''
-      }
 
       if (this.valid) {
         const response = await this.$axios.$post('/account/register', {
