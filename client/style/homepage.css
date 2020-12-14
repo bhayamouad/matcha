@@ -21,6 +21,9 @@ html, body{
     width: 50%;
     background-color: rgb(232,232,232);
 }
+.action-box button{
+    font-size: 20px;
+}
 .the-msg{
     padding: 10px;
     /* border: solid 2px black; */
@@ -64,3 +67,14 @@ html, body{
     padding: 40px;
 }
 /* #login */
+#re-link{
+    font-size: 20px;
+    text-align: center;
+    margin-top: -20px;
+
+}
+#f-pswd{
+    margin-bottom: 16px;
+    margin-top: -8px;
+    color: black!important;
+}

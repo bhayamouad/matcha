@@ -12,10 +12,13 @@
           placeholder="********"
         ></b-input>
       </b-field>
+        <div id="f-pswd"><NuxtLink to="/register">Forgot password ? </NuxtLink></div>
       <b-button @click="login" type="is-primary" expanded>Login</b-button>
 
     </div>
-    <NuxtLink to="/register">Register</NuxtLink>
+    <div id="re-link">Dont have an account?
+      <NuxtLink to="/register">&nbsp;Sign Up </NuxtLink>
+    </div>
   </div>
 </template>
 

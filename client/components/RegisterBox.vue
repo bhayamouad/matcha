@@ -48,7 +48,9 @@
       </b-field>
       <b-button @click="register" type="is-primary" expanded>Register</b-button>
     </div>
-        <NuxtLink to="/">Login</NuxtLink>
+    <div id="re-link">Already have an account?
+        <NuxtLink to="/">&nbsp;Login</NuxtLink>
+    </div>
   </div>
 </template>
 
