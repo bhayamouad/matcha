@@ -126,20 +126,18 @@ exports.login = (req,res) => {
     const {email, password} = req.body
     User.getByLogin(email)
         .then( async ([[user]]) => {
-            if(user.status != 0) // to discuss
-            {
-                const passCompare = await bcrypt.compare(password, user.password)
-                if(passCompare) {
-                    const jwt = createToken(user.id_user)
-                    res.cookie('jwt', jwt, {httpOnly: true, maxAge: tokenExprire * 1000 })
+            const passCompare = await bcrypt.compare(password, user.password)
+            if(passCompare) {
+                const jwt = createToken(user.id_user)
+                res.cookie('jwt', jwt, {httpOnly: true, maxAge: tokenExprire * 1000 })
+                if(user.status != 0) // to discuss
+                {
                     res.status(200).send({ message : 'you re logged in' }) 
-                    // redirect to complete registration
-
                     // redirection a sat should be done on the client side
                 }
-                else res.status(200).send({ message : 'The username or password is incorrect' })
+                else res.status(200).send({ message : 'You need to verify your account first'})
             }
-            else res.status(200).send({ message : 'You need to verify your account first'})
+            else res.status(200).send({ message : 'The username or password is incorrect' })
         })
         .catch( () => res.status(200).send({ message: `The username or password is incorrect` }))
 }
