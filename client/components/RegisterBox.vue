@@ -51,6 +51,7 @@
     <div id="re-link">Already have an account?
         <NuxtLink to="/">&nbsp;Login</NuxtLink>
     </div>
+
   </div>
 </template>
 
@@ -106,7 +107,7 @@
   };
   const validateCpassword = (cpassword, password) => {
     if (cpassword !== password)
-      return { valid: false, error: "The the passwords do not match" };
+      return { valid: false, error: "The passwords do not match" };
     return { valid: true, error: null };
   };
 export default {
@@ -140,37 +141,21 @@ export default {
       const validEmail = validateEmail(this.user.email)
       this.errors.email = validEmail.error
       if (this.valid) this.valid = validEmail.valid
-
       const validLogin = validateLogin(this.user.login)
       this.errors.login = validLogin.error
       if (this.valid) this.valid = validLogin.valid
-
+      
       const validPassword = validatePassword(this.user.password)
       this.errors.password = validPassword.error
       if (this.valid) this.valid = validPassword.valid
-      else {
-        this.user.password = ''
-        this.user.cpassword = ''
-      }
 
       const validCpassword = validateCpassword(this.user.cpassword,this.user.password)
       this.errors.cpassword = validCpassword.error
       if (this.valid) this.valid = validCpassword.valid
-      else {
-        this.user.password = ''
-        this.user.cpassword = ''
-      }
 
       if (this.valid) {
-        const response = await this.$axios.$post('/account/register', {
-          fname: this.user.fname,
-          lname: this.user.lname,
-          email: this.user.email,
-          login: this.user.login,
-          password: this.user.password,
-          cpassword: this.user.cpassword
-        })
-  
+        const response = await this.$axios.$post('/account/register', this.user)
+ 
         if(response.emailerr)
         {
             this.valid = false;
@@ -182,7 +167,10 @@ export default {
             this.errors.login = "This username already exists"
         }
         else {
-          //redirect here to login page with a flash message (telling user to verify the email)
+          if(response.error)
+            this.registerError(response.message)
+          if(response.success)
+            this.registerSuccess(response.message)
         }
         this.user = {
           fname: this.user.fname,
@@ -193,7 +181,21 @@ export default {
           cpassword: this.user.cpassword
           }
       }
-    }
+    },
+    registerError(msg) {
+        this.$buefy.toast.open({
+            duration: 2000,
+            message: msg,
+            type: 'is-danger',
+        })
+      },
+    registerSuccess(msg) {
+        this.$buefy.toast.open({
+            duration: 2000,
+            message: msg,
+            type: 'is-success',
+        })
+      }
   }
 }
 </script>
