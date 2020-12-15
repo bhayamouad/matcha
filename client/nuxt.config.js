@@ -21,6 +21,7 @@ export default {
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
     '@/style/main.scss'
+    
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
@@ -44,7 +45,7 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL: 'http://localhost:3000'
+    baseURL: 'http://192.168.99.122:3000'
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)

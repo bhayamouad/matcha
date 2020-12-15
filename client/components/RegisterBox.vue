@@ -1,7 +1,7 @@
 <template>
   <div class="the-box">
     <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
-    <div id="login-form">
+    <div id="login-form" @keyup.enter="register">
       <b-field label="" 
         v-bind:type="{'is-danger': errors.fname}"
         v-bind:message="errors.fname"
@@ -46,7 +46,7 @@
           placeholder="Confirm Password"
         ></b-input>
       </b-field>
-      <b-button @click="register" type="is-primary" expanded>Register</b-button>
+      <b-button @click="register" type="is-primary submit" expanded>Register</b-button>
     </div>
     <div id="re-link">Already have an account?
         <NuxtLink to="/">&nbsp;Login</NuxtLink>

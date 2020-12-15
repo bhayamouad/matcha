@@ -1,7 +1,7 @@
 <template>
   <div class="the-box">
     <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
-    <div id="login-form">
+    <div id="login-form" @keyup.enter="sendEmail">
       <b-field
         label="Email"
         v-bind:type="{ 'is-danger': errorEmail }"
