@@ -29,7 +29,7 @@
 </template>
 
 <script>
-
+let snackb;
 const validateLogin = login => {
   if (!login) return { valid: false, error: 'Please fill out this field.' };
   return { valid: true, error: null };
@@ -49,6 +49,9 @@ export default {
       errors: {}
     };
   },
+  beforeDestroy(){
+    //snackb.close()
+  },
   methods: {
     async login() {
       this.errors = {};
@@ -64,25 +67,39 @@ export default {
 
       if (this.valid) {
         const res = await this.$axios.$post("/account/login", this.user);
-        if (res.error) this.loginError(res.message);
-        if (res.success) {
-          this.$router.push('/register')
-          this.loginSuccess(res.message);}
+        if(res.special) this.verifyLink(res.message)
+        if (res.error && !res.special) this.loginError(res.message);
+        if (!res.error) {
+          this.$router.push('/home')
+          this.loginSuccess(res.message);
+        }
       }
     },
     loginError(msg) {
       this.$buefy.toast.open({
-        duration: 2000,
+        duration: 7000,
         message: msg,
         type: "is-danger"
       });
     },
     loginSuccess(msg) {
       this.$buefy.toast.open({
-        duration: 2000,
+        duration: 7000,
         message: msg,
         type: "is-success"
       });
+    },
+    verifyLink(msg){
+      snackb = this.$buefy.snackbar.open({
+                message: msg,
+                type: 'is-danger',
+                position: 'is-top',
+                actionText: 'Verify Now',
+                indefinite: false,
+                queue: true,
+                duration: 1000000,
+                onAction: () => {this.$router.push('/verify') } 
+            })
     }
   }
 };

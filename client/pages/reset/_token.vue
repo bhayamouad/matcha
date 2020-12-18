@@ -16,7 +16,7 @@ export default {
   
   async asyncData({$axios, params, redirect}){
     const res = await $axios.$get(`/account/reset/${params.token}`)
-    if(!res.success)
+    if(res.error)
       redirect('/reset')
   }
   // methods:{

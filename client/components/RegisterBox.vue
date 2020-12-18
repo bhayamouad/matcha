@@ -169,8 +169,11 @@ export default {
         else {
           if(response.error)
             this.registerError(response.message)
-          if(response.success)
+          else
+          {
             this.registerSuccess(response.message)
+            this.$router.push('/')
+          }
         }
         this.user = {
           fname: this.user.fname,
@@ -184,14 +187,14 @@ export default {
     },
     registerError(msg) {
         this.$buefy.toast.open({
-            duration: 2000,
+            duration: 7000,
             message: msg,
             type: 'is-danger',
         })
       },
     registerSuccess(msg) {
         this.$buefy.toast.open({
-            duration: 2000,
+            duration: 7000,
             message: msg,
             type: 'is-success',
         })

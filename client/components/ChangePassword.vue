@@ -94,14 +94,14 @@ export default {
     },
     changeError(msg) {
       this.$buefy.toast.open({
-        duration: 2000,
+        duration: 7000,
         message: msg,
         type: "is-danger",
       });
     },
     changeSuccess(msg) {
       this.$buefy.toast.open({
-        duration: 2000,
+        duration: 7000,
         message: msg,
         type: "is-success",
       });

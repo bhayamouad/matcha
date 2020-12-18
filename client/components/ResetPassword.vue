@@ -50,19 +50,19 @@ export default {
       if (this.valid) {
         const res = await this.$axios.$post("/account/reset", this.username);
         if (res.error) this.resetError(res.message);
-        if (res.success) this.resetSuccess(res.message);
+        else this.resetSuccess(res.message);
       }
     },
     resetError(msg) {
       this.$buefy.toast.open({
-        duration: 5000,
+        duration: 7000,
         message: msg,
         type: "is-danger",
       });
     },
     resetSuccess(msg){
        this.$buefy.toast.open({
-        duration: 5000,
+        duration: 7000,
         message: msg,
         type: "is-success",
       });

@@ -49,20 +49,21 @@ export default {
 
       if (this.valid) {
         const res = await this.$axios.$post("/account/verify", this.user);
+        if(res.redirect) this.$router.push('/')
         if (res.error) this.verifyError(res.message);
-        if (res.success) this.verifySuccess(res.message);
+        else this.verifySuccess(res.message);
       }
     },
     verifyError(msg) {
       this.$buefy.toast.open({
-        duration: 2000,
+        duration: 7000,
         message: msg,
         type: "is-danger",
       });
     },
     verifySuccess(msg) {
       this.$buefy.toast.open({
-        duration: 2000,
+        duration: 7000,
         message: msg,
         type: "is-success",
       });

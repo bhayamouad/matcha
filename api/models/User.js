@@ -14,8 +14,8 @@ module.exports = class User {
     return db.query('INSERT INTO users SET ?', this)
   }
 
-  static updateStatusByToken(id) {
-    return db.execute('UPDATE users SET status = 1 WHERE id_user = ?', [id])
+  static updateStatus(id) {
+    return db.execute('UPDATE users SET status = 1, expire_token = NULL WHERE id_user = ?', [id])
   }
 
   static getByToken(token) {

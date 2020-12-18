@@ -6,35 +6,36 @@
 
 <script>
 import loginBox from "@/components/LoginBox"
-let snackb;
+let snackb = null;
 export default {
   mounted(){
     this.checkToken()
   },
   beforeDestroy(){
-    snackb.close()
+    if(snackb)
+      snackb.close()
   },
   methods: {
     async checkToken(){
       const res = await this.$axios.$get(`/account/verify/${this.$route.params.token}`);
-      if (res.success)
+      if (!res.error)
         this.verifySuccess(res.message)
-      else if(res.special)
+      if(res.special)
         this.verifyLink(res.message)
-      else
+      if (res.error && !res.special)
         this.verifyError(res.message)
 
     },
     verifyError(msg) {
       this.$buefy.toast.open({
-        duration: 5000,
+        duration: 7000,
         message: msg,
         type: "is-danger",
       });
     },
     verifySuccess(msg) {
       this.$buefy.toast.open({
-        duration: 5000,
+        duration: 7000,
         message: msg,
         type: "is-success",
       });

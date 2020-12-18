@@ -54,7 +54,7 @@ exports.registerAccount = (req, res) => {
                     const subject = 'Email Confirmation'
                     const html = `<p>Hello ${user.login} Your account was created successfuly you need to verify your account to login please <a href="${process.env.CLIENT_URL}/verify/${token}/">click here</a>`
                     helpers.sendEmail(user.email, subject, html)
-                    res.status(201).send({ message: 'user register success', error: false, success: true })
+                    res.status(201).send({ message: 'Your Account was created. Please go check your Inbox to verify your Account', error: false, success: true })
                 })
                 .catch(err => res.status(500).send({ message: err.message, error: true, success: false }))
         })
@@ -71,38 +71,39 @@ exports.verifyAccount = (req, res) => {
                 const update = new Date(user.expire_token)
                 const diff = Math.floor((now - update) / 60000)
                 if (diff <= 60*24) {
-                    User.updateStatusByToken(user.id_user)
-                        .then(() => res.send({ message: 'Account is activated you can login now', error: false, success: true }))
-                        .catch((err) => res.status('500').send({ message: err.message, error: true, success: false ,special:false}))
+                    User.updateStatus(user.id_user)
+                        .then(() => res.send({ message: 'Account is activated you can login now', error: false }))
+                        .catch((err) => res.status('500').send({ message: err.message, error: true}))
                 }
-                else res.status('200').send({ message: 'This verification link is expired! Request a new one', error: true, success: false, special:true })
+                else res.status('200').send({ message: 'This verification link is expired! Request a new one', error: true, special:true })
             }
-            else res.status('200').send({ message: 'This account is already verified, you can login', error: true, success: false ,special:false})
+            else res.status('200').send({ message: 'This account is already verified, you can login', error: true })
         })
-        .catch(() => res.status('200').send({ message: 'Something went Wrong! Request a new verification link', error: true, success: false , special:true}))
+        .catch(() => res.status('200').send({ message: 'Something went Wrong! Request a new verification link', error: true, special:true}))
 }
 
 //login dyal lay7ssan 3wan
 exports.login = (req, res) => {
     const { login, password } = req.body
+    console.log({login, password})
     User.getByLogin(login)
         .then(async ([[user]]) => {
             const passCompare = await bcrypt.compare(password, user.password)
             if (passCompare) {
-                const jwt = createToken(user.id_user)
-                res.cookie('jwt', jwt, { httpOnly: true, maxAge: tokenExprire * 1000 })
                 if (user.status != 0) {
-                    res.status(200).send({ message: 'you re logged in', error: false, success: true })
+                    const jwt = helpers.createToken(user.id_user)
+                    res.cookie('jwt', jwt, { httpOnly: true, maxAge: tokenExprire * 1000 })
+                    res.status(200).send({ message: 'You are logged in', token: jwt, error: false})
                 }
-                else res.status(200).send({ message: 'You need to verify your account first', error: true, success: false })
+                else res.status(200).send({ message: 'You need to verify your account first', error: true, special:true })
             }
-            else res.status(200).send({ message: 'The username or password is incorrect', error: true, success: false })
+            else res.status(200).send({ message: 'The username or password is incorrect', error: true })
         })
-        .catch(() => res.status(200).send({ message: `The username or password is incorrect`, error: true, success: false }))
+        .catch(() => res.status(200).send({ message: 'The username or password is incorrect', error: true}))
 }
 
 exports.updateToken = (req, res) => {
-    token = cryptoRandomString({ length: 64, type: 'alphanumeric' });
+    token = cryptoRandomString({ length: 64, type: 'alphanumeric' });  
     User.getByLogin(req.body.login)
         .then(([[user]]) => {
             if (user.status == 0) {
@@ -116,15 +117,15 @@ exports.updateToken = (req, res) => {
                             const subject = 'Email Confirmation'
                             const html = `<p>Hello ${user.login} Your account was created successfuly you need to verify your account to login please <a href="${process.env.CLIENT_URL}/verify/${token}/">click here</a>`
                             helpers.sendEmail(user.email, subject, html)
-                            res.send({ message: 'Email verification was sent', error: false, success: true })
+                            res.send({ message: 'Email verification was sent Please go check your Inbox', error: false, redirect: true })
                         })
-                        .catch(err => res.status(500).send({ message: err.message, error: true, success: false }))
+                        .catch(err => res.status(500).send({ message: err.message, error: true }))
                 }
-                else res.status('200').send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit-diff-1?'s':''}.`, error: true, success: false })
+                else res.status('200').send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit-diff-1?'s':''}.`, error: true })
             }
-            else res.status(200).send({ message: 'This account is already verified.', error: true, success: false })
+            else res.status(200).send({ message: 'This account is already verified. You can login now', error: true, redirect: true })
         })
-        .catch(() => res.status(200).send({ message: 'Account not found.', error: true, success: false }))
+        .catch(() => res.status(200).send({ message: 'Account not found.', error: true }))
 }
 
 exports.sendEmailReset = (req, res) => {
@@ -135,8 +136,8 @@ exports.sendEmailReset = (req, res) => {
         html: `<p>Hello ${req.user.login} Someone has requested a link to change your password. You can do this through the link below. <a href="http://localhost:8080/reset/${req.token}/">Change My Password</a>`
     }
     mailConf.sendMail(mailOptions, (err) => {
-        if (err) res.send({ message: err, error: true, success: false })
-        else res.send({ message: 'Reset Email was sent', error: false, success: true })
+        if (err) res.send({ message: err, error: true })
+        else res.send({ message: 'Reset Email was sent', error: false })
     })
 }
 
@@ -156,15 +157,15 @@ exports.resetPassword = (req, res) => {
                             const subject = 'Reset Password'
                             const html = `<p>Hello ${user.login} Someone has requested a link to change your password. You can do this through the link below. <a href="${process.env.CLIENT_URL}/reset/${token}/">Change My Password</a>`
                             helpers.sendEmail(user.email, subject, html)
-                            res.send({ message: 'Reset Email was sent', error: false, success: true })
+                            res.send({ message: 'Reset Email was sent', error: false })
                         })
-                        .catch(err => res.status(500).send({ message: err.message, error: true, success: false }))
+                        .catch(err => res.status(500).send({ message: err.message, error: true }))
                 }
-                else res.status('200').send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit-diff-1?'s':''}.`, error: true, success: false })
+                else res.status('200').send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit-diff-1?'s':''}.`, error: true })
             }
-            else res.status(200).send({ message: 'Please Verify your account', error: true, success: false })
+            else res.status(200).send({ message: 'Please Verify your account', error: true})
         })
-        .catch(() => res.status(200).send({ message: 'Account not found', error: true, success: false }))
+        .catch(() => res.status(200).send({ message: 'Account not found', error: true }))
 }
 
 exports.passwordToken = (req, res) =>{
@@ -176,14 +177,14 @@ exports.passwordToken = (req, res) =>{
             const update = new Date(user.expire_token)
             const diff = Math.floor((now - update) / 60000)
             if (diff <= 60)
-                res.status(200).send({ message: 'change password', success: true });
-            else res.status('200').send({ message: 'This verification link is expired! Request a new one',success: false})
+                res.status(200).send({ message: 'change password', error: false });
+            else res.status('200').send({ message: 'This verification link is expired! Request a new one', error: true})
         }
         else
-            res.status(200).send({ message: 'link incorrect', success: false })
+            res.status(200).send({ message: 'link incorrect', error: true })
         
     })
-    .catch(() => res.status(200).send({ message: 'link incorrect', success: false }))
+    .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
 
 exports.changePassword = (req, res) => {
@@ -198,13 +199,13 @@ exports.changePassword = (req, res) => {
                     .then((salt) => { return bcrypt.hash(req.body.npassword, salt) })
                     .then(hashPassword => {
                         User.setPassword(hashPassword, user.id_user)
-                            .then(() => res.send({ message: 'password changed', success: true }))
-                            .catch((err) => res.status('500').send({ message: err.message, success: false }))
+                            .then(() => res.send({ message: 'password changed', error: false }))
+                            .catch((err) => res.status('500').send({ message: err.message, error: true }))
                     })
-                    .catch(err => res.status('500').send({ message: err.message, success: false }))
+                    .catch(err => res.status('500').send({ message: err.message, error: true }))
             }
             else
-                res.status(200).send({ message: 'link expired', success: false })
+                res.status(200).send({ message: 'link expired', error: true })
         })
-        .catch(() => res.status(200).send({ message: 'link incorrect', success: false }))
+        .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
