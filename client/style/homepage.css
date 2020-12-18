@@ -67,14 +67,18 @@ html, body{
     padding: 40px;
 }
 /* #login */
-#re-link{
-    font-size: 20px;
-    text-align: center;
-    margin-top: -20px;
-
-}
 #f-pswd{
     margin-bottom: 16px;
     margin-top: -8px;
-    color: black!important;
+}
+#f-pswd a{
+    color: black;
+}
+#f-pswd:hover{
+    text-decoration: underline;
+}
+#buttom-links{
+    font-size: 20px;
+    text-align: center;
+    margin-top: -20px;
 }

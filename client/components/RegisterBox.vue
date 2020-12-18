@@ -46,9 +46,9 @@
           placeholder="Confirm Password"
         ></b-input>
       </b-field>
-      <b-button @click="register" type="is-primary submit" expanded>Register</b-button>
+      <b-button @click="register" type="is-primary" expanded>Register</b-button>
     </div>
-    <div id="re-link">Already have an account?
+    <div id="buttom-links">Already have an account?
         <NuxtLink to="/">&nbsp;Login</NuxtLink>
     </div>
 

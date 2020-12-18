@@ -16,8 +16,10 @@
         >Send Email</b-button
       >
     </div>
-    <NuxtLink to="/register">Register</NuxtLink>
+    <div id="buttom-links">
+    Remembered your password?&nbsp;
     <NuxtLink to="/">Login</NuxtLink>
+    </div>
   </div>
 </template>
 

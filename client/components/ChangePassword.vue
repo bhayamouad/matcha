@@ -28,8 +28,10 @@
         >Change Password</b-button
       >
     </div>
-    <NuxtLink to="/register">Register</NuxtLink>
-    <NuxtLink to="/">login</NuxtLink>
+    <div id="buttom-links">
+    Remembered your password?&nbsp;
+    <NuxtLink to="/">Login</NuxtLink>
+    </div>
   </div>
 </template>
 
@@ -84,12 +86,10 @@ export default {
       if (this.valid) this.valid = validCpassword.valid;
 
       if (this.valid) {
-        const res = await this.$axios.$post(
-          "/account/changePassword",
-          this.passwords
-        );
-        if (res.error) this.changeError(res.message);
-        if (res.success) this.changeSuccess(res.message);
+        const res = await this.$axios.$post("/account/change-password",this.passwords);
+        console.log(res)
+        // if (res.error) this.changeError(res.message);
+        // if (res.success) this.changeSuccess(res.message);
       }
     },
     changeError(msg) {

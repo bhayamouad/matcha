@@ -21,7 +21,7 @@
         <div id="f-pswd"><NuxtLink to="/reset">Forgot password ? </NuxtLink></div>
       <b-button @click="login" type="is-primary" expanded>Login</b-button>
     </div>
-    <div id="re-link">Dont have an account?
+    <div id="buttom-links">Dont have an account?
       <NuxtLink to="/register">&nbsp;Sign Up </NuxtLink>
     </div>
 
@@ -65,7 +65,9 @@ export default {
       if (this.valid) {
         const res = await this.$axios.$post("/account/login", this.user);
         if (res.error) this.loginError(res.message);
-        if (res.success) this.loginSuccess(res.message);
+        if (res.success) {
+          this.$router.push('/register')
+          this.loginSuccess(res.message);}
       }
     },
     loginError(msg) {
