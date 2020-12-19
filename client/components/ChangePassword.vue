@@ -87,9 +87,17 @@ export default {
 
       if (this.valid) {
         const res = await this.$axios.$post("/account/change-password",this.passwords);
-        console.log(res)
+        // console.log(res)
         // if (res.error) this.changeError(res.message);
-        // if (res.success) this.changeSuccess(res.message);
+        if (!res.error)
+        {
+          this.changeSuccess(res.message);
+          this.$router.push('/')
+        }
+        else{
+          this.changeError(res.message);
+          this.$router.push('/reset')
+        }
       }
     },
     changeError(msg) {
@@ -105,6 +113,7 @@ export default {
         message: msg,
         type: "is-success",
       });
+      
     }
   },
 };

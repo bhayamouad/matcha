@@ -12,8 +12,8 @@ export default {
     this.checkToken()
   },
   beforeDestroy(){
-    if(snackb)
-      snackb.close()
+    // if(snackb)
+    //   snackb.close()
   },
   methods: {
     async checkToken(){

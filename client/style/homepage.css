@@ -3,7 +3,7 @@ html, body{
 }
 
 .visitorpage{
-    height: 100%;
+    min-height: 100%;
     display: flex;
 }
 
@@ -19,7 +19,9 @@ html, body{
     justify-content: center;
     align-items: center;
     width: 50%;
-    background-color: rgb(232,232,232);
+    background-image: url(../assets/bghome.svg);
+    background-size: auto 400px;
+
 }
 .action-box button{
     font-size: 20px;
@@ -28,20 +30,20 @@ html, body{
     padding: 10px;
     /* border: solid 2px black; */
     height: 600px;
-    max-width: 500px;
+    max-width: 400px;
     width: 100%;
 }
 
 #msg-txt{
     color: black;
-    font-size: 19px;
+    font-size: 17px;
     font-weight: 400;
 }
 
 #slogan{
     font-family: 'Nerko One', cursive;
     color: black;
-    font-size: 60px;
+    font-size: 50px;
     line-height: 90%;
 }
 
@@ -49,7 +51,7 @@ html, body{
     padding: 10px 0px;
     border-radius: 20px;
     background-color: white;
-    max-width: 450px;
+    max-width: 400px;
     width: 100%;
 }
 #blogo{
@@ -58,8 +60,12 @@ html, body{
     -webkit-user-drag: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+    width: 64%;
+    margin: auto;
+    justify-content: center;
 }
 #blogo-container{
+    display: flex;
     border-bottom: solid 1.5px rgb(232,232,232);
 }
 
@@ -80,5 +86,12 @@ html, body{
 #buttom-links{
     font-size: 20px;
     text-align: center;
-    margin-top: -20px;
+    margin-top: -30px;
+}
+#buttom-links a:hover{
+    text-decoration: underline;
+}
+.help{
+    margin-bottom: -5px;
+    margin-top: 0px;
 }

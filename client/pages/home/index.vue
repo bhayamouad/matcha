@@ -8,8 +8,9 @@ export default {
   name: "HomePage",
   head() {
     return {
-      title: "Matcha - Welcome",
+      title: "Matcha",
     };
+    
   },
 };
 </script>

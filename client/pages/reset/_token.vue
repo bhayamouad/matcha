@@ -19,15 +19,7 @@ export default {
     if(res.error)
       redirect('/reset')
   }
-  // methods:{
-  //   async checkToken(){
-  //     const res = await this.$axios.$get(`/account/reset/${this.$route.params.token}`);
-  //     console.log(res) //to remove
-  //     if(!res.success)
-  //       this.$router.push('/reset')
-  //   }
-  // }
-  
+
 }
 </script>
 <style src="@/style/homepage.css">

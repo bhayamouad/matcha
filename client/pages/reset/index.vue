@@ -12,6 +12,11 @@ export default {
   components: {
     resetBox,
   },
+  head() {
+    return {
+      title: "Matcha - Reset Password",
+    };
+  }
 }
 </script>
 <style src="@/style/homepage.css">

@@ -21,8 +21,8 @@
         <div id="f-pswd"><NuxtLink to="/reset">Forgot password ? </NuxtLink></div>
       <b-button @click="login" type="is-primary" expanded>Login</b-button>
     </div>
-    <div id="buttom-links">Dont have an account?
-      <NuxtLink to="/register">&nbsp;Sign Up </NuxtLink>
+    <div id="buttom-links">Dont have an account?&nbsp;
+      <NuxtLink to="/register">Sign Up </NuxtLink>
     </div>
 
   </div>

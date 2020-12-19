@@ -8,6 +8,11 @@ import registerbox from "~/components/RegisterBox";
 export default {
   layout:'auth',
   name: "Register",
+  head() {
+    return {
+      title: "Matcha - Register",
+    };
+  },
 
   components: {
     registerbox,
