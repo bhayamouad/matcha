@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm install && node setup/db_create.js && nodemon --legacy-watch app.js"
+    "start": "npm install && node -r dotenv/config setup/db_create.js && nodemon --legacy-watch app.js"
   },
   "author": "",
   "license": "ISC",
