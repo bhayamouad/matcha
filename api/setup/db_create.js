@@ -1,16 +1,16 @@
 const mysql = require('mysql2')
 let connection = mysql.createConnection({
-      host: 'db',
-      user: 'tirach',
-      password: 'rach'
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASS
 });
 
 connection.connect(function(err) {
       if (err) throw err;
-      connection.query("CREATE DATABASE matcha_db", (err) => {
+      connection.query(`CREATE DATABASE ${process.env.DB}`, (err) => {
             if (err) console.log("Database already exist.");
             else{
-                  connection.query(`USE matcha_db`);
+                  connection.query(`USE ${process.env.DB}`);
                   connection.query(`CREATE TABLE users (
                         id_user int(11) NOT NULL,
                         fname varchar(40) NOT NULL,
