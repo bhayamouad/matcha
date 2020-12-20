@@ -24,7 +24,7 @@ connection.connect(function(err) {
                         biography varchar(512),
                         rating int(3) DEFAULT 0,
                         status int(1) NOT NULL DEFAULT 0,
-                        token varchar(255) NOT NULL,
+                        token varchar(255),
                         expire_token TIMESTAMP DEFAULT NOW(),
                         profile varchar(255),
                         created_at TIMESTAMP NOT NULL DEFAULT NOW(),

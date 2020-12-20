@@ -150,7 +150,7 @@ exports.resetPassword = (req, res) => {
                 const now = new Date().getTime()
                 const update = new Date(user.expire_token)
                 const diff = Math.floor((now - update) / 60000)
-                const limit = 10
+                const limit = 3
                 if (diff >= limit){
                     User.updateToken(token, user.id_user)
                         .then(() => {
@@ -176,8 +176,8 @@ exports.passwordToken = (req, res) =>{
             const now = new Date().getTime()
             const update = new Date(user.expire_token)
             const diff = Math.floor((now - update) / 60000)
-            if (diff <= 60)
-                res.status(200).send({ message: 'change password', error: false });
+            if (diff <= 3)
+                res.status(200).send({ error: false });
             else res.status('200').send({ message: 'This verification link is expired! Request a new one', error: true})
         }
         else
@@ -193,7 +193,7 @@ exports.changePassword = (req, res) => {
             const now = new Date().getTime()
             const update = new Date(user.expire_token)
             const diff = Math.floor((now - update) / 60000)
-            if (diff <= 60)
+            if (diff <= 3)
             {
                 bcrypt.genSalt(10)
                     .then((salt) => { return bcrypt.hash(req.body.npassword, salt) })

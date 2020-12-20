@@ -37,6 +37,6 @@ module.exports = class User {
     return Promise.all([ret1, ret2])
   }
   static setPassword(password, id) {
-    return db.execute('UPDATE users SET password = ? WHERE id_user = ?', [password, id])
+    return db.execute('UPDATE users SET password = ?, token = NULL WHERE id_user = ?', [password, id])
   }
 }

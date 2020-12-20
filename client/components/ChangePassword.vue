@@ -87,8 +87,6 @@ export default {
 
       if (this.valid) {
         const res = await this.$axios.$post("/account/change-password",this.passwords);
-        // console.log(res)
-        // if (res.error) this.changeError(res.message);
         if (!res.error)
         {
           this.changeSuccess(res.message);

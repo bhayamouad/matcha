@@ -12,14 +12,14 @@ export default {
   components: {
     changePassword,
   },
-  
-  
   async asyncData({$axios, params, redirect}){
-    const res = await $axios.$get(`/account/reset/${params.token}`)
+    const res = await $axios.$get(`/account/reset/${params.token}`)    
     if(res.error)
+    {
+      //error msg   
       redirect('/reset')
-  }
-
+    }
+  },
 }
 </script>
 <style src="@/style/homepage.css">
