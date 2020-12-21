@@ -19,7 +19,7 @@ html, body{
     justify-content: center;
     align-items: center;
     width: 50%;
-    background-image: url(../assets/bghome.svg);
+    background-image: url(../assets/mbghome.svg);
     background-size: auto 400px;
 
 }
@@ -52,7 +52,7 @@ html, body{
     border-radius: 20px;
     background-color: white;
     max-width: 400px;
-    width: 100%;
+    width: 85%;
 }
 #blogo{
     user-select: none;
@@ -94,4 +94,51 @@ html, body{
 .help{
     margin-bottom: -5px;
     margin-top: 0px;
+}
+
+@media (max-width: 800px)
+{
+    html, body{
+        overflow: auto;
+    }
+    .visitorpage{
+        display: flex;
+        flex-flow: column;
+    }
+    .action-box{
+        order: 1;
+        width: 100%;
+        padding: 50px 0px ;
+    }
+    .the-box{
+        width: 80%;
+        border-radius: 10px;
+        padding: 10px 0;
+    }
+    #login-form{
+        padding: 20px;
+    }
+    #buttom-links{
+        font-size: 20px;
+        text-align: center;
+        margin-top: -10px;
+    }
+    .welcome-msg{
+        padding-top: 30px;
+        order: 2;
+        width: 100%;
+        /* background-image: linear-gradient(#950740, #FFFFFF); */
+        /* background-image: url(../assets/mbghome.svg); */
+    }
+    .the-msg{
+        text-align: center;
+        width: 90%;
+    }
+    #slogan{
+        color: #950740;
+    }
+    #msg-txt{
+        font-weight: 400;
+    }
+
 }
