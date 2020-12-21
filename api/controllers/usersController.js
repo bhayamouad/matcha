@@ -3,14 +3,9 @@ require('dotenv').config()
 const bcrypt = require('bcrypt')
 const cryptoRandomString = require('crypto-random-string')
 
-const nodemailer = require('nodemailer')
-const jwt = require('jsonwebtoken')
-
 let token = null
 const User = require('../models/User')
 const helpers = require('../tools/helpers')
-
-const tokenExprire = 3 * 24 * 3600 // 3days in second
 
 exports.registerValidation = (req, res, next) => {
     if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation
@@ -37,7 +32,7 @@ exports.registerValidation = (req, res, next) => {
 exports.registerAccount = (req, res) => {
 
 
-    token = cryptoRandomString({ length: 64, type: 'alphanumeric' });
+    token = helpers.hashHmacSha256(Date.now().toString())
     bcrypt.genSalt(10)
         .then((salt) => { return bcrypt.hash(req.body.password, salt) })
         .then(hashPassword => {
@@ -47,12 +42,12 @@ exports.registerAccount = (req, res) => {
                 email: req.body.email,
                 login: req.body.login,
                 password: hashPassword,
-                token: token
+                token: token.key
             })
             user.create()
                 .then(() => {
                     const subject = 'Email Confirmation'
-                    const html = `<p>Hello ${user.login} Your account was created successfuly you need to verify your account to login please <a href="${process.env.CLIENT_URL}/verify/${token}/">click here</a>`
+                    const html = `<p>Hello ${user.login} Your account was created successfuly you need to verify your account to login please <a href="${process.env.CLIENT_URL}/verify/${token.key}/">click here</a>`
                     helpers.sendEmail(user.email, subject, html)
                     res.status(201).send({ message: 'Your Account was created. Please go check your Inbox to verify your Account', error: false, success: true })
                 })
@@ -82,28 +77,28 @@ exports.verifyAccount = (req, res) => {
         .catch(() => res.status('200').send({ message: 'Something went Wrong! Request a new verification link', error: true, special:true}))
 }
 
-//login dyal lay7ssan 3wan
 exports.login = (req, res) => {
     const { login, password } = req.body
-    console.log({login, password})
     User.getByLogin(login)
-        .then(async ([[user]]) => {
+        .then(async ([[user]]) => { 
             const passCompare = await bcrypt.compare(password, user.password)
+            console.log(passCompare)
             if (passCompare) {
                 if (user.status != 0) {
-                    const jwt = helpers.createToken(user.id_user)
-                    res.cookie('jwt', jwt, { httpOnly: true, maxAge: tokenExprire * 1000 })
-                    res.status(200).send({ message: 'You are logged in', token: jwt, error: false})
+                    const accessJWT = helpers.createAccessToken(user)
+                    const refreshJWT = helpers.createRefreshToken(user)
+                    console.log(refreshJWT)
+                    res.status(200).send({ message: 'You are logged in', accessToken: accessJWT, refreshToken: refreshJWT, error: false })
                 }
                 else res.status(200).send({ message: 'You need to verify your account first', error: true, special:true })
             }
             else res.status(200).send({ message: 'The username or password is incorrect', error: true })
         })
-        .catch(() => res.status(200).send({ message: 'The username or password is incorrect', error: true}))
+        .catch(() => res.status(200).send({ message: 'The username or password  is incorrect', error: true}))
 }
 
 exports.updateToken = (req, res) => {
-    token = cryptoRandomString({ length: 64, type: 'alphanumeric' });  
+    token = helpers.hashHmacSha256(Date.now().toString())   
     User.getByLogin(req.body.login)
         .then(([[user]]) => {
             if (user.status == 0) {
@@ -112,10 +107,10 @@ exports.updateToken = (req, res) => {
                 const diff = Math.floor((now - update) / 60000)
                 const limit = 10
                 if (diff >= limit){
-                    User.updateToken(token, user.id_user)
+                    User.updateToken(token.key, user.id_user)
                         .then(() => {
                             const subject = 'Email Confirmation'
-                            const html = `<p>Hello ${user.login} Your account was created successfuly you need to verify your account to login please <a href="${process.env.CLIENT_URL}/verify/${token}/">click here</a>`
+                            const html = `<p>Hello ${user.login} Your account was created successfuly you need to verify your account to login please <a href="${process.env.CLIENT_URL}/verify/${token.key}/">click here</a>`
                             helpers.sendEmail(user.email, subject, html)
                             res.send({ message: 'Email verification was sent Please go check your Inbox', error: false, redirect: true })
                         })
@@ -143,7 +138,7 @@ exports.sendEmailReset = (req, res) => {
 
 exports.resetPassword = (req, res) => {
     const login = req.body.login
-    token = cryptoRandomString({ length: 64, type: 'alphanumeric' });
+    token = helpers.hashHmacSha256(Date.now().toString())
     User.getByLogin(login)
         .then(([[user]]) => {
             if (user.status !== 0) {
@@ -152,10 +147,10 @@ exports.resetPassword = (req, res) => {
                 const diff = Math.floor((now - update) / 60000)
                 const limit = 3
                 if (diff >= limit){
-                    User.updateToken(token, user.id_user)
+                    User.updateToken(token.key, user.id_user)
                         .then(() => {
                             const subject = 'Reset Password'
-                            const html = `<p>Hello ${user.login} Someone has requested a link to change your password. You can do this through the link below. <a href="${process.env.CLIENT_URL}/reset/${token}/">Change My Password</a>`
+                            const html = `<p>Hello ${user.login} Someone has requested a link to change your password. You can do this through the link below. <a href="${process.env.CLIENT_URL}/reset/${token.key}/">Change My Password</a>`
                             helpers.sendEmail(user.email, subject, html)
                             res.send({ message: 'Reset Email was sent', error: false })
                         })
@@ -207,5 +202,5 @@ exports.changePassword = (req, res) => {
             else
                 res.status(200).send({ message: 'link expired', error: true })
         })
-        .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
+        .catch(() => res.status(200).send({ message: 'link incorrect', error: true })) 
 }
