@@ -6,6 +6,8 @@ const cryptoRandomString = require('crypto-random-string')
 let token = null
 const User = require('../models/User')
 const helpers = require('../tools/helpers')
+const auth = require('../tools/authentification.js')
+
 
 exports.registerValidation = (req, res, next) => {
     if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation
@@ -82,12 +84,13 @@ exports.login = (req, res) => {
     User.getByLogin(login)
         .then(async ([[user]]) => { 
             const passCompare = await bcrypt.compare(password, user.password)
-            console.log(passCompare)
+            
             if (passCompare) {
                 if (user.status != 0) {
                     const accessJWT = helpers.createAccessToken(user)
                     const refreshJWT = helpers.createRefreshToken(user)
-                    console.log(refreshJWT)
+                    // cookiePaser.set('test', accessJWT)
+                    // res.cookie('test', 'eygfegwifgweigfiuwg')
                     res.status(200).send({ message: 'You are logged in', accessToken: accessJWT, refreshToken: refreshJWT, error: false })
                 }
                 else res.status(200).send({ message: 'You need to verify your account first', error: true, special:true })
