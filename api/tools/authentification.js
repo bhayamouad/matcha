@@ -13,7 +13,7 @@ user = {
     password: 'jdijwidj82hr3n'
 }
 //
-const accTokenExp = 15 * 60
+const accTokenExp = 60 * 15
 const refTokenExp = 24 * 3600
 
 
@@ -32,8 +32,11 @@ const createRefToken = (user)=>{
 }
 
 const authorize = (req, res, next)=>{
-
+    // const token = req.body.
+    res.send("done "+req.body.msg)
 }
 
 
 module.exports = {createAccToken, createRefToken, authorize}
+
+// return: jwt expired  // invalid token

@@ -77,10 +77,7 @@ export default {
         if(res.special) this.verifyLink(res.message)
         if (res.error && !res.special) this.loginError(res.message);
         if (!res.error) {
-          // this.logInS(res.accessToken)
-          // Cookie.set('jwt', res.refreshToken, { httpOnly: true })
-          // console.log(res.headers)
-          // console.log(res.headers['set-cookie'])
+          
           this.$router.push('/home')
           this.loginSuccess(res.message);
         }

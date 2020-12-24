@@ -8,6 +8,12 @@ const User = require('../models/User')
 const helpers = require('../tools/helpers')
 const auth = require('../tools/authentification.js')
 
+// ************************************
+exports.authorize = (req, res, next) => auth.authorize(req, res, next)
+
+
+// ************************************
+
 
 exports.registerValidation = (req, res, next) => {
     if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation
@@ -87,11 +93,9 @@ exports.login = (req, res) => {
             
             if (passCompare) {
                 if (user.status != 0) {
-                    const accessJWT = helpers.createAccessToken(user)
-                    const refreshJWT = helpers.createRefreshToken(user)
-                    // cookiePaser.set('test', accessJWT)
-                    // res.cookie('test', 'eygfegwifgweigfiuwg')
-                    res.status(200).send({ message: 'You are logged in', accessToken: accessJWT, refreshToken: refreshJWT, error: false })
+                    const accTok = auth.createAccToken(user)
+                    const refTok = auth.createRefToken(user)
+                    res.status(200).send({ message: 'You are logged in', accessToken: accTok, refreshToken: refTok, error: false })
                 }
                 else res.status(200).send({ message: 'You need to verify your account first', error: true, special:true })
             }
