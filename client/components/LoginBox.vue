@@ -29,6 +29,9 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+// const Cookie = require('cookie-parser')
+
 let snackb;
 const validateLogin = login => {
   if (!login) return { valid: false, error: 'Please fill out this field.' };
@@ -53,6 +56,10 @@ export default {
     //snackb.close()
   },
   methods: {
+    ...mapMutations({
+      logInS: 'auth/logIn',
+      logOut: 'auth/logOut'
+    }),
     async login() {
       this.errors = {};
       this.valid = true;
@@ -70,6 +77,7 @@ export default {
         if(res.special) this.verifyLink(res.message)
         if (res.error && !res.special) this.loginError(res.message);
         if (!res.error) {
+          
           this.$router.push('/home')
           this.loginSuccess(res.message);
         }
