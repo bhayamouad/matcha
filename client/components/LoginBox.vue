@@ -30,7 +30,7 @@
 
 <script>
 import { mapMutations } from 'vuex'
-// const Cookie = require('cookie-parser')
+import Cookies from 'js-cookie'
 
 let snackb;
 const validateLogin = login => {
@@ -77,8 +77,11 @@ export default {
         if(res.special) this.verifyLink(res.message)
         if (res.error && !res.special) this.loginError(res.message);
         if (!res.error) {
-          
+          Cookies.set('accTok', res.accessToken)
+          Cookies.set('refTok', res.refreshToken)
+          this.logInS(res.accessToken, res.refreshToken)
           this.$router.push('/home')
+          
           this.loginSuccess(res.message);
         }
       }

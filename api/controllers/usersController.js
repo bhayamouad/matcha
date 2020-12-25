@@ -11,6 +11,8 @@ const auth = require('../tools/authentification.js')
 // ************************************
 exports.authorize = (req, res, next) => auth.authorize(req, res, next)
 
+exports.athorized = ()=>{}
+
 
 // ************************************
 

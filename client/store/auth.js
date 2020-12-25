@@ -1,16 +1,19 @@
 const state = ()=> ({
     loggedIn: false,
-    accToken: null
+    accToken: null,
+    refToken: null
 })
 
 const mutations = {
-    logIn(state, accToken){
+    logIn(state, accToken, refToken){
         state.loggedIn = true
         state.accToken = accToken
+        state.refToken = refToken
     },
     logOut(state){
         state.loggedIn = false
         state.accToken = null
+        state.refToken = null
     }
 }
 
