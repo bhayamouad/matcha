@@ -1,3 +1,5 @@
-export default function({state}){
-// localStorage.setItem('test', 'swhidhwih')
+import Cookies from 'js-cookie'
+export default function({store, $axios}){
+    // const ret = await $axios.post('/account/authorization');
+    console.log(store.state.auth.accToken)
 }

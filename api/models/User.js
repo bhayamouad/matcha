@@ -26,6 +26,11 @@ module.exports = class User {
   static getByLogin(login) {
     return db.execute('SELECT * FROM users WHERE email = ? OR login = ? ', [login, login])
   }
+
+  static getById(id) {
+    return db.execute('SELECT * FROM users WHERE id_user = ? ', [id])
+  }
+
   static updateToken(token, id) {
     return db.execute('UPDATE users SET token = ?, expire_token = NOW() WHERE id_user = ?', [token, id])
   }

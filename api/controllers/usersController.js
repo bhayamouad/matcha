@@ -8,10 +8,11 @@ const User = require('../models/User')
 const helpers = require('../tools/helpers')
 const auth = require('../tools/authentification.js')
 
-// ************************************
+// ***********Authorization************
+
 exports.authorize = (req, res, next) => auth.authorize(req, res, next)
 
-exports.athorized = ()=>{}
+exports.authorized = (req, res)=>{res.status(200).send('authorized')}
 
 
 // ************************************

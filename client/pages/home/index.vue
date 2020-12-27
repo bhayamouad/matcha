@@ -1,24 +1,30 @@
 <template>
-  <div>hello from home {{theret}}</div>
+  <div>hello from home {{theret}}  </div>
 </template>
 
 <script>
 import Cookies from 'js-cookie'
-// import { mapMutations } from 'vuex'
+import { mapMutations } from 'vuex'
 
 export default {
   computed: {
     theret(){
-      return this.$store.state.auth.accToken;
+      return this.$store.state.auth.loggedIn;
     }
   },
-  middleware: 'authorization',
-  name: "HomePage",
-  // data(){
-  //   return{
-  //     test: Cookies.get('refTok')
-  //   }
+  // asyncData({$axios, store,redirect}){
+  //   const accTok = store.state.auth.accToken
+  //   const refTok = store.state.auth.refToken
+  //   const tokens = {accTok, refTok}
+  //   // const res = await $axios.$post(`/account/authorization`, tokens)    
+  //   // console.log(res)
+  //   console.log(store.state.auth.refToken)
+
   // },
+  beforeCreate(){
+    this.$store.commit('auth/init')
+  },
+  name: "HomePage",
   head() {
     return {
       title: "Matcha",

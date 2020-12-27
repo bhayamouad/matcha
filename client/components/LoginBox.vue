@@ -77,11 +77,10 @@ export default {
         if(res.special) this.verifyLink(res.message)
         if (res.error && !res.special) this.loginError(res.message);
         if (!res.error) {
-          Cookies.set('accTok', res.accessToken)
-          Cookies.set('refTok', res.refreshToken)
-          this.logInS(res.accessToken, res.refreshToken)
+          const accTok = res.accessToken
+          const refTok = res.refreshToken
+          this.logInS({accTok, refTok})
           this.$router.push('/home')
-          
           this.loginSuccess(res.message);
         }
       }
