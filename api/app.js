@@ -1,4 +1,6 @@
 const express = require('express')
+const fs = require('fs')
+const https = require('https');
 const bodyParser = require('body-parser')
 const cors =require('cors')
 
@@ -13,4 +15,8 @@ const usersRouter = require('./routes/usersRouter')
 
 app.use('/account',usersRouter)
 
-app.listen(3000);
+https.createServer({
+    key: fs.readFileSync('/etc/ssl/private/matchasigned.key'),
+    cert: fs.readFileSync('/etc/ssl/certs/matchasigned.crt')
+  }, app)
+  .listen(3000)
