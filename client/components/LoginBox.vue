@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      logInS: 'auth/logIn',
+      logInAuth: 'auth/logIn',
       logOut: 'auth/logOut'
     }),
     async login() {
@@ -79,7 +79,7 @@ export default {
         if (!res.error) {
           const accTok = res.accessToken
           const refTok = res.refreshToken
-          this.logInS({accTok, refTok})
+          this.logInAuth({accTok, refTok})
           this.$router.push('/home')
           this.loginSuccess(res.message);
         }
