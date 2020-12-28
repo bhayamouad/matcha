@@ -10,6 +10,7 @@ export default {
       cert: fs.readFileSync('/etc/ssl/certs/matchasigned.crt')
     }
   },
+  ssr: false,
   loading: false,
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {

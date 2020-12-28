@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <section>
     <b-steps type="is-success" v-model="active">
       <b-step-item label="Account" icon="account-key"></b-step-item>
@@ -17,6 +18,17 @@ export default {
   components: {
     SetProfile
   },
+=======
+  <div>hello from home {{theret}}  </div>
+</template>
+
+<script>
+// import Cookies from 'js-cookie'
+// import { mapMutations } from 'vuex'
+
+export default {
+  middleware: 'authorization',
+>>>>>>> anas
   name: "HomePage",
   head() {
     return {

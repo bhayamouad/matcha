@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
-// const Cookie = require('cookie-parser')
+import { mapMutations } from 'vuex'
+import Cookies from 'js-cookie'
 
 let snackb;
 const validateLogin = login => {
@@ -59,8 +59,8 @@ export default {
   },
   methods: {
     ...mapMutations({
-      logInS: "auth/logIn",
-      logOut: "auth/logOut"
+      logInAuth: 'auth/logIn',
+      logOut: 'auth/logOut'
     }),
     async login() {
       this.errors = {};
@@ -79,7 +79,10 @@ export default {
         if (res.special) this.verifyLink(res.message);
         if (res.error && !res.special) this.loginError(res.message);
         if (!res.error) {
-          this.$router.push("/home");
+          const accTok = res.accessToken
+          const refTok = res.refreshToken
+          this.logInAuth({accTok, refTok})
+          this.$router.push('/home')
           this.loginSuccess(res.message);
         }
       }

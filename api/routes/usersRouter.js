@@ -13,6 +13,7 @@ router.post('/reset',usersController.resetPassword)
 router.get('/reset/:token',usersController.passwordToken)
 router.post('/change-password',usersController.changePassword)
 
-router.post('/testauth', usersController.authorize)
+router.post('/authorization', usersController.authorize, usersController.authorized)
+///router.post('/testauth', usersController.authorize)
 
 module.exports = router
