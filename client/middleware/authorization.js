@@ -7,5 +7,5 @@ export default async function({store, $axios, redirect, route}){
 
     if(ret.data.state != 'AUTHORIZED')
         redirect('/')
-    console.log(route.path)
+    // console.log(route.path)
 }

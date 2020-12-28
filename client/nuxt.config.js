@@ -11,6 +11,7 @@ export default {
     }
   },
   ssr: false,
+  serverMiddleware: ["redirect-ssl"],
   loading: false,
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
