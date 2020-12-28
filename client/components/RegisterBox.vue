@@ -3,32 +3,32 @@
     <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
     <div id="login-form" @keyup.enter="register">
       <b-field label="" 
-        v-bind:type="{'is-danger': errors.fname}"
-        v-bind:message="errors.fname"
-        >
+        :type="{'is-danger': errors.fname}"
+        :message="errors.fname"
+        > 
         <b-input v-model="user.fname" placeholder="First Name"></b-input>
       </b-field>
       <b-field label="" 
-        v-bind:type="{'is-danger': errors.lname}"
-        v-bind:message="errors.lname"
+        :type="{'is-danger': errors.lname}"
+        :message="errors.lname"
       >
         <b-input v-model="user.lname" placeholder="Last Name"></b-input>
       </b-field>
       <b-field label="" 
-        v-bind:type="{'is-danger': errors.email}"
-        v-bind:message="errors.email"
+        :type="{'is-danger': errors.email}"
+        :message="errors.email"
         >
         <b-input v-model="user.email" placeholder="Email Address"></b-input>
       </b-field>
       <b-field label=""  
-        v-bind:type="{'is-danger': errors.login}"
-        v-bind:message="errors.login"
+        :type="{'is-danger': errors.login}"
+        :message="errors.login"
         >
         <b-input v-model="user.login" placeholder="Username"></b-input>
       </b-field>
       <b-field label="" 
-        v-bind:type="{'is-danger': errors.password}"
-        v-bind:message="errors.password"
+        :type="{'is-danger': errors.password}"
+        :message="errors.password"
         >
         <b-input
           type="password"
@@ -37,8 +37,8 @@
         ></b-input>
       </b-field>
       <b-field label="" 
-        v-bind:type="{'is-danger': errors.cpassword}"
-        v-bind:message="errors.cpassword"
+        :type="{'is-danger': errors.cpassword}"
+        :message="errors.cpassword"
         >
         <b-input
           type="password"

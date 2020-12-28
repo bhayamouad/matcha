@@ -18,24 +18,29 @@
       >
         <b-input type="password" v-model="user.password" placeholder="********"></b-input>
       </b-field>
-        <div id="f-pswd"><NuxtLink to="/reset">Forgot password ? </NuxtLink></div>
+      <div id="f-pswd">
+        <NuxtLink to="/reset">Forgot password ?</NuxtLink>
+      </div>
       <b-button @click="login" type="is-primary" expanded>Login</b-button>
     </div>
-    <div id="buttom-links">Dont have an account?&nbsp;
-      <NuxtLink to="/register">Sign Up </NuxtLink>
+    <div id="buttom-links">
+      Dont have an account?&nbsp;
+      <NuxtLink to="/register">Sign Up</NuxtLink>
     </div>
-
   </div>
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+import Cookies from 'js-cookie'
+
 let snackb;
 const validateLogin = login => {
-  if (!login) return { valid: false, error: 'Please fill out this field.' };
+  if (!login) return { valid: false, error: "Please fill out this field." };
   return { valid: true, error: null };
 };
 const validatePassword = password => {
-  if (!password) return { valid: false, error: 'Please fill out this field.' };
+  if (!password) return { valid: false, error: "Please fill out this field." };
   return { valid: true, error: null };
 };
 export default {
@@ -49,10 +54,14 @@ export default {
       errors: {}
     };
   },
-  beforeDestroy(){
+  beforeDestroy() {
     //snackb.close()
   },
   methods: {
+    ...mapMutations({
+      logInAuth: 'auth/logIn',
+      logOut: 'auth/logOut'
+    }),
     async login() {
       this.errors = {};
       this.valid = true;
@@ -67,9 +76,12 @@ export default {
 
       if (this.valid) {
         const res = await this.$axios.$post("/account/login", this.user);
-        if(res.special) this.verifyLink(res.message)
+        if (res.special) this.verifyLink(res.message);
         if (res.error && !res.special) this.loginError(res.message);
         if (!res.error) {
+          const accTok = res.accessToken
+          const refTok = res.refreshToken
+          this.logInAuth({accTok, refTok})
           this.$router.push('/home')
           this.loginSuccess(res.message);
         }
@@ -89,17 +101,19 @@ export default {
         type: "is-success"
       });
     },
-    verifyLink(msg){
+    verifyLink(msg) {
       snackb = this.$buefy.snackbar.open({
-                message: msg,
-                type: 'is-danger',
-                position: 'is-top',
-                actionText: 'Verify Now',
-                indefinite: false,
-                queue: true,
-                duration: 1000000,
-                onAction: () => {this.$router.push('/verify') } 
-            })
+        message: msg,
+        type: "is-danger",
+        position: "is-top",
+        actionText: "Verify Now",
+        indefinite: false,
+        queue: true,
+        duration: 1000000,
+        onAction: () => {
+          this.$router.push("/verify");
+        }
+      });
     }
   }
 };

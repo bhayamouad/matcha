@@ -1,9 +1,16 @@
+import fs from 'fs'
+
 export default {
   // server config
   server: {
     port: 8080, // default: 3000
-    host: '0.0.0.0' // default: localhost
+    host: '0.0.0.0', // default: localhost
+    https: {
+      key: fs.readFileSync('/etc/ssl/private/matchasigned.key'),
+      cert: fs.readFileSync('/etc/ssl/certs/matchasigned.crt')
+    }
   },
+  ssr: false,
   loading: false,
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
@@ -50,5 +57,12 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {
-  }
+  },
+
+  watchers: {
+    webpack: {
+      aggregateTimeout: 300,
+      poll: 1000
+    }
+    }
 }

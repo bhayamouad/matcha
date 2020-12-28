@@ -48,7 +48,7 @@ connection.connect(function(err) {
 
                   connection.query(`CREATE TABLE tags(
                               id_tag int(11) NOT NULL,
-                              tag varchar(20) NOT NULL,
+                              tag varchar(20) NOT NULL UNIQUE,
                               created_at TIMESTAMP NOT NULL DEFAULT NOW(),
                               updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
                         );`);

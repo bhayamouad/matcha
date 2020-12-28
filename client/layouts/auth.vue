@@ -29,7 +29,7 @@
 <script>
 
 export default {
-
+middleware: 'notLoggedIn'
 }
 </script>
 <style src="@/style/homepage.css">

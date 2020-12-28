@@ -6,7 +6,7 @@ var crypto = require("crypto-js");
 exports.hashHmacSha256 = (string) => crypto.AES.encrypt(string, process.env.SECRET_KEY);
 
 const genKey = (id, password) => {
-    console.log(id +' '+password)
+    // console.log(id +' '+password)
     return this.hashHmacSha256(id + password);
   }
 
@@ -46,9 +46,9 @@ exports.createAccessToken = (user) => {
 }
 
 exports.createRefreshToken = (user) => {
-    console.log(user.id_user +' '+ user.password)
-    const key = genKey(user.id_user, user.password) 
-    console.log(key)
+    // console.log(user.id_user +' '+ user.password)
+    const key = genKey(user.id_user, user.password).key
+    // console.log(key)
     return jwt.sign({ id_user: user.id_user, key }, process.env.SECRET_KEY, { expiresIn: refreshExprire })
 }
 
