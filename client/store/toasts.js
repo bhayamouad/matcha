@@ -20,7 +20,7 @@ const mutations = {
       {
         call()
       }
-    },
+    }
   }
 
 export default{

@@ -1,48 +1,24 @@
 <template>
 <div>
-    <b-button @click="fire1" type="is-primary">fire1</b-button>
-    <b-button @click="fire2" type="is-primary">fire2</b-button>
+    <b-button @click="toast('hi there from plugin', 'is-danger', 3000)" type="is-primary">fire1</b-button>
+    <b-button @click="toast2('hi there from plugin', 'is-success', 3000)" type="is-primary">fire2</b-button>
     <b-button @click="red" type="is-danger">home</b-button>
 </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
 export default {
+ 
   methods: {
-    ...mapMutations({
-      clear: 'toasts/clear',
-      add: 'toasts/add'
-    }),
-    fire1(msg) {
-      
-    // this.clear()
-    if(Date.now() - this.$store.state.toasts.time > 250)
-    {
-      const ref = this.$buefy.toast.open({
-        duration: 7000,
-        message: "test",
-        type: "is-danger",
-      });
-    
-      console.log(this.$store.state.toasts.time)
-      const toast = ref.close
-      const time = Date.now()
-
-      this.add({toast, time})
-    }
+    toast(msg, type, duration) {
+      this.$snoast.toast(this.$buefy, msg, 'is-danger', 3000)
     },
-    fire2(msg) {
-        // this.clear()
-      const ref = this.$buefy.toast.open({
-        duration: 7000,
-        message: 'test',
-        type: "is-success",
-      });
-        this.add(ref.close)
+    toast2(msg, type, duration) {
+      this.$snoast.toast(this.$buefy, msg, 'is-success', 3000)
     },
     red(){
-        this.clear()
+        // this.clear()
+        this.$snoast.close()
         this.$router.push('/')
     }
   }
