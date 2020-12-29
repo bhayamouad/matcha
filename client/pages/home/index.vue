@@ -14,10 +14,10 @@
 import SetProfile from '@/components/SetProfile.vue';
 
 export default {
+  middleware: 'authorization',
   components: {
     SetProfile
   },
-  middleware: 'authorization',
   name: "HomePage",
   head() {
     return {

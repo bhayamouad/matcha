@@ -8,10 +8,9 @@ import verifyBox from "@/components/VerifyEmail"
 export default {
   layout:'auth',
   name: "VerifyEmail",
-
   components: {
-    verifyBox,
-  },
+    verifyBox
+  }
 }
 </script>
 <style src="@/style/homepage.css">

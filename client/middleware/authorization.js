@@ -1,4 +1,4 @@
-export default async function({store, $axios, redirect, route}){
+export default async function({store, $axios, redirect}){
     store.commit('auth/init')
     const accTok = store.state.auth.accToken
     const refTok = store.state.auth.refToken
@@ -7,5 +7,4 @@ export default async function({store, $axios, redirect, route}){
 
     if(ret.data.state != 'AUTHORIZED')
         redirect('/')
-    console.log(route.path)
 }

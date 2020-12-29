@@ -168,10 +168,10 @@ export default {
         }
         else {
           if(response.error)
-            this.registerError(response.message)
+            this.$snoast.toast(this.$buefy, response.message, 'is-danger')
           else
           {
-            this.registerSuccess(response.message)
+            this.$snoast.toast(this.$buefy, response.message, 'is-success')
             this.$router.push('/')
           }
         }
@@ -185,20 +185,12 @@ export default {
           }
       }
     },
-    registerError(msg) {
-        this.$buefy.toast.open({
-            duration: 7000,
-            message: msg,
-            type: 'is-danger',
-        })
-      },
-    registerSuccess(msg) {
-        this.$buefy.toast.open({
-            duration: 7000,
-            message: msg,
-            type: 'is-success',
-        })
-      }
+    
+        
+      
+    
+        
+     
   }
 }
 </script>

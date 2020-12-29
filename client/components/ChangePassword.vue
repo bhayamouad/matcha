@@ -57,7 +57,6 @@ const validateCpassword = (cpassword, npassword) => {
   return { valid: true, error: null };
 };
 export default {
-  props: ["token"],
   data() {
     return {
       passwords: {
@@ -89,31 +88,16 @@ export default {
         const res = await this.$axios.$post("/account/change-password",this.passwords);
         if (!res.error)
         {
-          this.changeSuccess(res.message);
+          this.$snoast.toast(this.$buefy, res.message, 'is-success')
           this.$router.push('/')
         }
         else{
-          this.changeError(res.message);
+          this.$snoast.toast(this.$buefy, res.message, 'is-danger')
           this.$router.push('/reset')
         }
       }
-    },
-    changeError(msg) {
-      this.$buefy.toast.open({
-        duration: 7000,
-        message: msg,
-        type: "is-danger",
-      });
-    },
-    changeSuccess(msg) {
-      this.$buefy.toast.open({
-        duration: 7000,
-        message: msg,
-        type: "is-success",
-      });
-      
     }
-  },
+  }
 };
 </script>
 

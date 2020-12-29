@@ -34,7 +34,6 @@
 import { mapMutations } from 'vuex'
 import Cookies from 'js-cookie'
 
-let snackb;
 const validateLogin = login => {
   if (!login) return { valid: false, error: "Please fill out this field." };
   return { valid: true, error: null };
@@ -44,6 +43,9 @@ const validatePassword = password => {
   return { valid: true, error: null };
 };
 export default {
+  beforeDestroy() {
+    this.$snoast.close()
+  },
   data() {
     return {
       user: {
@@ -53,9 +55,6 @@ export default {
       valid: true,
       errors: {}
     };
-  },
-  beforeDestroy() {
-    //snackb.close()
   },
   methods: {
     ...mapMutations({
@@ -76,44 +75,15 @@ export default {
 
       if (this.valid) {
         const res = await this.$axios.$post("/account/login", this.user);
-        if (res.special) this.verifyLink(res.message);
-        if (res.error && !res.special) this.loginError(res.message);
+        if (res.special) this.$snoast.snackbar(this.$buefy,res.message,'is-danger','Verify Now','/verify')
+        if (res.error && !res.special) this.$snoast.toast(this.$buefy, res.message, 'is-danger')
         if (!res.error) {
           const accTok = res.accessToken
           const refTok = res.refreshToken
           this.logInAuth({accTok, refTok})
           this.$router.push('/home')
-          this.loginSuccess(res.message);
         }
       }
-    },
-    loginError(msg) {
-      this.$buefy.toast.open({
-        duration: 7000,
-        message: msg,
-        type: "is-danger"
-      });
-    },
-    loginSuccess(msg) {
-      this.$buefy.toast.open({
-        duration: 7000,
-        message: msg,
-        type: "is-success"
-      });
-    },
-    verifyLink(msg) {
-      snackb = this.$buefy.snackbar.open({
-        message: msg,
-        type: "is-danger",
-        position: "is-top",
-        actionText: "Verify Now",
-        indefinite: false,
-        queue: true,
-        duration: 1000000,
-        onAction: () => {
-          this.$router.push("/verify");
-        }
-      });
     }
   }
 };

@@ -7,19 +7,20 @@
 <script>
 import changePassword from "@/components/ChangePassword"
 export default {
+  async beforeCreate() {
+     const res = await this.$axios.$get(`/account/reset/${this.$route.params.token}`)
+     console.log(res)
+    if(res.error)
+    { 
+      this.$snoast.toast(this.$buefy,res.message,'is-danger')
+      this.$router.push('/reset')
+    }
+  },
   layout:'auth',
   name: "ChangePassword",
   components: {
     changePassword,
-  },
-  async asyncData({$axios, params, redirect}){
-    const res = await $axios.$get(`/account/reset/${params.token}`)    
-    if(res.error)
-    {
-      //error msg   
-      redirect('/reset')
-    }
-  },
+  }
 }
 </script>
 <style src="@/style/homepage.css">

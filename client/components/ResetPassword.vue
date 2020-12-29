@@ -49,25 +49,11 @@ export default {
 
       if (this.valid) {
         const res = await this.$axios.$post("/account/reset", this.username);
-        if (res.error) this.resetError(res.message);
-        else this.resetSuccess(res.message);
+        if (res.error) this.$snoast.toast(this.$buefy, res.message, 'is-danger')
+        else this.$snoast.toast(this.$buefy, res.message, 'is-success')
       }
-    },
-    resetError(msg) {
-      this.$buefy.toast.open({
-        duration: 7000,
-        message: msg,
-        type: "is-danger",
-      });
-    },
-    resetSuccess(msg){
-       this.$buefy.toast.open({
-        duration: 7000,
-        message: msg,
-        type: "is-success",
-      });
     }
-  },
+  }
 };
 </script>
 
