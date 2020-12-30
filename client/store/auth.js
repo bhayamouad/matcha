@@ -21,7 +21,12 @@ const mutations = {
         state.loggedIn = false
         state.accToken = null
         state.refToken = null
+        Cookies.remove('accTok')
+        Cookies.remove('refTok')
     },
+    // status(state, status){
+    //     state.loggedIn = status
+    // },
     init(state){
         const acc = Cookies.get('accTok');
         const ref = Cookies.get('refTok')

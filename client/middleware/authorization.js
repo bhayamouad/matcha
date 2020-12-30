@@ -3,9 +3,13 @@ export default async function({store, $axios, redirect}){
     const accTok = store.state.auth.accToken
     const refTok = store.state.auth.refToken
     const tokens = {accTok, refTok}
+   
     const ret = await $axios.post('/account/authorization', tokens);
-    if(ret.data.accTok)
-        store.commit('auth/setAccTok', ret.data.accTok)
     if(ret.data.state != 'AUTHORIZED')
+    {
+        store.commit('auth/logOut')
         redirect('/')
+    }
+
+    
 }

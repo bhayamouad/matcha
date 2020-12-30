@@ -21,10 +21,7 @@ const mutations = {
       {
         call()
       }
-    },
-    // initbeufy(){
-
-    // }
+    }
   }
 
 export default{
