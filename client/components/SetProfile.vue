@@ -1,10 +1,12 @@
 <template>
   <div>
-    <b-field label="Gender"
+    <b-field label="Gender" 
+      :type="{'is-danger': errors.gender}" 
+      :message="errors.gender"
     >
-      <b-radio v-model="gender" name="gender" native-value="1" required>Male</b-radio>
-      <b-radio v-model="gender" name="gender" native-value="2" required>Female</b-radio>
-      <b-radio v-model="gender" name="gender" native-value="0" required>Other</b-radio>
+      <b-radio v-model="gender" name="gender" native-value="M">Male</b-radio>
+      <b-radio v-model="gender" name="gender" native-value="F">Female</b-radio>
+      <b-radio v-model="gender" name="gender" native-value="O">Other</b-radio>
     </b-field>
     <client-only>
       <b-field label="Birthdate">
@@ -12,10 +14,13 @@
         <b-button @click="$refs.datepicker.toggle()" icon-left="calendar-today" type="is-primary" />
       </b-field>
     </client-only>
-    <b-field label="Sexual Preferences">
-      <b-radio v-model="interest" name="interest" native-value="1" required>Male</b-radio>
-      <b-radio v-model="interest" name="interest" native-value="2" required>Female</b-radio>
-      <b-radio v-model="interest" name="interest" native-value="0" required>Both</b-radio>
+    <b-field label="Sexual Preferences"
+      :type="{'is-danger': errors.interest}" 
+      :message="errors.interest"
+    >
+      <b-radio v-model="interest" name="interest" native-value="M">Male</b-radio>
+      <b-radio v-model="interest" name="interest" native-value="F">Female</b-radio>
+      <b-radio v-model="interest" name="interest" native-value="B">Both</b-radio>
     </b-field>
     <b-field label="Biography">
       <b-input minlength="20" maxlength="200" type="textarea" v-model="bio"></b-input>
@@ -36,14 +41,15 @@
 </template>
 <script>
 const tags = ["Test1", "test2", "test3"];
-// const validateGender = (gender) => {
-//     if (!gender) return { valid: false, error: "You must choose your gender" };
-//     return { valid: true, error: null };
-//   }
-// const validateInterest = (interest) => {
-//     if (!interest) return { valid: false, error: "You must choose your Sexual orientation" };
-//     return { valid: true, error: null };
-//   }
+const validateGender = gender => {
+  if (!gender) return { valid: false, error: "You must choose your gender" };
+  return { valid: true, error: null };
+};
+const validateInterest = interest => {
+  if (!interest)
+    return { valid: false, error: "You must choose your Sexual orientation" };
+  return { valid: true, error: null };
+};
 export default {
   data() {
     const maxYear = new Date();
@@ -55,8 +61,8 @@ export default {
       new_tags: [],
       filteredTags: tags,
       max: maxYear,
-      valid:true,
-      errors:{}
+      valid: true,
+      errors: {}
     };
   },
   methods: {
@@ -71,13 +77,27 @@ export default {
       });
     },
     setProfile() {
+      this.errors = {}
+      this.valid = true
+      
+      const validGender = validateGender(this.gender)
+      this.errors.gender = validGender.error
+      if (this.valid) this.valid = validGender.valid
+      
+      const validInterest = validateInterest(this.interest)
+      this.errors.interest = validInterest.error
+      if (this.valid) this.valid = validInterest.valid
+      
+      if(this.valid)
+        return true
+      else
+        return false
       // navigator.geolocation.getCurrentPosition(position => {
       //   console.log(position.coords.latitude)
       //   console.log(position.coords.longitude)
       // })
       // this.errors = {}
       // this.valid = true
-      
       // const validgender = validateGender(this.user.fname)
       // this.errors.fname = validFname.error
       // if (this.valid) this.valid = validFname.valid

@@ -1,26 +1,21 @@
-// import Vuex from "vuex"
+// export const state = () => ({
+//     value: 'myvalue'
+// })
 
-// const createStore = () => {
-//     return new Vuex.Store({
-//         state: {
-//             token: null
-//         },
-//         mutations: {
-//             setToken(state, token) {
-//                 state.token = token
-//             },
-//             clearToken(state) {
-//                 state.token = null
-//             }
-//         },
-//         actions: {
-//             authenticateUser(vuexContext, user){
-                
-//             }
-//         },
-//         getters: {
-
-//         }
-//     })
+// export const getters = {
+//     getterValue: state => {
+//         return state.value
+//     }
 // }
 
+// export const mutations = {
+//     updateValue: (state, payload) => {
+//         state.value = payload
+//     }
+// }
+
+// export const actions = {
+//     updateActionValue({ commit }) {
+//         commit('updateValue', payload)
+//     }
+// }
