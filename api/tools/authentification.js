@@ -2,21 +2,12 @@ require('dotenv').config()
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const crypto = require("crypto-js");
-const { createAccessToken } = require('./helpers');
+// const { createAccessToken } = require('./helpers');
 
 const cryptSHA265 = (string) => crypto.SHA256(string, process.env.SECRET_KEY).toString();
 
-// user = {
-//     id_user : 1,
-//     login: 'abenani',
-//     email: 'abenani@mohmal.com',
-//     password: 'jdijwidj82hr3n'
-// }
-// //
 const accTokenExp = 60 * 15
-const refTokenExp = 24 * 3600
-
-
+const refTokenExp = 24 * 3600 * 3
 
 const createAccToken = (user)=>{
     const {id_user, login, email} = user
@@ -52,22 +43,19 @@ const authorize = (req, res, next)=>{
                     if(refPayload.key == cryptSHA265(user.id_user+user.password))
                     {
                         const newAccTok = createAccToken(user)
-                        res.append('acctok', newAccTok)
+                        req.newAccTok = newAccTok
                         next()
                     }
                     else
                         res.status(200).send('invalid reftok key')
                 })
             }catch(e){
-                res.status(200).send(e.message)
+                res.status(201).send(e.message)
             }
         else
-            res.status(200).send(e.message)
+            res.status(202).send(e.message)
     }
 
 }
 
-
 module.exports = {createAccToken, createRefToken, authorize}
-
-// return: jwt expired  // invalid token

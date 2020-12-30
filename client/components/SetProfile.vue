@@ -1,8 +1,6 @@
 <template>
   <div>
     <b-field label="Gender"
-      :type="{ 'is-danger': errors.gender }"
-      :message="errors.gender"
     >
       <b-radio v-model="gender" name="gender" native-value="1" required>Male</b-radio>
       <b-radio v-model="gender" name="gender" native-value="2" required>Female</b-radio>
@@ -24,7 +22,7 @@
     </b-field>
     <b-field label="Enter some tags">
       <b-taginput
-        v-model="tags"
+        v-model="new_tags"
         :data="filteredTags"
         icon="label"
         autocomplete
@@ -37,7 +35,7 @@
   </div>
 </template>
 <script>
-const data = ["Test1", "tEst2", "test3"];
+const tags = ["Test1", "test2", "test3"];
 // const validateGender = (gender) => {
 //     if (!gender) return { valid: false, error: "You must choose your gender" };
 //     return { valid: true, error: null };
@@ -54,8 +52,8 @@ export default {
       gender: null,
       interest: null,
       bio: "",
-      tags: [],
-      filteredTags: data,
+      new_tags: [],
+      filteredTags: tags,
       max: maxYear,
       valid:true,
       errors:{}
@@ -63,7 +61,7 @@ export default {
   },
   methods: {
     getFilteredTags(text) {
-      this.filteredTags = data.filter(option => {
+      this.filteredTags = tags.filter(option => {
         return (
           option
             .toString()

@@ -35,22 +35,22 @@ const wrapedSendMail = (mailOptions) => {
         })
     })
 }
-const accessExprire = 15 * 60 // 15min
-const refreshExprire = 3 * 24 * 3600
-exports.createAccessToken = (user) => {
-    return jwt.sign({ 
-        id_user: user.id_user,
-        login: user.login,
-        email: user.email
-        }, process.env.SECRET_KEY, { expiresIn: accessExprire })
-}
+// const accessExprire = 15 * 60 // 15min
+// const refreshExprire = 3 * 24 * 3600
+// exports.createAccessToken = (user) => {
+//     return jwt.sign({ 
+//         id_user: user.id_user,
+//         login: user.login,
+//         email: user.email
+//         }, process.env.SECRET_KEY, { expiresIn: accessExprire })
+// }
 
-exports.createRefreshToken = (user) => {
-    // console.log(user.id_user +' '+ user.password)
-    const key = genKey(user.id_user, user.password).key
-    // console.log(key)
-    return jwt.sign({ id_user: user.id_user, key }, process.env.SECRET_KEY, { expiresIn: refreshExprire })
-}
+// exports.createRefreshToken = (user) => {
+//     // console.log(user.id_user +' '+ user.password)
+//     const key = genKey(user.id_user, user.password).key
+//     // console.log(key)
+//     return jwt.sign({ id_user: user.id_user, key }, process.env.SECRET_KEY, { expiresIn: refreshExprire })
+// }
 
 exports.sendEmail = async (to, subject, html) => { 
     let mailOptions = { 
