@@ -24,7 +24,8 @@
 import SetProfile from '@/components/SetProfile.vue';
 
 export default {
-  middleware: 'authorization',
+  layout: 'home',
+  // middleware: 'authorization',
   components: {
     SetProfile
   },

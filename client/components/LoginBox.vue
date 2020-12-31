@@ -81,7 +81,7 @@ export default {
           const accTok = res.accessToken
           const refTok = res.refreshToken
           this.logInAuth({accTok, refTok})
-          this.$router.push('/home')
+          this.$router.go()
         }
       }
     }

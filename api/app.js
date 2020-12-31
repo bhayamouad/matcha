@@ -9,7 +9,12 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.use(cors())
+const corsOptions = {
+  exposedHeaders: 'acctok',
+};
+app.use(cors(corsOptions))
+
+
 app.get('/test', (req, res)=> res.send("The API is running!"))
 const usersRouter = require('./routes/usersRouter')
 

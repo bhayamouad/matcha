@@ -30,6 +30,7 @@
         v-model="new_tags"
         :data="filteredTags"
         icon="label"
+        allow-new
         autocomplete
         placeholder="Add a tag"
         :remove-on-keys="[]"

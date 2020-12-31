@@ -43,7 +43,7 @@ const authorize = (req, res, next)=>{
                     if(refPayload.key == cryptSHA265(user.id_user+user.password))
                     {
                         const newAccTok = createAccToken(user)
-                        req.newAccTok = newAccTok
+                        res.set('acctok', newAccTok)
                         next()
                     }
                     else
