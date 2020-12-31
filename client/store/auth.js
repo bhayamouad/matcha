@@ -10,7 +10,7 @@ const mutations = {
         state.accToken = ret.accTok
         state.refToken = ret.refTok
         Cookies.set('accTok', ret.accTok)
-        Cookies.set('refTok', ret.refTok, { expires: 3 }) //3days
+        Cookies.set('refTok', ret.refTok, {expires: 3 }) //3days
     },
     setAccTok(state,token){
         state.loggedIn = true
@@ -24,9 +24,9 @@ const mutations = {
         Cookies.remove('accTok')
         Cookies.remove('refTok')
     },
-    // status(state, status){
-    //     state.loggedIn = status
-    // },
+    status(state, status){
+        state.loggedIn = status
+    },
     init(state){
         const acc = Cookies.get('accTok');
         const ref = Cookies.get('refTok')

@@ -5,7 +5,7 @@
                 <span id="slogan">
                     Online <br> Dating, at it's <br> finest
                 </span>
-                <br><br><br>
+                <br><br>
                 <span id="msg-txt">
                     😂 Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                     when an unknown printer took a galley of type and scrambled it to make a type specimen book.
@@ -29,7 +29,7 @@
 <script>
 
 export default {
-middleware: 'notLoggedIn'
+middleware: 'authorization',
 }
 </script>
 <style src="@/style/homepage.css">
