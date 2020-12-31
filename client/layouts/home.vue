@@ -11,7 +11,7 @@
 
 <script>
 export default {
-    // middleware: 'authorization',
+    middleware: 'authorization',
     methods: {
         logoutnow()
         {
@@ -24,5 +24,8 @@ export default {
 </script>
 
 <style>
+/* html, body{
+    overflow: auto;
+} */
 
 </style>
