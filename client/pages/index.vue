@@ -18,11 +18,6 @@ export default {
   components: {
     loginbox,
   },
-  head() {
-    return {
-      title: "Matcha - Welcome",
-    };
-  },
 };
 </script>
 <style src="@/style/homepage.css">

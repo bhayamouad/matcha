@@ -12,6 +12,11 @@
 <script>
 export default {
     middleware: 'authorization',
+    head() {
+    return {
+      title: "Matcha",
+    };
+  },
     methods: {
         logoutnow()
         {

@@ -30,6 +30,11 @@
 
 export default {
 middleware: 'authorization',
+head() {
+    return {
+      title: "Matcha - Welcome",
+    };
+  },
 }
 </script>
 <style src="@/style/homepage.css">

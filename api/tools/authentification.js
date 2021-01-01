@@ -33,7 +33,7 @@ const authorize = (req, res, next)=>{
         next()
     }catch(e)
     {
-        if(e.message == 'jwt expired')
+        if(e.message == 'jwt expired' || e.message == 'jwt must be provided')
             try{
                 const refPayload = jwt.verify(refTok, process.env.SECRET_KEY)
                 if(refPayload.type != 'refresh')
