@@ -78,9 +78,9 @@ export default {
         if (res.special) this.$snoast.snackbar(this.$buefy,res.message,'is-danger','Verify Now','/verify')
         if (res.error && !res.special) this.$snoast.toast(this.$buefy, res.message, 'is-danger')
         if (!res.error) {
-          const accTok = res.accessToken
-          const refTok = res.refreshToken
-          this.logInAuth({accTok, refTok})
+          // const accTok = res.accessToken
+          // const refTok = res.refreshToken
+          // this.logInAuth({accTok, refTok})
           this.$router.go()
         }
       }

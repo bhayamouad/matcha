@@ -97,7 +97,9 @@ exports.login = (req, res) => {
                 if (user.status != 0) {
                     const accTok = auth.createAccToken(user)
                     const refTok = auth.createRefToken(user)
-                    res.status(200).send({accessToken: accTok, refreshToken: refTok, error: false })
+                    res.cookie('accTok', accTok, {httpOnly: true, maxAge:1000 * 60 * 15})
+                    res.cookie('refTok', refTok, {httpOnly: true, maxAge:1000 * 3600 * 24 * 3})
+                    res.status(200).send({error: false })
                 }
                 else res.status(200).send({ message: 'You need to verify your account first', error: true, special:true })
             }
@@ -105,6 +107,13 @@ exports.login = (req, res) => {
         })
         .catch(() => res.status(200).send({ message: 'The username or password  is incorrect', error: true}))
 }
+
+exports.logOut = (req, res) => {
+    res.clearCookie('accTok');
+    res.clearCookie('refTok');
+    res.send({error: false})
+}
+
 
 exports.updateToken = (req, res) => {
     token = helpers.hashHmacSha256(Date.now().toString()) 

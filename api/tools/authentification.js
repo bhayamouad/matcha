@@ -23,8 +23,9 @@ const createRefToken = (user)=>{
 }
 
 const authorize = (req, res, next)=>{
-    const accTok = req.body.accTok
-    const refTok = req.body.refTok
+    // console.log('Cookies: ', req.cookies) // remove
+    const accTok = req.cookies.accTok
+    const refTok = req.cookies.refTok
 
     try{
         const accPayload = jwt.verify(accTok, process.env.SECRET_KEY)
@@ -43,7 +44,7 @@ const authorize = (req, res, next)=>{
                     if(refPayload.key == cryptSHA265(user.id_user+user.password))
                     {
                         const newAccTok = createAccToken(user)
-                        res.set('acctok', newAccTok)
+                        res.cookie('accTok', newAccTok, {httpOnly: true, maxAge:1000 * 60 * 15})
                         next()
                     }
                     else

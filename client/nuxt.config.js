@@ -33,8 +33,7 @@ export default {
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: ['~/plugins/snoast.js', '~/plugins/axios.js'
-  ],
+  plugins: ['~/plugins/snoast.js'],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
 
@@ -52,7 +51,8 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL: process.env.BASE_URL
+    baseURL: process.env.BASE_URL,
+    credentials: true
   },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)

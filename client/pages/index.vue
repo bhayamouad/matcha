@@ -8,9 +8,11 @@ import loginbox from "~/components/LoginBox";
 export default {
   layout: 'auth',
   name: "HomePage",
-  data(){
+  beforeCreate(){
     if(this.$store.state.auth.loggedIn)
       this.$nuxt.setLayout('home');
+  },
+  data(){
     return{
     status: this.$store.state.auth.loggedIn
     }

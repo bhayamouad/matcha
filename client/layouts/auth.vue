@@ -1,6 +1,6 @@
 <template>
   <div class="visitorpage">
-        <div class="welcome-msg">
+        <div v-if="!status" class="welcome-msg">
             <div class="the-msg">
                 <span id="slogan">
                     Online <br> Dating, at it's <br> finest
@@ -35,6 +35,11 @@ head() {
       title: "Matcha - Welcome",
     };
   },
+data(){
+    return{
+        status: this.$store.state.auth.loggedIn
+    }
+},
 }
 </script>
 <style src="@/style/homepage.css">
