@@ -2,13 +2,13 @@ import Cookies from 'js-cookie'
 const state = ()=> ({
     loggedIn: false,
     accToken: null,
-    refToken: null
+    userId: null
 })
 const mutations = {
     logIn(state, ret){
         state.loggedIn = true
         state.accToken = ret.accTok
-        state.refToken = ret.refTok
+        state.userId = ret.userId
         Cookies.set('accTok', ret.accTok)
         Cookies.set('refTok', ret.refTok, {expires: 3 }) //3days
     },
@@ -20,7 +20,7 @@ const mutations = {
     logOut(state){
         state.loggedIn = false
         state.accToken = null
-        state.refToken = null
+        state.userId = null
         Cookies.remove('accTok')
         Cookies.remove('refTok')
     },
@@ -33,7 +33,6 @@ const mutations = {
         if(ref && acc)
         {
             state.accToken = acc
-            state.refToken = ref
         }
     }
 }

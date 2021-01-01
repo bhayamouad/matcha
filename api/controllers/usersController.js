@@ -97,7 +97,7 @@ exports.login = (req, res) => {
                 if (user.status != 0) {
                     const accTok = auth.createAccToken(user)
                     const refTok = auth.createRefToken(user)
-                    res.status(200).send({accessToken: accTok, refreshToken: refTok, error: false })
+                    res.status(200).send({userId: user.id_user, accessToken: accTok, refreshToken: refTok, error: false })
                 }
                 else res.status(200).send({ message: 'You need to verify your account first', error: true, special:true })
             }
@@ -130,19 +130,6 @@ exports.updateToken = (req, res) => {
             else res.status(200).send({ message: 'This account is already verified. You can login now', error: true, redirect: true })
         })
         .catch(() => res.status(200).send({ message: 'Account not found.', error: true }))
-}
-
-exports.sendEmailReset = (req, res) => {
-    let mailOptions = {
-        from: process.env.EMAIL,
-        to: req.user.email,
-        subject: 'Reset Password',
-        html: `<p>Hello ${req.user.login} Someone has requested a link to change your password. You can do this through the link below. <a href="http://localhost:8080/reset/${req.token}/">Change My Password</a>`
-    }
-    mailConf.sendMail(mailOptions, (err) => {
-        if (err) res.send({ message: err, error: true })
-        else res.send({ message: 'Reset Email was sent', error: false })
-    })
 }
 
 exports.resetPassword = (req, res) => {
@@ -211,5 +198,17 @@ exports.changePassword = (req, res) => {
             else
                 res.status(200).send({ message: 'link expired', error: true })
         })
-        .catch(() => res.status(200).send({ message: 'link incorrect', error: true })) 
+        .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
+}
+exports.setProfile = (req,res) => {
+    const {gender, birthdate, interest, bio, tags, lat, long} = req.body
+    const data = {
+        gender,
+        birthdate: new Date(birthdate.toString()),
+        interest,
+        bio
+    }
+    User.setProfile(data,1)
+    .then( () => res.status(200).send({message:`success`}))
+    .catch( err => res.send( { message: err.message }))
 }

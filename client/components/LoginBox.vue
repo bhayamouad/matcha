@@ -80,7 +80,8 @@ export default {
         if (!res.error) {
           const accTok = res.accessToken
           const refTok = res.refreshToken
-          this.logInAuth({accTok, refTok})
+          const userId = res.userId
+          this.logInAuth({accTok, refTok, userId})
           this.$router.go()
         }
       }
