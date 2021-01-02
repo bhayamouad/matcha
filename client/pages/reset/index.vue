@@ -1,5 +1,5 @@
 <template>
-  <resetBox v-if="!status"></resetBox>
+  <resetBox ></resetBox>
 </template>
 
 <script>

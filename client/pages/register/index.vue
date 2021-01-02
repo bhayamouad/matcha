@@ -1,5 +1,5 @@
 <template>
-  <registerbox v-if="!status"></registerbox>
+  <registerbox ></registerbox>
 </template>
 
 <script>

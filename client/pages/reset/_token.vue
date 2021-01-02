@@ -1,6 +1,6 @@
 <template>
 <div>
-  <changePassword v-if="!status"></changePassword>
+  <changePassword ></changePassword>
 </div>
 </template>
 

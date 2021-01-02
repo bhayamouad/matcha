@@ -5,7 +5,7 @@
 <b-button @click="logoutnow" type="is-success" >Logout</b-button><br>
 </div>
 </nav>
-  <nuxt />
+  <nuxt/>
   </div>
 </template>
 
@@ -24,12 +24,19 @@ export default {
             this.$store.commit('auth/logOut')
             this.$router.go()
         }
+    },
+    data(){
+    return{
+    status: this.$store.state.auth.loggedIn
     }
+  }
 
 }
 </script>
 
 <style>
-
+html, body{
+    overflow: auto;
+}
 
 </style>

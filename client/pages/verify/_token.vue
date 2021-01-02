@@ -1,6 +1,6 @@
 <template>
   <div>
-    <loginBox v-if="!status"></loginBox>
+    <loginBox ></loginBox>
   </div>
 </template>
 

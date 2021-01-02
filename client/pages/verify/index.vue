@@ -1,5 +1,5 @@
 <template>
-  <verifyBox v-if="!status"/>
+  <verifyBox />
 </template>
 
 <script>
