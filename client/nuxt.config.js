@@ -1,10 +1,7 @@
 import fs from 'fs'
-
 export default {
   // server config
   server: {
-    port: 8080, // default: 3000
-    host: '0.0.0.0', // default: localhost
     https: {
       key: fs.readFileSync('/etc/ssl/private/matchasigned.key'),
       cert: fs.readFileSync('/etc/ssl/certs/matchasigned.crt')

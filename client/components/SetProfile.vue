@@ -1,67 +1,113 @@
 <template>
   <div>
-    <b-field label="Gender"
+    <b-field label="Gender" 
+      :type="{'is-danger': errors.gender}" 
+      :message="errors.gender"
     >
-      <b-radio v-model="gender" name="gender" native-value="1" required>Male</b-radio>
-      <b-radio v-model="gender" name="gender" native-value="2" required>Female</b-radio>
-      <b-radio v-model="gender" name="gender" native-value="0" required>Other</b-radio>
+      <b-radio v-model="gender" name="gender" native-value="M">Male</b-radio>
+      <b-radio v-model="gender" name="gender" native-value="F">Female</b-radio>
+      <b-radio v-model="gender" name="gender" native-value="O">Other</b-radio>
     </b-field>
     <client-only>
-      <b-field label="Birthdate">
-        <b-datepicker ref="datepicker" :max-date="max" expanded placeholder="Select a date"></b-datepicker>
+      <b-field label="Birthdate"
+        :type="{'is-danger': errors.birthdate}" 
+        :message="errors.birthdate"
+      >
+        <b-datepicker v-model="birthdate" ref="datepicker" :max-date="max" expanded placeholder="Select a date"></b-datepicker>
         <b-button @click="$refs.datepicker.toggle()" icon-left="calendar-today" type="is-primary" />
       </b-field>
     </client-only>
-    <b-field label="Sexual Preferences">
-      <b-radio v-model="interest" name="interest" native-value="1" required>Male</b-radio>
-      <b-radio v-model="interest" name="interest" native-value="2" required>Female</b-radio>
-      <b-radio v-model="interest" name="interest" native-value="0" required>Both</b-radio>
+    <b-field label="Sexual Preferences"
+      :type="{'is-danger': errors.interest}" 
+      :message="errors.interest"
+    >
+      <b-radio v-model="interest" name="interest" native-value="M">Male</b-radio>
+      <b-radio v-model="interest" name="interest" native-value="F">Female</b-radio>
+      <b-radio v-model="interest" name="interest" native-value="B">Both</b-radio>
     </b-field>
-    <b-field label="Biography">
-      <b-input minlength="20" maxlength="200" type="textarea" v-model="bio"></b-input>
+    <b-field label="Biography"
+      :type="{'is-danger': errors.bio}" 
+      :message="errors.bio"
+      >
+      <b-input minlength="20" maxlength="200" type="textarea" v-model="bio" placeholder="Type a short Biography"></b-input>
     </b-field>
-    <b-field label="Enter some tags">
+    <b-field label="Enter some tags"
+      :type="{'is-danger': errors.tags}" 
+      :message="errors.tags"
+    >
       <b-taginput
-        v-model="new_tags"
+        v-model="tags"
         :data="filteredTags"
         icon="label"
+        allow-new
         autocomplete
         placeholder="Add a tag"
         :remove-on-keys="[]"
         @typing="getFilteredTags"
       ></b-taginput>
     </b-field>
-    <b-button @click="setProfile" type="is-primary" expanded>Set Profile</b-button>
   </div>
 </template>
 <script>
-const tags = ["Test1", "test2", "test3"];
-// const validateGender = (gender) => {
-//     if (!gender) return { valid: false, error: "You must choose your gender" };
-//     return { valid: true, error: null };
-//   }
-// const validateInterest = (interest) => {
-//     if (!interest) return { valid: false, error: "You must choose your Sexual orientation" };
-//     return { valid: true, error: null };
-//   }
+const tagsList = ["Test1", "test2", "test3"];
+let lat,long
+navigator.geolocation.getCurrentPosition((position) => {
+  lat = position.coords.latitude
+  long = position.coords.longitude
+})
+const validateGender = gender => {
+  if (!gender) return { valid: false, error: "You must choose your gender" }
+  return { valid: true, error: null }
+}
+
+const validateInterest = interest => {
+  if (!interest)
+    return { valid: false, error: "You must choose your Sexual orientation" }
+  return { valid: true, error: null }
+}
+
+const validateBirthDate = date => {
+  if (!date)
+    return { valid: false, error: "You must choose your Birthday" }
+  return { valid: true, error: null }
+}
+
+const validateBiography = bio => {
+  if (!bio)
+    return { valid: false, error: "You must type a short biography" }
+  return { valid: true, error: null }
+}
+
+const validateTags = tags => {
+  if (!tags[0])
+    return { valid: false, error: "You must enter your interest tags" }
+  return { valid: true, error: null }
+}
+
 export default {
+  computed: {
+    user () {
+      return this.$store.state.userId
+    }
+  },
   data() {
     const maxYear = new Date();
-    maxYear.setFullYear(maxYear.getFullYear() - 18);
+    maxYear.setFullYear(maxYear.getFullYear() - 18)
     return {
       gender: null,
       interest: null,
+      birthdate: null,
       bio: "",
-      new_tags: [],
-      filteredTags: tags,
+      tags: [],
+      filteredTags: tagsList,
       max: maxYear,
-      valid:true,
-      errors:{}
+      valid: true,
+      errors: {}
     };
   },
   methods: {
     getFilteredTags(text) {
-      this.filteredTags = tags.filter(option => {
+      this.filteredTags = tagsList.filter(option => {
         return (
           option
             .toString()
@@ -70,17 +116,41 @@ export default {
         );
       });
     },
-    setProfile() {
-      // navigator.geolocation.getCurrentPosition(position => {
-      //   console.log(position.coords.latitude)
-      //   console.log(position.coords.longitude)
-      // })
-      // this.errors = {}
-      // this.valid = true
+    async setProfile() {
+      this.errors = {}
+      this.valid = true
       
-      // const validgender = validateGender(this.user.fname)
-      // this.errors.fname = validFname.error
-      // if (this.valid) this.valid = validFname.valid
+      const validGender = validateGender(this.gender)
+      this.errors.gender = validGender.error
+      if (this.valid) this.valid = validGender.valid
+      
+      const validInterest = validateInterest(this.interest)
+      this.errors.interest = validInterest.error
+      if (this.valid) this.valid = validInterest.valid
+
+      const validBirthDate = validateBirthDate(this.birthdate)
+      this.errors.birthdate = validBirthDate.error
+      if (this.valid) this.valid = validBirthDate.valid
+
+      const validBiography = validateBiography(this.bio)
+      this.errors.bio = validBiography.error
+      if (this.valid) this.valid = validBiography.valid
+
+      const validTags = validateTags(this.tags)
+      this.errors.tags = validTags.error
+      if (this.valid) this.valid = validTags.valid
+
+      if(this.valid)
+      {
+        console.log(this.userId)
+        const data = {gender:this.gender, birthdate: new Date(this.birthdate.toString()), interest:this.interest, bio:this.bio, tags:this.tags, lat, long}
+        const res = await this.$axios.$post('/account/setProfile', data)
+        console.log(res)
+        if(res)
+          return true
+      }
+      else
+        return false
     }
   }
 };
