@@ -1,5 +1,5 @@
 <template>
-  <registerbox></registerbox>
+  <registerbox v-if="!status"></registerbox>
 </template>
 
 <script>
@@ -14,7 +14,11 @@ export default {
       title: "Matcha - Register",
     };
   },
-
+  data(){
+    return{
+    status: this.$store.state.auth.loggedIn
+    }
+  },
   components: {
     registerbox,
   },

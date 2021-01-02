@@ -1,5 +1,5 @@
 <template>
-  <verifyBox/>
+  <verifyBox v-if="!status"/>
 </template>
 
 <script>
@@ -11,6 +11,11 @@ export default {
   name: "VerifyEmail",
   components: {
     verifyBox
+  },
+  data(){
+    return{
+    status: this.$store.state.auth.loggedIn
+    }
   }
 }
 </script>

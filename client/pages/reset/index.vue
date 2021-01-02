@@ -1,5 +1,5 @@
 <template>
-  <resetBox></resetBox>
+  <resetBox v-if="!status"></resetBox>
 </template>
 
 <script>
@@ -16,7 +16,12 @@ export default {
     return {
       title: "Matcha - Reset Password",
     };
-  }
+  },
+  data(){
+    return{
+    status: this.$store.state.auth.loggedIn
+    }
+  },
 }
 </script>
 <style src="@/style/homepage.css">

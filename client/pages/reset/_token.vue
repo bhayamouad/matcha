@@ -1,6 +1,6 @@
 <template>
 <div>
-  <changePassword></changePassword>
+  <changePassword v-if="!status"></changePassword>
 </div>
 </template>
 
@@ -14,6 +14,11 @@ export default {
     { 
       this.$snoast.toast(this.$buefy,res.message,'is-danger')
       this.$router.push('/reset')
+    }
+  },
+  data(){
+    return{
+    status: this.$store.state.auth.loggedIn
     }
   },
   middleware: 'loggedIn',

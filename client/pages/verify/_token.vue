@@ -1,6 +1,6 @@
 <template>
   <div>
-    <loginBox></loginBox>
+    <loginBox v-if="!status"></loginBox>
   </div>
 </template>
 
@@ -20,6 +20,11 @@ export default {
         this.$snoast.toast(this.$buefy, res.message, "is-success");
       if (res.special)
         this.$snoast.snackbar(this.$buefy,res.message,'is-danger','Verify Now','/verify')
+    }
+  },
+  data(){
+    return{
+    status: this.$store.state.auth.loggedIn
     }
   },
 
