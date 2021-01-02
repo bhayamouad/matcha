@@ -6,13 +6,13 @@
         :type="{'is-danger': errors.fname}"
         :message="errors.fname"
         > 
-        <b-input v-model="user.fname" placeholder="First Name"></b-input>
+        <b-input v-model="user.fname" placeholder="First Name" maxlength="25"></b-input>
       </b-field>
       <b-field label="" 
         :type="{'is-danger': errors.lname}"
         :message="errors.lname"
       >
-        <b-input v-model="user.lname" placeholder="Last Name"></b-input>
+        <b-input v-model="user.lname" placeholder="Last Name" maxlength="25"></b-input>
       </b-field>
       <b-field label="" 
         :type="{'is-danger': errors.email}"
@@ -34,6 +34,7 @@
           type="password"
           v-model="user.password"
           placeholder="Password"
+          password-reveal
         ></b-input>
       </b-field>
       <b-field label="" 
@@ -44,6 +45,7 @@
           type="password"
           v-model="user.cpassword"
           placeholder="Confirm Password"
+          password-reveal
         ></b-input>
       </b-field>
       <b-button @click="register" type="is-primary" expanded>Register</b-button>

@@ -1,9 +1,15 @@
 <template>
-  <loginbox v-if="!status"></loginbox>
+  <div>
+    <loginbox v-if="!status"></loginbox>
+    <home v-if="status" />
+  </div>
+
 </template>
 
 <script>
 import loginbox from "~/components/LoginBox";
+import home from "~/components/Home";
+
 
 export default {
   layout: 'auth',
@@ -19,6 +25,7 @@ export default {
   },
   components: {
     loginbox,
+    home
   },
 };
 </script>

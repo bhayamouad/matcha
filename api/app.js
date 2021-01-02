@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const fs = require('fs')
 const https = require('https');
@@ -11,7 +12,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 const corsOptions = {
-  origin: 'https://localhost:8080',
+  origin: process.env.CLIENT_URL,
   exposedHeaders: 'acctok',
   credentials: true,
 };
