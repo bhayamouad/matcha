@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const fs = require('fs')
 const https = require('https');
@@ -5,14 +6,14 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors =require('cors')
 
+
 const app = express()
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
 const corsOptions = {
-  origin: 'https://localhost:8080',
-  exposedHeaders: 'acctok',
+  origin: process.env.CLIENT_URL,
   credentials: true,
 };
 app.use(cors(corsOptions))
@@ -20,7 +21,6 @@ app.use(cookieParser())
 
 
 app.get('/test', (req, res)=> {
-  console.log('yeee Ho')
   // console.log('Cookies: ', req.cookies)
   res.send("The API is running!")
 })

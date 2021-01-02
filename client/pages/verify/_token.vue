@@ -10,6 +10,7 @@ export default {
   mounted() {
     this.checkToken();
   },
+  middleware: 'loggedIn',
   methods: {
     async checkToken() {
       const res = await this.$axios.$get(

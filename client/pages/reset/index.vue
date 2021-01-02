@@ -8,7 +8,7 @@ import resetBox from "@/components/ResetPassword"
 export default {
   layout:'auth',
   name: "ResetPassword",
-
+  middleware: 'loggedIn',
   components: {
     resetBox,
   },

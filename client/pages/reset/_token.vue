@@ -16,6 +16,7 @@ export default {
       this.$router.push('/reset')
     }
   },
+  middleware: 'loggedIn',
   layout:'auth',
   name: "ChangePassword",
   components: {

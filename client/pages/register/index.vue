@@ -8,6 +8,7 @@ import registerbox from "~/components/RegisterBox";
 export default {
   layout:'auth',
   name: "Register",
+  middleware: 'loggedIn',
   head() {
     return {
       title: "Matcha - Register",

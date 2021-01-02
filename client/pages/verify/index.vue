@@ -7,6 +7,7 @@ import verifyBox from "@/components/VerifyEmail"
 
 export default {
   layout:'auth',
+  middleware: 'loggedIn',
   name: "VerifyEmail",
   components: {
     verifyBox
