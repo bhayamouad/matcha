@@ -12,7 +12,7 @@ const auth = require('../tools/authentification.js')
 
 exports.authorize = (req, res, next) => auth.authorize(req, res, next)
 
-exports.authorized = (req, res)=>{res.status(200).send({state: 'AUTHORIZED', error: null})}
+exports.authorized = (req, res)=>{res.status(200).send({state: 'AUTHORIZED', error: false})}
 
 
 

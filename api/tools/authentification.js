@@ -2,7 +2,7 @@ require('dotenv').config()
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const crypto = require("crypto-js");
-// const { createAccessToken } = require('./helpers');
+
 
 const cryptSHA265 = (string) => crypto.SHA256(string, process.env.SECRET_KEY).toString();
 
@@ -23,11 +23,15 @@ const createRefToken = (user)=>{
 }
 
 const authorize = (req, res, next)=>{
-    // console.log('Cookies: ', req.cookies) // remove
     const accTok = req.cookies.accTok
     const refTok = req.cookies.refTok
 
     try{
+        if(!refTok)
+        {
+            res.clearCookie('accTok');
+            throw Error('refToken must be provided');
+        }
         const accPayload = jwt.verify(accTok, process.env.SECRET_KEY)
         if(accPayload.type != 'access')
             throw Error('wrong token type'); 
