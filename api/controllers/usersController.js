@@ -102,10 +102,9 @@ exports.login = (req, res) => {
                     const accTok = auth.createAccToken(user)
                     const refTok = auth.createRefToken(user)
                     
-                    res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 })
+                    res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15})
                     res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
                     res.status(200).send({ error: false })
-                    res.status(200).send({ userId: user.id_user, accessToken: accTok, refreshToken: refTok, error: false })
                 }
                 else res.status(200).send({ message: 'You need to verify your account first', error: true, special: true })
             }
@@ -214,7 +213,6 @@ exports.changePassword = (req, res) => {
         .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
 exports.setProfile = async (req, res) => {
-    accTok = req.cookies.accTok
     const { gender, birthdate, interest, bio, tags, lat, lng } = req.body
     const data = {
         gender,
@@ -222,16 +220,15 @@ exports.setProfile = async (req, res) => {
         interest,
         bio
     }
-    const accPayLoad = jwt.verify(accTok, process.env.SECRET_KEY)
     const [location] = await helpers.getLocation(lat, lng)
     const pos = new Position({
         city: `${location.city},${location.country}`,
         lat,
         lng,
-        user_id: accPayLoad.id_user,
+        user_id: req.id_user,
     })
     await pos.savePosition()
-    User.setProfile(data, accPayLoad.id_user)
+    User.setProfile(data, req.id_user)
         .then(() => res.status(200).send({ message: `success` }))
         .catch(err => res.send({ message: err.message }))
 }

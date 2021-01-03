@@ -34,7 +34,8 @@ const authorize = (req, res, next)=>{
         }
         const accPayload = jwt.verify(accTok, process.env.SECRET_KEY)
         if(accPayload.type != 'access')
-            throw Error('wrong token type'); 
+            throw Error('wrong token type');
+        req.id_user = accPayload.id_user
         next()
     }catch(e)
     {
@@ -49,7 +50,8 @@ const authorize = (req, res, next)=>{
                     if(refPayload.key == cryptSHA265(user.id_user+user.password))
                     {
                         const newAccTok = createAccToken(user)
-                        res.cookie('accTok', newAccTok, {httpOnly: true, maxAge:1000 * 60})
+                        res.cookie('accTok', newAccTok, {httpOnly: true, maxAge:1000 * 60 * 15})
+                        req.id_user = user.id_user
                         next()
                     }
                     else
