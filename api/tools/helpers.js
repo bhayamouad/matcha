@@ -1,9 +1,22 @@
 require('dotenv').config()
 const nodemailer = require('nodemailer')
-var crypto = require("crypto-js");
+const crypto = require("crypto-js")
+const NodeGeocoder = require('node-geocoder')
 
 exports.hashHmacSha256 = (string) => crypto.AES.encrypt(string, process.env.SECRET_KEY);
 
+
+const geoOptions = {
+    provider: 'google',
+    apiKey: 'AIzaSyAmDARYa-puuDsAWPOU2nfKCC_RusalumM',
+    formatter: null
+}
+
+const geocoder = NodeGeocoder(geoOptions)
+
+exports.getLocation = async (lat, lon) => {
+    return await geocoder.reverse({lat, lon})
+}
 
 const wrapedSendMail = (mailOptions) => {
     return new Promise( (resolve,reject) =>{

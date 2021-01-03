@@ -16,6 +16,8 @@ router.post('/change-password',usersController.changePassword)
 
 router.post('/authorization', usersController.authorize, usersController.authorized)
 
-router.post('/setProfile', usersController.setProfile)
+router.post('/setProfile', usersController.authorize, usersController.setProfile)
+
+router.get('/getTags', usersController.getTags)
 
 module.exports = router

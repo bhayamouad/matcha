@@ -13,7 +13,7 @@ static saveTagUser(user_id, tag_id){
 }
 
 static getTags () {
-    return db.execute('SELECT * FROM tags')
+    return db.execute('SELECT tag FROM tags')
 }
 
 static getTagById (id_tag) {

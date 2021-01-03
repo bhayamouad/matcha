@@ -71,10 +71,11 @@ connection.connect(function(err) {
                                     city varchar(20),
                                     lat FLOAT( 10, 6 ),
                                     lng FLOAT( 10, 6 ),
-                                    user_id int(11) NOT NULL,
+                                    user_id int(11) NOT NULL UNIQUE,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
                                     updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
                                     );`);
+                  connection.query(`ALTER TABLE positions MODIFY id_positions int(11) NOT NULL AUTO_INCREMENT;`);
                   connection.query(`ALTER TABLE positions ADD PRIMARY KEY (id_position);`);
                   connection.query(`ALTER TABLE positions ADD FOREIGN KEY (user_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 

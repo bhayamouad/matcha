@@ -2,9 +2,12 @@ require('dotenv').config()
 
 const bcrypt = require('bcrypt')
 const cryptoRandomString = require('crypto-random-string')
+const jwt = require('jsonwebtoken')
 
 let token = null
 const User = require('../models/User')
+const Tag = require('../models/Tag')
+const Position = require('../models/Position')
 const helpers = require('../tools/helpers')
 const auth = require('../tools/authentification.js')
 
@@ -12,7 +15,7 @@ const auth = require('../tools/authentification.js')
 
 exports.authorize = (req, res, next) => auth.authorize(req, res, next)
 
-exports.authorized = (req, res)=>{res.status(200).send({state: 'AUTHORIZED', error: false})}
+exports.authorized = (req, res) => { res.status(200).send({ state: 'AUTHORIZED', error: false }) }
 
 
 
@@ -59,11 +62,11 @@ exports.registerAccount = (req, res) => {
                     const subject = 'Email Confirmation'
                     const html = `<p>Hello ${user.login} Your account was created successfuly you need to verify your account to login please <a href="${process.env.CLIENT_URL}/verify/${token.key}/">click here</a>`
                     helpers.sendEmail(user.email, subject, html)
-                    res.status(201).send({ message: 'Your Account was created. Please go check your Inbox to verify your Account', error: false})
+                    res.status(201).send({ message: 'Your Account was created. Please go check your Inbox to verify your Account', error: false })
                 })
-                .catch(err => res.status(500).send({ message: err.message, error: true}))
+                .catch(err => res.status(500).send({ message: err.message, error: true }))
         })
-        .catch(err => res.status(500).send({ message: err.message, error: true}))
+        .catch(err => res.status(500).send({ message: err.message, error: true }))
 }
 
 
@@ -75,49 +78,51 @@ exports.verifyAccount = (req, res) => {
                 const now = new Date().getTime()
                 const update = new Date(user.expire_token)
                 const diff = Math.floor((now - update) / 60000)
-                if (diff <= 60*24) {
+                if (diff <= 60 * 24) {
                     User.updateStatus(user.id_user)
                         .then(() => res.send({ message: 'Account is activated you can login now', error: false }))
-                        .catch((err) => res.status('500').send({ message: err.message, error: true}))
+                        .catch((err) => res.status('500').send({ message: err.message, error: true }))
                 }
-                else res.status('200').send({ message: 'This verification link is expired! Request a new one', error: true})
+                else res.status('200').send({ message: 'This verification link is expired! Request a new one', error: true })
             }
             else res.status('200').send({ message: 'This account is already verified, you can login', error: true })
         })
-        .catch(() => res.status('200').send({ message: 'Something went Wrong! Request a new verification link', error: true, special:true}))
+        .catch(() => res.status('200').send({ message: 'Something went Wrong! Request a new verification link', error: true, special: true }))
 }
 
 exports.login = (req, res) => {
     const { login, password } = req.body
     User.getByLogin(login)
-        .then(async ([[user]]) => { 
+        .then(async ([[user]]) => {
             const passCompare = await bcrypt.compare(password, user.password)
-            
+
             if (passCompare) {
                 if (user.status != 0) {
+                    
                     const accTok = auth.createAccToken(user)
                     const refTok = auth.createRefToken(user)
-                    res.cookie('accTok', accTok, {httpOnly: true, maxAge:1000 * 60 * 15})
-                    res.cookie('refTok', refTok, {httpOnly: true, maxAge:1000 * 3600 * 24 * 3})
-                    res.status(200).send({error: false })
-                    res.status(200).send({userId: user.id_user, accessToken: accTok, refreshToken: refTok, error: false })
+                    
+                    res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 })
+                    res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
+                    res.status(200).send({ error: false })
+                    res.status(200).send({ userId: user.id_user, accessToken: accTok, refreshToken: refTok, error: false })
                 }
-                else res.status(200).send({ message: 'You need to verify your account first', error: true, special:true })
+                else res.status(200).send({ message: 'You need to verify your account first', error: true, special: true })
             }
             else res.status(200).send({ message: 'The username or password is incorrect', error: true })
         })
-        .catch(() => res.status(200).send({ message: 'The username or password  is incorrect', error: true}))
+        .catch( (e) => res.status(200).send({ message: 'The username or password  is incorrect', error: true }))
 }
 
 exports.logOut = (req, res) => {
     res.clearCookie('accTok');
     res.clearCookie('refTok');
-    res.send({error: false})
+    res.send({ error: false })
 }
 
 
 exports.updateToken = (req, res) => {
-    token = helpers.hashHmacSha256(Date.now().toString()) 
+    token = helpers.hashHmacSha256(Date.now().toString())
     User.getByLogin(req.body.login)
         .then(([[user]]) => {
             if (user.status == 0) {
@@ -125,7 +130,7 @@ exports.updateToken = (req, res) => {
                 const update = new Date(user.expire_token)
                 const diff = Math.floor((now - update) / 60000)
                 const limit = 10
-                if (diff >= limit){
+                if (diff >= limit) {
                     User.updateToken(token.key.toString(), user.id_user)
                         .then(() => {
                             const subject = 'Email Confirmation'
@@ -135,7 +140,7 @@ exports.updateToken = (req, res) => {
                         })
                         .catch(err => res.status(500).send({ message: err.message, error: true }))
                 }
-                else res.status('200').send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit-diff-1?'s':''}.`, error: true })
+                else res.status('200').send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit - diff - 1 ? 's' : ''}.`, error: true })
             }
             else res.status(200).send({ message: 'This account is already verified. You can login now', error: true, redirect: true })
         })
@@ -152,7 +157,7 @@ exports.resetPassword = (req, res) => {
                 const update = new Date(user.expire_token)
                 const diff = Math.floor((now - update) / 60000)
                 const limit = 3
-                if (diff >= limit){
+                if (diff >= limit) {
                     User.updateToken(token.key.toString(), user.id_user)
                         .then(() => {
                             const subject = 'Reset Password'
@@ -162,30 +167,29 @@ exports.resetPassword = (req, res) => {
                         })
                         .catch(err => res.status(500).send({ message: err.message, error: true }))
                 }
-                else res.status('200').send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit-diff-1?'s':''}.`, error: true })
+                else res.status('200').send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit - diff - 1 ? 's' : ''}.`, error: true })
             }
-            else res.status(200).send({ message: 'Please Verify your account', error: true})
+            else res.status(200).send({ message: 'Please Verify your account', error: true })
         })
         .catch(() => res.status(200).send({ message: 'Account not found', error: true }))
 }
 
-exports.passwordToken = (req, res) =>{
+exports.passwordToken = (req, res) => {
     User.getByToken(req.params.token)
-    .then(([[user]]) => {
-        if(user)
-        {
-            const now = new Date().getTime()
-            const update = new Date(user.expire_token)
-            const diff = Math.floor((now - update) / 60000)
-            if (diff <= 3)
-                res.status(200).send({ error: false });
-            else res.status('200').send({ message: 'This link is expired! Request a new one', error: true})
-        }
-        else
-            res.status(200).send({ message: 'link incorrect', error: true })
-        
-    })
-    .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
+        .then(([[user]]) => {
+            if (user) {
+                const now = new Date().getTime()
+                const update = new Date(user.expire_token)
+                const diff = Math.floor((now - update) / 60000)
+                if (diff <= 3)
+                    res.status(200).send({ error: false });
+                else res.status('200').send({ message: 'This link is expired! Request a new one', error: true })
+            }
+            else
+                res.status(200).send({ message: 'link incorrect', error: true })
+
+        })
+        .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
 
 exports.changePassword = (req, res) => {
@@ -194,8 +198,7 @@ exports.changePassword = (req, res) => {
             const now = new Date().getTime()
             const update = new Date(user.expire_token)
             const diff = Math.floor((now - update) / 60000)
-            if (diff <= 3)
-            {
+            if (diff <= 3) {
                 bcrypt.genSalt(10)
                     .then((salt) => { return bcrypt.hash(req.body.npassword, salt) })
                     .then(hashPassword => {
@@ -210,15 +213,36 @@ exports.changePassword = (req, res) => {
         })
         .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
-exports.setProfile = (req,res) => {
-    const {gender, birthdate, interest, bio, tags, lat, long} = req.body
+exports.setProfile = async (req, res) => {
+    accTok = req.cookies.accTok
+    const { gender, birthdate, interest, bio, tags, lat, lng } = req.body
     const data = {
         gender,
         birthdate: new Date(birthdate.toString()),
         interest,
         bio
     }
-    User.setProfile(data,1)
-    .then( () => res.status(200).send({message:`success`}))
-    .catch( err => res.send( { message: err.message }))
+    const accPayLoad = jwt.verify(accTok, process.env.SECRET_KEY)
+    const [location] = await helpers.getLocation(lat, lng)
+    const pos = new Position({
+        city: `${location.city},${location.country}`,
+        lat,
+        lng,
+        user_id: accPayLoad.id_user,
+    })
+    await pos.savePosition()
+    User.setProfile(data, accPayLoad.id_user)
+        .then(() => res.status(200).send({ message: `success` }))
+        .catch(err => res.send({ message: err.message }))
+}
+exports.getTags = (req, res) => {
+    Tag.getTags()
+        .then(([tags]) => {
+            const tagsList = []
+            tags.forEach(tag => {
+                tagsList.push(tag.tag)
+            });
+            res.send({ tags: tagsList })
+        })
+        .catch(err => res.send({ message: err.message }))
 }
