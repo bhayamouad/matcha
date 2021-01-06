@@ -50,11 +50,8 @@
 </template>
 <script>
 const tagsList = ["Test1", "test2", "test3"];
-let lat,long
-navigator.geolocation.getCurrentPosition((position) => {
-  lat = position.coords.latitude
-  long = position.coords.longitude
-})
+let lat=null, lng=null
+
 const validateGender = gender => {
   if (!gender) return { valid: false, error: "You must choose your gender" }
   return { valid: true, error: null }
@@ -85,10 +82,11 @@ const validateTags = tags => {
 }
 
 export default {
-  computed: {
-    user () {
-      return this.$store.state.userId
-    }
+  beforeCreate() {
+    navigator.geolocation.getCurrentPosition((position) => {
+    lat = position.coords.latitude
+    lng = position.coords.longitude
+  })
   },
   data() {
     const maxYear = new Date();
@@ -142,11 +140,9 @@ export default {
 
       if(this.valid)
       {
-        console.log(this.userId)
-        const data = {gender:this.gender, birthdate: new Date(this.birthdate.toString()), interest:this.interest, bio:this.bio, tags:this.tags, lat, long}
+        const data = {gender:this.gender, birthdate: new Date(this.birthdate.toString()), interest:this.interest, bio:this.bio, tags:this.tags, lat, lng}
         const res = await this.$axios.$post('/account/setProfile', data)
-        console.log(res)
-        if(res)
+        if(res.message === 'success')
           return true
       }
       else

@@ -2,6 +2,8 @@ require('dotenv').config()
 const nodemailer = require('nodemailer')
 const crypto = require("crypto-js")
 const NodeGeocoder = require('node-geocoder')
+const publicIp = require('public-ip')
+const request = require('request')
 
 exports.hashHmacSha256 = (string) => crypto.AES.encrypt(string, process.env.SECRET_KEY);
 
@@ -53,4 +55,16 @@ exports.sendEmail = async (to, subject, html) => {
     }
     let resp = await wrapedSendMail(mailOptions) 
     return resp
+}
+
+exports.getPublicIp = async () => {
+	return await publicIp.v4()
+}
+exports.ipLocationFinderAPI = (ip) => {
+    return new Promise((resolve, reject) => {
+        request(`https://tools.keycdn.com/geo.json?host=${ip}`, { json: true }, (err, res, body) => {
+          if (err) reject(err)
+          resolve(body)
+        });
+    })
 }

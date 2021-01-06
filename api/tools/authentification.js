@@ -25,14 +25,13 @@ const createRefToken = (user)=>{
 const authorize = (req, res, next)=>{
     const accTok = req.cookies.accTok
     const refTok = req.cookies.refTok
-    console.log(`******* authorize function********`)
     try{
         if(!refTok)
         {
             res.clearCookie('accTok');
             throw Error('refToken must be provided');
         }
-        const accPayload = jwt.verify(accTok, process.env.SECRET_KEY)
+        const accPayload = jwt.verify(accTok, process.env.SECRET_KEY) 
         if(accPayload.type != 'access')
             throw Error('wrong token type');
         req.id_user = accPayload.id_user
@@ -41,7 +40,6 @@ const authorize = (req, res, next)=>{
     {
         if(e.message == 'jwt expired' || e.message == 'jwt must be provided')
             try{
-                console.log(`******* new acc******** ${e.message}`)
                 const refPayload = jwt.verify(refTok, process.env.SECRET_KEY)
                 if(refPayload.type != 'refresh')
                     throw Error('wrong token type'); 

@@ -220,18 +220,33 @@ exports.setProfile = async (req, res) => {
         interest,
         bio
     }
-    const [location] = await helpers.getLocation(lat, lng)
-    const pos = new Position({
-        city: `${location.city},${location.country}`,
-        lat,
-        lng,
-        user_id: req.id_user,
-    })
+    let pos = null
+    if(lat && lng)
+    {
+        const [location] = await helpers.getLocation(lat, lng)
+        pos = new Position({
+            city: `${location.city},${location.country}`,
+            lat,
+            lng,
+            user_id: req.id_user,  
+        })
+    }
+    else {
+        const ip = await helpers.getPublicIp()
+        const res = await helpers.ipLocationFinderAPI(ip) 
+        pos = new Position({
+            city: `${res.data.geo.city},${res.data.geo.country_name}`,
+            lat: res.data.geo.latitude,
+            lng: res.data.geo.longitude,
+            user_id: req.id_user,  
+        })
+    }
     await pos.savePosition()
     User.setProfile(data, req.id_user)
         .then(() => res.status(200).send({ message: `success` }))
         .catch(err => res.send({ message: err.message }))
 }
+
 exports.getTags = (req, res) => {
     Tag.getTags()
         .then(([tags]) => {
