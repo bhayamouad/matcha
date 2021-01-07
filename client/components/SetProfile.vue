@@ -41,7 +41,9 @@
         icon="label"
         allow-new
         autocomplete
+        :confirm-keys = "['Enter']"
         placeholder="Add a tag"
+        :before-adding="tagValidate"
         :remove-on-keys="[]"
         @typing="getFilteredTags"
       ></b-taginput>
@@ -49,7 +51,7 @@
   </div>
 </template>
 <script>
-const tagsList = ["Test1", "test2", "test3"];
+let tagsList = null
 let lat=null, lng=null
 
 const validateGender = gender => {
@@ -82,11 +84,13 @@ const validateTags = tags => {
 }
 
 export default {
-  beforeCreate() {
+  async beforeCreate() {
     navigator.geolocation.getCurrentPosition((position) => {
-    lat = position.coords.latitude
-    lng = position.coords.longitude
-  })
+      lat = position.coords.latitude
+      lng = position.coords.longitude
+    })
+    const result = await this.$axios.$get('/account/getTags')
+    tagsList = result.tags
   },
   data() {
     const maxYear = new Date();
@@ -104,6 +108,9 @@ export default {
     };
   },
   methods: {
+    tagValidate (tag) {
+        return tag.match(/^([A-Za-z0-9_]){3,25}$/);
+    },
     getFilteredTags(text) {
       this.filteredTags = tagsList.filter(option => {
         return (
@@ -140,7 +147,10 @@ export default {
 
       if(this.valid)
       {
-        const data = {gender:this.gender, birthdate: new Date(this.birthdate.toString()), interest:this.interest, bio:this.bio, tags:this.tags, lat, lng}
+        let newTags = [... tagsList, ...this.tags]// merge the new and the old tags
+        newTags = [...new Set(newTags)] // to escape the duplication in tags to add
+        newTags = newTags.slice(tagsList.length) // get only the new ones
+        const data = {gender:this.gender, birthdate: new Date(this.birthdate.toString()), interest:this.interest, bio:this.bio, tags:this.tags, lat, lng, newTags}
         const res = await this.$axios.$post('/account/setProfile', data)
         if(res.message === 'success')
           return true

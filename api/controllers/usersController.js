@@ -104,7 +104,7 @@ exports.login = (req, res) => {
                     
                     res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15})
                     res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
-                    res.status(200).send({ error: false })
+                    res.status(200).send({ userStatus: user.status, error: false })
                 }
                 else res.status(200).send({ message: 'You need to verify your account first', error: true, special: true })
             }
@@ -213,11 +213,12 @@ exports.changePassword = (req, res) => {
         .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
 exports.setProfile = async (req, res) => {
-    const { gender, birthdate, interest, bio, tags, lat, lng } = req.body
+    const { gender, birthdate, interest, bio, tags, lat, lng, newTags} = req.body
     const data = {
         gender,
-        birthdate: new Date(birthdate.toString()),
+        birthdate: new Date(birthdate.toString()), 
         interest,
+        tags: tags.toString(),  
         bio
     }
     let pos = null
@@ -242,6 +243,9 @@ exports.setProfile = async (req, res) => {
         })
     }
     await pos.savePosition()
+    newTags.forEach( async (tag) => {
+        await Tag.saveTag(tag)
+    })
     User.setProfile(data, req.id_user)
         .then(() => res.status(200).send({ message: `success` }))
         .catch(err => res.send({ message: err.message }))
@@ -257,4 +261,10 @@ exports.getTags = (req, res) => {
             res.send({ tags: tagsList })
         })
         .catch(err => res.send({ message: err.message }))
+}
+
+exports.getStatus = (req,res) => {
+    User.getStatusById(req.id_user)
+        .then(([[user]]) => res.status(200).send({status: user.status, error: false}))
+        .catch(err => res.send({ message:err.message, error: true}))
 }

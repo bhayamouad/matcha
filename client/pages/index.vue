@@ -1,7 +1,7 @@
 <template>
   <div>
-    <loginbox v-if="!status"></loginbox>
-    <home v-if="status" />
+    <loginbox v-if="!loggedIn"></loginbox>
+    <home v-if="loggedIn" />
   </div>
 
 </template>
@@ -20,7 +20,7 @@ export default {
   },
   data(){
     return{
-    status: this.$store.state.auth.loggedIn
+    loggedIn: this.$store.state.auth.loggedIn
     }
   },
   components: {

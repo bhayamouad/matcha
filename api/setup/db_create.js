@@ -23,6 +23,7 @@ connection.connect(function(err) {
                         birthdate date DEFAULT NULL,
                         interest ENUM('M', 'F', 'B', '0') DEFAULT '0',
                         biography varchar(200),
+                        tags varchar(255),
                         rating int(3) DEFAULT 0,
                         status int(1) NOT NULL DEFAULT 0,
                         token varchar(255),
@@ -47,25 +48,13 @@ connection.connect(function(err) {
                   connection.query(`ALTER TABLE images ADD FOREIGN KEY (user_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 
                   connection.query(`CREATE TABLE tags(
-                              id_tag int(11) NOT NULL,
-                              tag varchar(20) NOT NULL UNIQUE,
+                              tag varchar(25) NOT NULL,
                               created_at TIMESTAMP NOT NULL DEFAULT NOW(),
                               updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
                         );`);
 
-                  connection.query(`ALTER TABLE tags ADD PRIMARY KEY (id_tag);`);
-                  connection.query(`ALTER TABLE tags MODIFY id_tag int(11) NOT NULL AUTO_INCREMENT;`);
-
-                  connection.query(`CREATE TABLE users_tags(
-                                    user_id int(11) NOT NULL,
-                                    tag_id int(11) NOT NULL,
-                                    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-                                    updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
-                                    );`);
-                  connection.query(`ALTER TABLE users_tags ADD PRIMARY KEY (user_id,tag_id);`);
-                  connection.query(`ALTER TABLE users_tags ADD FOREIGN KEY (user_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
-                  connection.query(`ALTER TABLE users_tags ADD FOREIGN KEY (tag_id) REFERENCES tags (id_tag) ON DELETE CASCADE ON UPDATE CASCADE;`);
-
+                  connection.query(`ALTER TABLE tags ADD PRIMARY KEY (tag);`);
+                  
                   connection.query(`CREATE TABLE positions(
                                     id_position int(11) NOT NULL,
                                     city varchar(20),
@@ -75,8 +64,8 @@ connection.connect(function(err) {
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
                                     updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
                                     );`);
-                  connection.query(`ALTER TABLE positions MODIFY id_positions int(11) NOT NULL AUTO_INCREMENT;`);
                   connection.query(`ALTER TABLE positions ADD PRIMARY KEY (id_position);`);
+                  connection.query(`ALTER TABLE positions MODIFY id_position int(11) NOT NULL AUTO_INCREMENT;`);
                   connection.query(`ALTER TABLE positions ADD FOREIGN KEY (user_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 
                   connection.query(`CREATE TABLE matchs(

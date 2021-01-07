@@ -19,5 +19,6 @@ router.post('/authorization', usersController.authorize, usersController.authori
 router.post('/setProfile', usersController.authorize, usersController.setProfile)
 
 router.get('/getTags', usersController.getTags)
+router.get('/getStatus',usersController.authorize, usersController.getStatus)
 
 module.exports = router

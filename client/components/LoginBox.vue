@@ -59,7 +59,8 @@ export default {
   methods: {
     ...mapMutations({
       logInAuth: 'auth/logIn',
-      logOut: 'auth/logOut'
+      logOut: 'auth/logOut',
+      setStatus: 'auth/setStatus'
     }),
     async login() {
       this.errors = {};
@@ -78,10 +79,9 @@ export default {
         if (res.special) this.$snoast.snackbar(this.$buefy,res.message,'is-danger','Verify Now','/verify')
         if (res.error && !res.special) this.$snoast.toast(this.$buefy, res.message, 'is-danger')
         if (!res.error) {
-          const accTok = res.accessToken
-          const refTok = res.refreshToken
-          const userId = res.userId
-          this.logInAuth({accTok, refTok, userId})
+          const status = res.userStatus
+          this.logInAuth()
+          this.setStatus(status)
           this.$router.go()
         }
       }

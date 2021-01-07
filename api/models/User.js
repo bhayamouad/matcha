@@ -45,6 +45,9 @@ module.exports = class User {
     return db.execute('UPDATE users SET password = ?, token = NULL, expire_token = NULL WHERE id_user = ?', [password, id])
   }
   static setProfile(data, id) {
-    return db.execute('UPDATE users SET gender = ?, birthdate = ?, interest = ?, biography = ? WHERE id_user = ?', [data.gender,data.birthdate, data.interest, data.bio, id])
+    return db.execute('UPDATE users SET gender = ?, birthdate = ?, interest = ?, tags = ?, biography = ? WHERE id_user = ?', [data.gender,data.birthdate, data.interest, data.tags, data.bio, id])
+  }
+  static getStatusById(id){
+    return db.execute('SELECT status FROM users WHERE id_user = ?', [id])
   }
 }
