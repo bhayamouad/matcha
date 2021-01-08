@@ -3,6 +3,7 @@
     <b-field label="Gender" 
       :type="{'is-danger': errors.gender}" 
       :message="errors.gender"
+      
     >
       <b-radio v-model="gender" name="gender" native-value="M">Male</b-radio>
       <b-radio v-model="gender" name="gender" native-value="F">Female</b-radio>
@@ -42,7 +43,7 @@
         allow-new
         autocomplete
         :confirm-keys = "['Enter']"
-        placeholder="Add a tag"
+        placeholder="ex: #vegan, #geek, #piercing etc..."
         :before-adding="tagValidate"
         :remove-on-keys="[]"
         @typing="getFilteredTags"
@@ -109,7 +110,7 @@ export default {
   },
   methods: {
     tagValidate (tag) {
-        return tag.match(/^([A-Za-z0-9_]){3,25}$/);
+        return tag.match(/^#([A-Za-z0-9_]){3,25}$/);
     },
     getFilteredTags(text) {
       this.filteredTags = tagsList.filter(option => {

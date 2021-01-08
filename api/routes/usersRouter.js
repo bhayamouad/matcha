@@ -20,5 +20,7 @@ router.post('/setProfile', usersController.authorize, usersController.setProfile
 
 router.get('/getTags', usersController.getTags)
 router.get('/getStatus',usersController.authorize, usersController.getStatus)
+router.get('/acceptPrivacy',usersController.authorize, usersController.acceptPrivacy)
+
 
 module.exports = router

@@ -242,7 +242,11 @@ exports.setProfile = async (req, res) => {
             user_id: req.id_user,  
         })
     }
-    await pos.savePosition()
+    try {
+        await pos.savePosition()
+    } catch (error) {
+        await Position.updatePosition(pos)
+    }
     newTags.forEach( async (tag) => {
         await Tag.saveTag(tag)
     })
@@ -267,4 +271,10 @@ exports.getStatus = (req,res) => {
     User.getStatusById(req.id_user)
         .then(([[user]]) => res.status(200).send({status: user.status, error: false}))
         .catch(err => res.send({ message:err.message, error: true}))
+}
+
+exports.acceptPrivacy = (req, res) => {
+    User.setStatusById(req.id_user)
+        .then(() => res.status(200).send({error: false}))
+        .catch(err => res.send({message:err.message, error: true}))
 }
