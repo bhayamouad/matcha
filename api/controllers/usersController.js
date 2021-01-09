@@ -98,11 +98,11 @@ exports.login = (req, res) => {
 
             if (passCompare) {
                 if (user.status != 0) {
-                    
+
                     const accTok = auth.createAccToken(user)
                     const refTok = auth.createRefToken(user)
-                    
-                    res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15})
+
+                    res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15 })
                     res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
                     res.status(200).send({ userStatus: user.status, error: false })
                 }
@@ -110,7 +110,7 @@ exports.login = (req, res) => {
             }
             else res.status(200).send({ message: 'The username or password is incorrect', error: true })
         })
-        .catch( (e) => res.status(200).send({ message: 'The username or password  is incorrect', error: true }))
+        .catch((e) => res.status(200).send({ message: 'The username or password  is incorrect', error: true }))
 }
 
 exports.logOut = (req, res) => {
@@ -213,38 +213,49 @@ exports.changePassword = (req, res) => {
         .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
 exports.setProfile = async (req, res) => {
-    const { gender, birthdate, interest, bio, tags, lat, lng, newTags} = req.body
+    const { gender, birthdate, interest, bio, tags, lat, lng, newTags } = req.body
     const data = {
         gender,
-        birthdate: new Date(birthdate.toString()), 
+        birthdate: new Date(birthdate.toString()),
         interest,
-        tags: tags.toString(),  
+        tags: tags.toString(),
         bio
     }
     let pos = null
-    if(lat && lng)
-    {
-        const [location] = await helpers.getLocation(lat, lng)
-        pos = new Position({
-            city: `${location.city},${location.country}`,
-            lat,
-            lng,
-            user_id: req.id_user,  
-        })
+    if (lat && lng) {
+        try {
+            const [location] = await helpers.getLocation(lat, lng)
+            pos = new Position({
+                city: `${location.city},${location.country}`,
+                lat,
+                lng,
+                user_id: req.id_user,
+            })
+        } catch (error) {
+            return res.send({ message: error.message, error: true })
+        }
     }
     else {
-        const ip = await helpers.getPublicIp()
-        const res = await helpers.ipLocationFinderAPI(ip) 
-        pos = new Position({
-            city: `${res.data.geo.city},${res.data.geo.country_name}`,
-            lat: res.data.geo.latitude,
-            lng: res.data.geo.longitude,
-            user_id: req.id_user,  
-        })
+        try {
+            const ip = await helpers.getPublicIp()
+            const res = await helpers.ipLocationFinderAPI(ip)
+            pos = new Position({
+                city: `${res.data.geo.city},${res.data.geo.country_name}`,
+                lat: res.data.geo.latitude,
+                lng: res.data.geo.longitude,
+                user_id: req.id_user,
+            })
+            await pos.savePosition()
+        } catch (error) {
+            return res.send({ message: error.message, error: true })
+        }
     }
-    await pos.savePosition()
-    newTags.forEach( async (tag) => {
-        await Tag.saveTag(tag)
+    newTags.forEach(async (tag) => {
+        try {
+            await Tag.saveTag(tag)
+        } catch (error) {
+            return res.send({ message: error.message, error: true })
+        }
     })
     User.setProfile(data, req.id_user)
         .then(() => res.status(200).send({ message: `success` }))
@@ -263,8 +274,8 @@ exports.getTags = (req, res) => {
         .catch(err => res.send({ message: err.message }))
 }
 
-exports.getStatus = (req,res) => {
+exports.getStatus = (req, res) => {
     User.getStatusById(req.id_user)
-        .then(([[user]]) => res.status(200).send({status: user.status, error: false}))
-        .catch(err => res.send({ message:err.message, error: true}))
+        .then(([[user]]) => res.status(200).send({ status: user.status, error: false }))
+        .catch(err => res.send({ message: err.message, error: true }))
 }
