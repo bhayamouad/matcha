@@ -8,8 +8,10 @@ module.exports = class Position {
     this.user_id = position.user_id
 }
 
-savePosition () {
+  savePosition () {
     return db.query("INSERT INTO positions SET ?", this)
-}
-
+  }
+  static updatePosition(pos) {
+    return db.execute("UPDATE positions SET city = ?, lat = ?, lng = ? WHERE user_id = ?", [pos.city, pos.lat, pos.lng, pos.user_id])
+  }
 }

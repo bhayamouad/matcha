@@ -32,7 +32,6 @@
 
 <script>
 import { mapMutations } from 'vuex'
-import Cookies from 'js-cookie'
 
 const validateLogin = login => {
   if (!login) return { valid: false, error: "Please fill out this field." };
