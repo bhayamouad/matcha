@@ -21,7 +21,8 @@
     "nuxt": "^2.14.6",
     "nuxt-buefy": "^0.4.3",
     "redirect-ssl": "^2.0.0",
-    "vue2-interact": "^0.0.3"
+    "vue2-interact": "^0.0.3",
+    "vuedraggable": "^2.24.3"
   },
   "devDependencies": {
     "@vue/test-utils": "^1.1.0",

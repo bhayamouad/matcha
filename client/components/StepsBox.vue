@@ -5,14 +5,7 @@
         <set-profile ref="child" />
       </b-step-item>
       <b-step-item label="Pictures" icon="image" :clickable="isStepsClickable">
-        <div class="columns is-multiline">
-          <image-upload />
-          <image-upload />
-          <image-upload />
-          <image-upload />
-          <image-upload />
-          
-        </div>
+          <image-upload></image-upload>
       </b-step-item>
       <b-step-item label="Profile" icon="account" :clickable="isStepsClickable">
         <div class>
@@ -27,10 +20,7 @@
               We strive to be transparent in the way we process your data. Because we use many of the same online services you do, we know that insufficient information and overly complicated language are common issues in privacy policies. We take the exact opposite approach: we have written our Privacy Policy and related documents in plain language. We actually want you to read our policies and understand our privacy practices!
               We work hard to keep your information secure We have teams dedicated to keeping your data safe and secure. We constantly update our security practices and invest in our security efforts to enhance the safety of your information.
             </span>
-            <b-field label="Privacy Policy"
-            :type="{'is-danger': errorCheck}" 
-            :message="errorCheck"
-            >
+            <b-field label="Privacy Policy" :type="{'is-danger': errorCheck}" :message="errorCheck">
               <b-checkbox v-model="check">I accept</b-checkbox>
             </b-field>
           </div>
@@ -39,10 +29,14 @@
       <template slot="navigation" slot-scope="{previous, next}">
         <div class="field is-grouped is-grouped-centered">
           <p class="control">
-            <a class="button is-light" @click.prevent="previous.action" :disabled="previousDisable">Back</a>
+            <a
+              class="button is-light"
+              @click.prevent="previous.action"
+              :disabled="previousDisable"
+            >Back</a>
           </p>
           <p class="control">
-            <a class="button is-primary" @click.prevent="send(next.action)"> {{nextValue}} </a>
+            <a class="button is-primary" @click.prevent="send(next.action)">{{nextValue}}</a>
           </p>
         </div>
       </template>
@@ -53,7 +47,8 @@
 <script>
 import SetProfile from "@/components/SetProfile.vue";
 import Account from "@/components/Account.vue";
-import ImageUpload from "@/components/ImageUploadBox.vue"
+import ImageUpload from "@/components/ImageUploadBox.vue";
+
 export default {
   components: {
     SetProfile,
@@ -66,24 +61,17 @@ export default {
       title: "Matcha"
     };
   },
-  computed:{
-    nextValue(){
-      return (this.active === 2) ? "Finish" : "Next"
+  computed: {
+    nextValue() {
+      return this.active === 2 ? "Finish" : "Next";
     },
-    previousDisable()
-    {
-      return (this.active === 0) ? true : false
+    previousDisable() {
+      return this.active === 0 ? true : false;
     },
-    stepType()
-    {
-      if(this.error === null)
-        return ''
-      else if(this.error === false)
-        return 'is-success'
-      else
-        return 'is-danger'
+    stepType() {
+      if (this.error === null) return "";
+      else return "is-danger";
     }
-    
   },
   data() {
     return {
@@ -91,7 +79,7 @@ export default {
       isStepsClickable: false,
       check: false,
       error: null,
-      errorCheck: ''
+      errorCheck: ""
     };
   },
   methods: {
@@ -99,25 +87,22 @@ export default {
       if (this.active === 0) {
         // const check = await this.$refs.child.setProfile();
         // if (check) {
-        //     this.error = false  
+        //     this.error = false
         //     next();
         // }
         // else
         //   this.error = true
-        next()
+        next();
       }
-      if (this.active === 1){
-        next()
-      } 
-      if (this.active === 2){
-        if(!this.check)
-          this.errorCheck = 'You must accept our privacy policy'
+      if (this.active === 1) {
+        next();
+      }
+      if (this.active === 2) {
+        if (!this.check) this.errorCheck = "You must accept our privacy policy";
         else {
-          const res = await this.$axios.$get('/account/acceptPrivacy')
-          if(!res.error)
-            this.$router.go()
+          const res = await this.$axios.$get("/account/acceptPrivacy");
+          if (!res.error) this.$router.go();
         }
-        
       }
     }
   }

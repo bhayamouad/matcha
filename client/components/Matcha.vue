@@ -12,10 +12,11 @@
       :class="{ 'transition': isVisible }">
       <Vue2InteractDraggable
         v-if="isVisible"
-        :interact-out-of-sight-x-coordinate="500"
+        :interact-out-of-sight-x-coordinate="600"
         :interact-max-rotation="15"
-        :interact-x-threshold="200"
-        :interact-y-threshold="200"
+        :interact-x-threshold="600"
+        :interact-y-threshold="600"
+        :interact-event-bus-events="interactEventBus"
         interact-block-drag-down
         @draggedRight="emitAndNext('match')"
         @draggedLeft="emitAndNext('reject')"
@@ -74,11 +75,11 @@ export default {
         return {
             isVisible: true,
             index: 0,
-    //      interactEventBus: {
-    //         draggedRight: 'match',
-    //         draggedLeft: 'reject',
-    //         draggedUp: 'skip'
-    //       },
+            interactEventBus: {
+                draggedRight: 'match',
+                draggedLeft: 'reject',
+                draggedUp: 'skip'
+              },
             cards: []
         }
     },
@@ -95,13 +96,13 @@ export default {
     },
     methods: {
         match() {
-          InteractEventBus.$emit(EVENTS.MATCH)
+          InteractEventBus.$emit('match')
         },
         reject() {
-          InteractEventBus.$emit(EVENTS.REJECT)
+          InteractEventBus.$emit('reject')
         },
         skip() {
-          InteractEventBus.$emit(EVENTS.SKIP)
+          InteractEventBus.$emit('skip')
         },
         emitAndNext(event) {
             this.$emit(event, this.index)
