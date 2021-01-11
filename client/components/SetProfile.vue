@@ -14,7 +14,7 @@
         :type="{'is-danger': errors.birthdate}" 
         :message="errors.birthdate"
       >
-        <b-datepicker v-model="birthdate" ref="datepicker" :max-date="max" expanded placeholder="Select a date"></b-datepicker>
+        <b-datepicker v-model="birthdate" ref="datepicker" :max-date="max" placeholder="Select a date"></b-datepicker>
         <b-button @click="$refs.datepicker.toggle()" icon-left="calendar-today" type="is-primary" />
       </b-field>
     </client-only>
