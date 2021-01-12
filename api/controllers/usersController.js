@@ -1,16 +1,25 @@
 require('dotenv').config()
 
 const bcrypt = require('bcrypt')
-const cryptoRandomString = require('crypto-random-string')
-const jwt = require('jsonwebtoken')
+const multer  = require('multer')
 
 let token = null
 const User = require('../models/User')
 const Tag = require('../models/Tag')
 const Position = require('../models/Position')
+const Image = require('../models/Image')
 const helpers = require('../tools/helpers')
-const auth = require('../tools/authentification.js')
+const auth = require('../tools/authentification.js')  
 
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, helpers.hashHmacSha256(new Date().getTime().toString()).key+"."+file.mimetype.split('/')[1])
+    }
+})
 // ***********Authorization************
 
 exports.authorize = (req, res, next) => auth.authorize(req, res, next)
@@ -19,11 +28,11 @@ exports.authorized = (req, res) => { res.status(200).send({ state: 'AUTHORIZED',
 
 
 
-// ************************************
+// ************************************ 
 
 
 exports.registerValidation = (req, res, next) => {
-    if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation
+    if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation 
     const { email, login } = req.body;
     User.ifUnique(email, login)
         .then((ret) => {
@@ -225,7 +234,7 @@ exports.setProfile = async (req, res) => {
     if (lat && lng) {
         try {
             const [location] = await helpers.getLocation(lat, lng)
-            pos = new Position({
+            position = new Position({
                 city: `${location.city},${location.country}`,
                 lat,
                 lng,
@@ -236,27 +245,27 @@ exports.setProfile = async (req, res) => {
         }
     }
     else {
-        try {
+        try { 
             const ip = await helpers.getPublicIp()
             const res = await helpers.ipLocationFinderAPI(ip)
-            pos = new Position({
+            position = new Position({
                 city: `${res.data.geo.city},${res.data.geo.country_name}`,
                 lat: res.data.geo.latitude,
                 lng: res.data.geo.longitude,
                 user_id: req.id_user,
             })
             try {
-                await pos.savePosition()
+                await position.save()
             } catch (err) {
-                await Position.updatePosition(pos)
+                await Position.update(position)
             }
         } catch (error) {
-            return res.send({ message: error.message, error: true })
+            return res.send({ message: error.message, error: true }) 
         }
     }
     newTags.forEach(async (tag) => {
         try {
-            await Tag.saveTag(tag)
+            await Tag.save(tag)
         } catch (error) {
             return res.send({ message: error.message, error: true })
         }
@@ -267,18 +276,18 @@ exports.setProfile = async (req, res) => {
 }
 
 exports.getTags = (req, res) => {
-    Tag.getTags()
+    Tag.getAll()
         .then(([tags]) => {
             const tagsList = []
             tags.forEach(tag => {
-                tagsList.push(tag.tag)
+                tagsList.push(tag.tag) 
             });
             res.send({ tags: tagsList })
         })
         .catch(err => res.send({ message: err.message }))
 }
 
-exports.getStatus = (req, res) => {
+exports.getStatus = (req, res) => { 
     User.getStatusById(req.id_user)
         .then(([[user]]) => res.status(200).send({status: user.status, error: false}))
         .catch(err => res.send({ message:err.message, error: true}))
@@ -287,5 +296,28 @@ exports.getStatus = (req, res) => {
 exports.acceptPrivacy = (req, res) => {
     User.setStatusById(req.id_user)
         .then(() => res.status(200).send({error: false}))
-        .catch(err => res.send({message:err.message, error: true}))
+        .catch(err => res.send({message:err.message, error: true}))  
+}
+ 
+exports.saveImages = (req, res) => {   
+    let upload = multer({storage}).array('images',5)
+    upload(req, res, (err) => {
+        const imagesList = req.files
+        imagesList.forEach(async (imageFile, index) => {
+            const image = new Image({
+                path: imageFile.path,
+                user_id: req.id_user,
+                is_profile: index
+            })
+            console.log()
+            // try {
+            //     await image.save()
+            // } catch (error) {
+                
+            // }
+            
+        })
+        res.send({error: false}) 
+    })
+
 }

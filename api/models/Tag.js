@@ -2,11 +2,11 @@ const db = require('../setup/db_connection')
 
 module.exports = class Tag {
 
-static saveTag (tag) {
+static save (tag) {
     return db.execute("INSERT INTO tags (tag) VALUES (?)", [tag])
 }
 
-static getTags () {
+static getAll () {
     return db.execute('SELECT tag FROM tags')
 }
 
