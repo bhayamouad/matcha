@@ -8,11 +8,6 @@
     <transition-group type="transition" class="columns is-multiline" :name="!drag ? 'flip-list' : null">
       <div class="column is-4 " :class="{'draggable':image.url}" v-for="(image, index)  in upoloadImages" :key="image.position">
         <div class="card" aria-id="contentIdForA11y3" >
-          <div class="card-header" role="button" aria-controls="contentIdForA11y3">
-            <p class="card-header-title">
-              <template>Photo {{image.position+1}}</template>
-            </p>
-          </div>
           <div class="card-content">
             <div class="content">
               <input
@@ -45,7 +40,7 @@ export default {
   data() {
     return {
       upoloadImages: images.map((url, index) => {
-        return { url, position: index };
+        return { url, position: index, file: null };
       }),
       drag: false
     };
@@ -82,23 +77,23 @@ export default {
         const fileReader = new FileReader();
         fileReader.addEventListener("load", (e) => {
           this.imageUrl = e.target.result;
-          this.upoloadImages[index].url = this.imageUrl; 
+          this.upoloadImages[index].url = this.imageUrl;
+          this.upoloadImages[index].file = event.target.files[0]
         });
-        images[index] = event.target.files[0]
         fileReader.readAsDataURL(event.target.files[0]);
       }
-      else this.upoloadImages[index].url = null; 
+      else {
+        this.upoloadImages[index].url = null;
+        this.upoloadImages[index].file = null;
+        } 
     },
     async saveImages(){
-      console.log(images)
-      console.log(this.upoloadImages)
-      //   images.forEach(image => formData.append("images", image)) 
-
-      //   const res = await this.$axios.$post("/account/saveImages", formData ,{headers: {'content-Type': 'multipart/form-data' } })
-      //   formData.delete("images");
-      //   if(res.error)
-      //     return false
-      // return true
+        this.upoloadImages.forEach((image,index) => formData.append("images", image))
+        const res = await this.$axios.$post("/account/saveImages", formData ,{headers: {'content-Type': 'multipart/form-data' } })
+        formData.delete("images");
+        if(res.error)
+          return false
+      return true
     }
   } 
 };
