@@ -1,7 +1,4 @@
 const router = require('express').Router()
-const multer  = require('multer')
-
-var upload = multer({ dest: 'uploads/' })
 
 const usersController = require('../controllers/usersController')
 
@@ -25,7 +22,7 @@ router.get('/getTags', usersController.getTags)
 router.get('/getStatus',usersController.authorize, usersController.getStatus)
 router.get('/acceptPrivacy',usersController.authorize, usersController.acceptPrivacy)
 
-router.post('/saveImages', upload.array('images',5), usersController.saveImages) 
+router.post('/saveImages', usersController.authorize, usersController.saveImages) 
 
 
 module.exports = router

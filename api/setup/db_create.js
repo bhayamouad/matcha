@@ -28,7 +28,6 @@ connection.connect(function(err) {
                         status int(1) NOT NULL DEFAULT 0,
                         token varchar(255),
                         expire_token TIMESTAMP DEFAULT NOW(),
-                        profile varchar(255),
                         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
                         updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
                   );`);

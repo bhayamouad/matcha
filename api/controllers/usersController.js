@@ -1,17 +1,25 @@
 require('dotenv').config()
 
 const bcrypt = require('bcrypt')
-
+const multer  = require('multer')
 
 let token = null
 const User = require('../models/User')
 const Tag = require('../models/Tag')
-const Position = require('../models/Position') 
+const Position = require('../models/Position')
+const Image = require('../models/Image')
 const helpers = require('../tools/helpers')
 const auth = require('../tools/authentification.js')  
 
 
-
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, helpers.hashHmacSha256(new Date().getTime().toString()).key+"."+file.mimetype.split('/')[1])
+    }
+})
 // ***********Authorization************
 
 exports.authorize = (req, res, next) => auth.authorize(req, res, next)
@@ -226,7 +234,7 @@ exports.setProfile = async (req, res) => {
     if (lat && lng) {
         try {
             const [location] = await helpers.getLocation(lat, lng)
-            pos = new Position({
+            position = new Position({
                 city: `${location.city},${location.country}`,
                 lat,
                 lng,
@@ -240,16 +248,16 @@ exports.setProfile = async (req, res) => {
         try { 
             const ip = await helpers.getPublicIp()
             const res = await helpers.ipLocationFinderAPI(ip)
-            pos = new Position({
+            position = new Position({
                 city: `${res.data.geo.city},${res.data.geo.country_name}`,
                 lat: res.data.geo.latitude,
                 lng: res.data.geo.longitude,
                 user_id: req.id_user,
             })
             try {
-                await pos.savePosition()
+                await position.save()
             } catch (err) {
-                await Position.updatePosition(pos)
+                await Position.update(position)
             }
         } catch (error) {
             return res.send({ message: error.message, error: true }) 
@@ -257,7 +265,7 @@ exports.setProfile = async (req, res) => {
     }
     newTags.forEach(async (tag) => {
         try {
-            await Tag.saveTag(tag)
+            await Tag.save(tag)
         } catch (error) {
             return res.send({ message: error.message, error: true })
         }
@@ -268,7 +276,7 @@ exports.setProfile = async (req, res) => {
 }
 
 exports.getTags = (req, res) => {
-    Tag.getTags()
+    Tag.getAll()
         .then(([tags]) => {
             const tagsList = []
             tags.forEach(tag => {
@@ -279,7 +287,7 @@ exports.getTags = (req, res) => {
         .catch(err => res.send({ message: err.message }))
 }
 
-exports.getStatus = (req, res) => {
+exports.getStatus = (req, res) => { 
     User.getStatusById(req.id_user)
         .then(([[user]]) => res.status(200).send({status: user.status, error: false}))
         .catch(err => res.send({ message:err.message, error: true}))
@@ -292,6 +300,24 @@ exports.acceptPrivacy = (req, res) => {
 }
  
 exports.saveImages = (req, res) => {   
-    console.log(req.files, 'file')
-    res.send({error: false})
+    let upload = multer({storage}).array('images',5)
+    upload(req, res, (err) => {
+        const imagesList = req.files
+        imagesList.forEach(async (imageFile, index) => {
+            const image = new Image({
+                path: imageFile.path,
+                user_id: req.id_user,
+                is_profile: index
+            })
+            console.log()
+            // try {
+            //     await image.save()
+            // } catch (error) {
+                
+            // }
+            
+        })
+        res.send({error: false}) 
+    })
+
 }
