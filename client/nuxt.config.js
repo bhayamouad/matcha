@@ -19,6 +19,9 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' }
     ],
+    script: [
+      {src: 'https://kit.fontawesome.com/58266b08e8.js', crossorigin: "anonymous"}
+    ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
       { rel: 'stylesheet', href:'https://fonts.googleapis.com/icon?family=Material+Icons'}

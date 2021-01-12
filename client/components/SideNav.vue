@@ -2,10 +2,10 @@
   <div id="thenav">
      <a id="home-link" href="/"> <div id="logo"><img src="@/assets/logo-small.svg"></div></a>
      <ul>
-         <li><i class="fas fa-hashtag"></i>LINK 1</li>
-         <li>LINK 2</li>
-         <li>LINK 3</li>
-         <li>LINK 4</li>
+         <a href="#Home"><li><i class="fas fa-home"></i>Home</li></a>
+         <a href="#Messages"><li><i class="fas fa-envelope"></i>Messages</li></a>
+         <a href="#Notifications"><li><i class="fas fa-bell"></i>Notifications</li></a>
+         <a href="#Settings"><li><i class="fas fa-cog"></i>Settings</li></a>
      </ul>
   </div>
   
