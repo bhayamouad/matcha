@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="steps-id">
     <b-steps :type="stepType" size="is-medium" v-model="active">
       <b-step-item label="Account" icon="account-key" :clickable="isStepsClickable">
         <set-profile ref="child" />
@@ -109,5 +109,14 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style>
+#steps-id{
+  padding: 20px 60px;
+  max-width: 1200px;
+  width: 80%;
+  margin: auto;
+}
+b-steps{
+  width: 200px;
+}
 </style>
