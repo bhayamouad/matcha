@@ -1,15 +1,16 @@
 require('dotenv').config()
 
 const bcrypt = require('bcrypt')
-const cryptoRandomString = require('crypto-random-string')
-const jwt = require('jsonwebtoken')
+
 
 let token = null
 const User = require('../models/User')
 const Tag = require('../models/Tag')
-const Position = require('../models/Position')
+const Position = require('../models/Position') 
 const helpers = require('../tools/helpers')
-const auth = require('../tools/authentification.js')
+const auth = require('../tools/authentification.js')  
+
+
 
 // ***********Authorization************
 
@@ -19,11 +20,11 @@ exports.authorized = (req, res) => { res.status(200).send({ state: 'AUTHORIZED',
 
 
 
-// ************************************
+// ************************************ 
 
 
 exports.registerValidation = (req, res, next) => {
-    if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation
+    if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation 
     const { email, login } = req.body;
     User.ifUnique(email, login)
         .then((ret) => {
@@ -236,7 +237,7 @@ exports.setProfile = async (req, res) => {
         }
     }
     else {
-        try {
+        try { 
             const ip = await helpers.getPublicIp()
             const res = await helpers.ipLocationFinderAPI(ip)
             pos = new Position({
@@ -251,7 +252,7 @@ exports.setProfile = async (req, res) => {
                 await Position.updatePosition(pos)
             }
         } catch (error) {
-            return res.send({ message: error.message, error: true })
+            return res.send({ message: error.message, error: true }) 
         }
     }
     newTags.forEach(async (tag) => {
@@ -271,7 +272,7 @@ exports.getTags = (req, res) => {
         .then(([tags]) => {
             const tagsList = []
             tags.forEach(tag => {
-                tagsList.push(tag.tag)
+                tagsList.push(tag.tag) 
             });
             res.send({ tags: tagsList })
         })
@@ -287,5 +288,10 @@ exports.getStatus = (req, res) => {
 exports.acceptPrivacy = (req, res) => {
     User.setStatusById(req.id_user)
         .then(() => res.status(200).send({error: false}))
-        .catch(err => res.send({message:err.message, error: true}))
+        .catch(err => res.send({message:err.message, error: true}))  
+}
+ 
+exports.saveImages = (req, res) => {   
+    console.log(req.files, 'file')
+    res.send({error: false})
 }

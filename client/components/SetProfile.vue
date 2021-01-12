@@ -156,7 +156,6 @@ export default {
         if(res.message === 'success')
           return true
       }
-      else
         return false
     }
   }

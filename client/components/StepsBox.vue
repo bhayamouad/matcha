@@ -2,10 +2,10 @@
   <div>
     <b-steps :type="stepType" size="is-medium" v-model="active">
       <b-step-item label="Account" icon="account-key" :clickable="isStepsClickable">
-        <set-profile ref="child" />
+        <set-profile ref="setProfileChild" />
       </b-step-item>
       <b-step-item label="Pictures" icon="image" :clickable="isStepsClickable">
-          <image-upload></image-upload>
+          <image-upload ref="imageUploadChild"></image-upload>
       </b-step-item>
       <b-step-item label="Profile" icon="account" :clickable="isStepsClickable">
         <div class>
@@ -69,7 +69,7 @@ export default {
       return this.active === 0 ? true : false;
     },
     stepType() {
-      if (this.error === null) return "";
+      if (this.error !== true) return "";
       else return "is-danger";
     }
   },
@@ -85,17 +85,23 @@ export default {
   methods: {
     async send(next) {
       if (this.active === 0) {
-        // const check = await this.$refs.child.setProfile();
+        // const check = await this.$refs.setProfileChild.setProfile()
         // if (check) {
         //     this.error = false
         //     next();
         // }
         // else
         //   this.error = true
-        next();
+        next()
       }
       if (this.active === 1) {
-        next();
+        const check = await this.$refs.imageUploadChild.saveImages()
+        if (check) {
+          this.error = false
+          next()
+        }
+        else
+          this.error = true
       }
       if (this.active === 2) {
         if (!this.check) this.errorCheck = "You must accept our privacy policy";
