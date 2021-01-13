@@ -1,5 +1,6 @@
 require('dotenv').config()
 
+const fs = require('fs')
 const bcrypt = require('bcrypt')
 const multer  = require('multer')
 
@@ -296,27 +297,34 @@ exports.getStatus = (req, res) => {
 exports.acceptPrivacy = (req, res) => {
     User.setStatusById(req.id_user)
         .then(() => res.status(200).send({error: false}))
-        .catch(err => res.send({message:err.message, error: true}))  
+        .catch(err => res.send({message:err.message, error: true}))   
 }
  
-exports.saveImages = (req, res) => {   
-    let upload = multer({storage}).array('images',5)
-    upload(req, res, (err) => {
-        const imagesList = req.files
-        imagesList.forEach(async (imageFile, index) => {
-            const image = new Image({
-                path: imageFile.path,
-                user_id: req.id_user,
-                is_profile: index
+exports.saveImages = (req, res) => {
+    Image.getUserImages(req.id_user)
+        .then(([userImages]) => {
+            let upload = multer({storage}).array('images',5) 
+            upload(req, res, async (err) => {
+                let imagesList = req.files  
+                if(userImages.length > 0){  
+                    userImages.forEach( (image) => {  
+                        Image.updateImage(image.is_profile, imagesList[image.is_profile].path)
+                        .then(()=>{
+                            imagesList.splice(0, 1) 
+                            fs.unlinkSync(image.path)  
+                        })
+                        .catch(err => console.log("ERROR UPDATE"))
+                    })
+                }
+                imagesList.forEach(async (imageFile, index) => {  
+                    const image = new Image({
+                        path: imageFile.path,
+                        user_id: req.id_user,
+                        is_profile: index 
+                    })
+                    await image.save()  
+                })
             })
-            console.log()
-            // try {
-            //     await image.save()
-            // } catch (error) {
-                
-            // }
-            
-        })
         res.send({error: false}) 
     })
 

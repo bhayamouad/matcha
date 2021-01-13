@@ -88,7 +88,7 @@ export default {
         } 
     },
     async saveImages(){
-        this.upoloadImages.forEach((image,index) => formData.append("images", image))
+        this.upoloadImages.forEach((image,index) => formData.append("images", image.file))
         const res = await this.$axios.$post("/account/saveImages", formData ,{headers: {'content-Type': 'multipart/form-data' } })
         formData.delete("images");
         if(res.error)
