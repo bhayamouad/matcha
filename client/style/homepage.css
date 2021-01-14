@@ -52,7 +52,8 @@ html, body{
     border-radius: 20px;
     background-color: white;
     max-width: 400px;
-    width: 85%;
+    width: 90%;
+    margin: auto;
 }
 #blogo{
     user-select: none;

@@ -1,7 +1,7 @@
 <template>
   <section> 
-    <steps v-if="status === 1"/>
-    <Matcha v-if="status !== 1"/>
+    <steps v-if="status"/>
+    <Matcha v-if="!status"/>
   </section>
 </template>
 
@@ -27,7 +27,10 @@ export default {
   },
   async fetch () {
     const res = await this.$axios.$get('/account/getStatus')
-    this.status = res.status
+    if(res.status == 1)
+      this.status = 1;
+    else
+      this.status = 0;
   },
   methods: {
   },
