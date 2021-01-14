@@ -18,7 +18,9 @@
                 accept="image/*"
                 @change="onFilePicked($event,index)"
               />
-              <span class="material-icons" @click="uploadClick(index)">add_circle_outline</span>
+
+              <span v-if="image.url" class="material-icons" @click="deleteImage(index)">clear</span>
+              <span v-else class="material-icons" @click="uploadClick(index)">add_circle_outline</span>
               <img :src="image.url" alt />
             </div>
           </div>
@@ -71,6 +73,13 @@ export default {
         return
       }
     },
+    deleteImage(index){
+       this.$delete(this.upoloadImages, index)
+       this.upoloadImages.forEach((image,i) => {
+         image.position = i
+       })
+      this.upoloadImages.push({url:null,position:4,file:null})
+    },
     onFilePicked(event,index) {
       const files = event.target.files;
       if (files.length) {
@@ -95,6 +104,7 @@ export default {
           return false
       return true
     }
+    
   } 
 };
 </script>

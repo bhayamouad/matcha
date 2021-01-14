@@ -14,11 +14,11 @@ module.exports = class Image {
     return db.execute("UPDATE images SET path = ? WHERE is_profile = ?", [path, pos])
   }
 
-  static deleteUserImages(id){
-    return db.execute("DELETE FROM images WHERE user_id = ?", [id]) 
+  static deleteUserImages(id,limit){
+    return db.execute("DELETE FROM images WHERE user_id = ? ORDER BY id_image DESC LIMIT ?", [id,limit]) 
   }
 
   static getUserImages(id){
-    return db.execute("SELECT * FROM images WHERE user_id = ?", [id])
+    return db.execute("SELECT * FROM images WHERE user_id = ? ", [id])
   }
 }

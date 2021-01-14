@@ -306,24 +306,36 @@ exports.saveImages = (req, res) => {
             let upload = multer({storage}).array('images',5) 
             upload(req, res, async (err) => {
                 let imagesList = req.files  
-                if(userImages.length > 0){  
-                    userImages.forEach( (image) => {  
+                if(userImages.length === 0){ 
+                    imagesList.forEach(async (imageFile, index) => {  
+                        const image = new Image({
+                            path: imageFile.path,
+                            user_id: req.id_user,
+                            is_profile: index 
+                        })
+                        await image.save()  
+                    })
+                }
+                else {
+                    userImages.forEach( (image,index) => {  
                         Image.updateImage(image.is_profile, imagesList[image.is_profile].path)
                         .then(()=>{
                             imagesList.splice(0, 1) 
-                            fs.unlinkSync(image.path)  
-                        })
+                            fs.unlinkSync(image.path)
+                            if(index+1 === userImages.length){
+                                imagesList.forEach(async (imageFile) => {   
+                                    const image = new Image({
+                                        path: imageFile.path,
+                                        user_id: req.id_user,
+                                        is_profile: ++index
+                                    })
+                                    await image.save()  
+                                })
+                            }
+                        }) 
                         .catch(err => console.log("ERROR UPDATE"))
                     })
                 }
-                imagesList.forEach(async (imageFile, index) => {  
-                    const image = new Image({
-                        path: imageFile.path,
-                        user_id: req.id_user,
-                        is_profile: index 
-                    })
-                    await image.save()  
-                })
             })
         res.send({error: false}) 
     })
