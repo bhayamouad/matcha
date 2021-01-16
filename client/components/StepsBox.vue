@@ -10,7 +10,7 @@
       <b-step-item label="Profile" icon="account" :clickable="isStepsClickable">
         <div class>
           <div class>
-            <span id="slogan">Our Commitment To You</span>
+            <span id="lstep-title">Our Commitment To You</span>
             <br />
             <br />
             <span>
@@ -115,14 +115,6 @@ export default {
 };
 </script>
 
-<style>
-#steps-id{
-  padding: 20px 60px;
-  max-width: 1200px;
-  width: 80%;
-  margin: auto;
-}
-b-steps{
-  width: 200px;
-}
+<style src="@/style/steps.css">
+
 </style>

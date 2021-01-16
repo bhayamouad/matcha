@@ -32,6 +32,6 @@ export default {
 }
 </script>
 
-<style src="@/style/sidenav.scss" lang="scss">
+<style src="@/style/sidenav.css">
 
 </style>

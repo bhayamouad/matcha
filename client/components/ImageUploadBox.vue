@@ -19,8 +19,8 @@
                 @change="onFilePicked($event,index)"
               />
 
-              <span v-if="image.url" class="material-icons" @click="deleteImage(index)">clear</span>
-              <span v-else class="material-icons" @click="uploadClick(index)">add_circle_outline</span>
+              <span v-if="image.url" class="material-icons del-icons" @click="deleteImage(index)">clear</span>
+              <span v-else class="material-icons up-icons" @click="uploadClick(index)">add_circle_outline</span>
               <img :src="image.url" alt />
             </div>
           </div>

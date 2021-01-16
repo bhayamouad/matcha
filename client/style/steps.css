@@ -1,0 +1,32 @@
+#steps-id{
+    padding: 10px 60px;
+    max-width: 1200px;
+    width: 100%;
+    margin: auto;
+}
+b-steps{
+width: 200px;
+}
+
+.up-icons{
+    color: var(--main-color);
+    font-size: 30px;
+}
+.del-icons{
+    color: var(--main-color);
+    font-size: 30px;
+}
+#lstep-title{
+    font-size: 30px;
+    font-weight: 600;
+}
+.card{
+    max-width: 280px;
+    margin: auto;
+}
+@media (max-width: 800px)
+{
+    #steps-id{
+        padding: 10px 0px;
+    }
+}
