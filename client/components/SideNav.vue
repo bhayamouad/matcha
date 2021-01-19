@@ -2,7 +2,7 @@
   <div id="thenav">
       <div id="logo"><a id="home-link" href="/"> <img src="@/assets/logo-small.svg"></a></div>
      <ul>
-         <a href="#Home"><li><i class="fas fa-home"></i><span class="pg-title">Home</span></li></a>
+         <a href="/"><li><i class="fas fa-home"></i><span class="pg-title">Home</span></li></a>
          <a href="#Messages"><li><i class="fas fa-envelope"></i><span class="pg-title">Messages</span></li></a>
          <a href="#Notifications"><li><i class="fas fa-bell"></i><span class="pg-title">Notifications</span></li></a>
           <a href="#Profile"><li><i class="fas fa-user"></i><span class="pg-title">Profile</span></li></a>
