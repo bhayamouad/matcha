@@ -2,7 +2,8 @@
   <div class="the-box">
     <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
     <div id="login-form" @keyup.enter="register">
-      <b-field label="" 
+      <div id="fname">
+      <b-field label="" id="fname1"
         :type="{'is-danger': errors.fname}"
         :message="errors.fname"
         > 
@@ -14,6 +15,7 @@
       >
         <b-input v-model="user.lname" placeholder="Last Name" maxlength="25"></b-input>
       </b-field>
+      </div>
       <b-field label="" 
         :type="{'is-danger': errors.email}"
         :message="errors.email"
@@ -198,4 +200,16 @@ export default {
 </script>
 
 <style>
+#fname{
+  display: flex;
+}
+#fname1{
+  margin-right: 10px;
+}
+#fname .counter{
+  display: none;
+}
+#fname p{
+  margin-bottom: 3px;
+}
 </style>

@@ -45,7 +45,7 @@ const authorize = (req, res, next)=>{
                     throw Error('wrong token type'); 
                 User.getById(refPayload.id_user)
                 .then(([[user]]) =>{
-                    if(refPayload.key == cryptSHA265(user.id_user+user.password))
+                    if(user && refPayload.key == cryptSHA265(user.id_user+user.password))
                     {
                         const newAccTok = createAccToken(user)
                         res.cookie('accTok', newAccTok, {httpOnly: true, maxAge:1000 * 60 * 15})
