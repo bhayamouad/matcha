@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const fs = require('fs')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt') 
 const multer  = require('multer')
 
 let token = null
@@ -317,24 +317,29 @@ exports.saveImages = (req, res) => {
                     })
                 }
                 else {
-                    userImages.forEach( (image,index) => {  
-                        Image.updateImage(image.is_profile, imagesList[image.is_profile].path)
-                        .then(()=>{
-                            imagesList.splice(0, 1) 
-                            fs.unlinkSync(image.path)
-                            if(index+1 === userImages.length){
-                                imagesList.forEach(async (imageFile) => {   
-                                    const image = new Image({
-                                        path: imageFile.path,
-                                        user_id: req.id_user,
-                                        is_profile: ++index
+                    const limit = userImages.length - imagesList.length
+                    if (limit > 0)
+                        await Image.deleteUserImages(req.id_user, limit)
+                    else{
+                        userImages.forEach( (image,index) => {  
+                            Image.updateImage(image.is_profile, imagesList[image.is_profile].path)
+                            .then(()=>{
+                                imagesList.splice(0, 1) 
+                                fs.unlinkSync(image.path)
+                                if(index+1 === userImages.length){
+                                    imagesList.forEach(async (imageFile) => {   
+                                        const image = new Image({
+                                            path: imageFile.path,
+                                            user_id: req.id_user,
+                                            is_profile: ++index
+                                        })
+                                        await image.save()  
                                     })
-                                    await image.save()  
-                                })
-                            }
-                        }) 
-                        .catch(err => console.log("ERROR UPDATE"))
-                    })
+                                }
+                            }) 
+                            .catch(err => console.log("ERROR UPDATE"))
+                        })
+                    }
                 }
             })
         res.send({error: false}) 

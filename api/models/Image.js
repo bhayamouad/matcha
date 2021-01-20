@@ -15,7 +15,7 @@ module.exports = class Image {
   }
 
   static deleteUserImages(id,limit){
-    return db.execute("DELETE FROM images WHERE user_id = ? ORDER BY id_image DESC LIMIT ?", [id,limit]) 
+    return db.execute(`DELETE FROM images WHERE user_id = ? ORDER BY id_image DESC LIMIT ${limit}`, [id]) 
   }
 
   static getUserImages(id){
