@@ -21,8 +21,7 @@ app.use(cookieParser())
 
 
 app.get('/test', (req, res)=> {
-  // console.log('Cookies: ', req.cookies)
-  res.send("The API is running!")
+  res.send(`The API is running!`)
 })
 const usersRouter = require('./routes/usersRouter')
 

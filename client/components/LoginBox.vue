@@ -22,7 +22,9 @@
         <NuxtLink to="/reset">Forgot password ?</NuxtLink>
       </div>
       <b-button @click="login" type="is-primary" expanded>Login</b-button>
+        <authbtn></authbtn>
     </div>
+
     <div id="buttom-links">
       Dont have an account?&nbsp;
       <NuxtLink to="/register">Sign Up</NuxtLink>
@@ -32,6 +34,7 @@
 
 <script>
 import { mapMutations } from 'vuex'
+import authbtn from '@/components/AuthBtns.vue';
 
 const validateLogin = login => {
   if (!login) return { valid: false, error: "Please fill out this field." };
@@ -55,6 +58,7 @@ export default {
       errors: {}
     };
   },
+  components: {authbtn},
   methods: {
     ...mapMutations({
       logInAuth: 'auth/logIn',
