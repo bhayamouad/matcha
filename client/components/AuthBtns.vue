@@ -1,7 +1,7 @@
 <template>
   <div id="auth-cmp">
-      <a :href=fbLink><div id="fb-btn" > <i class="fab fa-facebook-f"></i> Facebook</div></a>
-      <a :href=gglLink><div id="ggl-btn"><i class="fab fa-google"></i> Google</div></a>
+      <a :href=fbLink><div id="fb-btn" > <i class="fab fa-facebook-f"></i> &nbsp;Facebook</div></a>
+      <a :href=gglLink><div id="ggl-btn"><i class="fab fa-google"></i> &nbsp;Google</div></a>
   </div>
 </template>
 
@@ -19,7 +19,7 @@ export default {
         gglParams(){
             return queryString.stringify({
                 client_id: `662979618051-fnrho7ms8fjcaaa8vkako0mpe5c51va5.apps.googleusercontent.com`,
-                redirect_uri: 'https://localhost:8080',
+                redirect_uri: 'https://localhost:8080/oauth/google',
                 scope: [
                     'https://www.googleapis.com/auth/userinfo.email',
                     'https://www.googleapis.com/auth/userinfo.profile',
@@ -32,7 +32,7 @@ export default {
         fbParams(){
             return queryString.stringify({
                 client_id: '425669022113452',
-                redirect_uri: 'https://localhost:8080',
+                redirect_uri: 'https://localhost:8080/oauth/facebook',
                 scope: ['email'],
                 response_type: 'code',
                 auth_type: 'rerequest',
@@ -40,6 +40,8 @@ export default {
         }
     }
 }
+
+
 </script>
 
 <style>
@@ -48,7 +50,7 @@ export default {
     display: grid;
     grid-template-areas:
     'fbb gglb';
-    grid-gap: 12px;
+    grid-gap: 10px;
     padding: 10px 0px;
     width: 100%;
     max-width: 400px;
@@ -57,9 +59,11 @@ export default {
 }
 #fb-btn,#ggl-btn{
     font-size: 1rem;
-    padding: 7px 25px;
+    padding: 7px 0px;
     border-radius: 3px;
     color: white;
+    width: 100%;
+    text-align: center;
 }
 #ggl-btn{
     background-color: #DB4437;

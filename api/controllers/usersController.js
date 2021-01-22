@@ -3,6 +3,7 @@ require('dotenv').config()
 const fs = require('fs')
 const bcrypt = require('bcrypt') 
 const multer  = require('multer')
+const axios = require('axios')
 
 let token = null
 const User = require('../models/User')
@@ -10,7 +11,7 @@ const Tag = require('../models/Tag')
 const Position = require('../models/Position')
 const Image = require('../models/Image')
 const helpers = require('../tools/helpers')
-const auth = require('../tools/authentification.js')  
+const auth = require('../tools/authentication.js')  
 
 
 const storage = multer.diskStorage({
@@ -30,6 +31,48 @@ exports.authorized = (req, res) => { res.status(200).send({ state: 'AUTHORIZED',
 
 
 // ************************************ 
+
+exports.gglOauth = (req, res) => {
+    // console.log(req.body)
+    // res.send(req.body)
+    const code = req.body.code
+    axios({
+        url: `https://oauth2.googleapis.com/token`,
+        method: 'post',
+        data: {
+          client_id: process.env.CLIENT_GGL_ID,
+          client_secret: process.env.CLIENT_GGL_KEY,
+          redirect_uri: 'https://localhost:8080/oauth/google',
+          grant_type: 'authorization_code',
+          code,
+        },
+      }).then(({data})=>{
+          return data.access_token;
+      }).then((access_token)=>{
+          return axios({
+            url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+            method: 'get',
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          });
+      }).then(({data})=>{
+          console.log(dataq)
+      })
+      .catch(()=>{
+          console.log('error')
+      })
+}
+
+exports.fbOauth = (req, res) => {
+    console.log(req.body)
+    res.send(req.body)
+}
+// ************Oauth**************** 
+
+
+// *********************************
+
 
 
 exports.registerValidation = (req, res, next) => {
