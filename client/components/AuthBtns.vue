@@ -20,10 +20,7 @@ export default {
             return queryString.stringify({
                 client_id: `662979618051-fnrho7ms8fjcaaa8vkako0mpe5c51va5.apps.googleusercontent.com`,
                 redirect_uri: 'https://localhost:8080/oauth/google',
-                scope: [
-                    'https://www.googleapis.com/auth/userinfo.email',
-                    'https://www.googleapis.com/auth/userinfo.profile',
-                ].join(' '),
+                scope: 'email profile',
                 response_type: 'code',
                 access_type: 'offline',
                 prompt: 'consent',
@@ -33,7 +30,7 @@ export default {
             return queryString.stringify({
                 client_id: '425669022113452',
                 redirect_uri: 'https://localhost:8080/oauth/facebook',
-                scope: ['email'],
+                scope: ['email','user_birthday','user_gender'],
                 response_type: 'code',
                 auth_type: 'rerequest',
             });

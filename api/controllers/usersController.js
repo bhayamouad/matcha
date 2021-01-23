@@ -57,7 +57,7 @@ exports.gglOauth = (req, res) => {
             },
           });
       }).then(({data})=>{
-          console.log(dataq)
+          console.log(data)
       })
       .catch(()=>{
           console.log('error')
@@ -65,8 +65,31 @@ exports.gglOauth = (req, res) => {
 }
 
 exports.fbOauth = (req, res) => {
-    console.log(req.body)
-    res.send(req.body)
+    const code = req.body.code
+    axios({
+        url: 'https://graph.facebook.com/v4.0/oauth/access_token',
+        method: 'get',
+        params: {
+          client_id: process.env.CLIENT_FB_ID,
+          client_secret: process.env.CLIENT_FB_KEY,
+          redirect_uri: 'https://localhost:8080/oauth/facebook',
+          code,
+        },
+      }).then(({data})=>{
+          return axios({
+            url: 'https://graph.facebook.com/me',
+            method: 'get',
+            params: {
+            fields: ['id', 'email', 'first_name', 'last_name', 'birthday', 'gender'].join(','),
+            access_token: data.access_token,
+                }
+          })
+      }).then(({data})=>{
+          console.log(data)
+      }).catch(()=>{
+          console.log('error')
+      })
+
 }
 // ************Oauth**************** 
 
