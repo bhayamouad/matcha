@@ -12,25 +12,13 @@ export default {
             }
   },
  async beforeCreate(){
-    if(this.$route.params.authsrc == 'google')
+    if(this.$route.params.authsrc == 'google' && this.$route.query.code)
     {
-        if (this.$route.query.code)
-        {
-        const res = await this.$axios.$post('/account/oauth/google', {code : this.$route.query.code})
-        }
-        else{
-        this.$router.push('/')
-        }
+      const res = await this.$axios.$post('/account/oauth/google', {code : this.$route.query.code})
     }
-    else if(this.$route.params.authsrc == 'facebook')
+    else if(this.$route.params.authsrc == 'facebook' && this.$route.query.code)
     {
-        if (this.$route.query.code)
-        {
-          const res = await this.$axios.$post('/account/oauth/facebook', {code : this.$route.query.code})
-        }
-        else{
-          this.$router.push('/')
-        }
+      const res = await this.$axios.$post('/account/oauth/facebook', {code : this.$route.query.code})
     }
     else{
       this.$router.push('/')
