@@ -42,7 +42,7 @@ exports.gglOauth = (req, res) => {
         data: {
           client_id: process.env.CLIENT_GGL_ID,
           client_secret: process.env.CLIENT_GGL_KEY,
-          redirect_uri: 'https://localhost:8080/oauth/google',
+          redirect_uri: `${process.env.CLIENT_URL}/oauth/google`,
           grant_type: 'authorization_code',
           code,
         },
@@ -72,7 +72,7 @@ exports.fbOauth = (req, res) => {
         params: {
           client_id: process.env.CLIENT_FB_ID,
           client_secret: process.env.CLIENT_FB_KEY,
-          redirect_uri: 'https://localhost:8080/oauth/facebook',
+          redirect_uri: `${process.env.CLIENT_URL}/oauth/facebook`,
           code,
         },
       }).then(({data})=>{
@@ -98,7 +98,7 @@ exports.fbOauth = (req, res) => {
 
 
 
-exports.registerValidation = (req, res, next) => {
+exports.registerValidation = (req, res, next) => { 
     if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation 
     const { email, login } = req.body;
     User.ifUnique(email, login)
@@ -151,7 +151,7 @@ exports.verifyAccount = (req, res) => {
     User.getByToken(token)
         .then(([[user]]) => {
             if (user.status == 0) {
-                const now = new Date().getTime()
+                const now = new Date().getTime() 
                 const update = new Date(user.expire_token)
                 const diff = Math.floor((now - update) / 60000)
                 if (diff <= 60 * 24) {

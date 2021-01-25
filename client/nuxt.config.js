@@ -1,6 +1,9 @@
 import fs from 'fs'
 export default {
   // server config
+  publicRuntimeConfig: {
+    clientURL: process.env.CLIENT_URL
+  },
   server: {
     https: {
       key: fs.readFileSync('/etc/ssl/private/matchasigned.key'),
