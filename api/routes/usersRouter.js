@@ -26,5 +26,7 @@ router.post('/saveImages', usersController.authorize, usersController.saveImages
 router.post('/oauth/google', usersController.gglOauth)
 router.post('/oauth/facebook', usersController.fbOauth)
 
+router.get('/loggedUser', usersController.authorize, usersController.getLoggedUser)
+
 
 module.exports = router

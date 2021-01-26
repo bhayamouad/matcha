@@ -11,7 +11,7 @@ const app = express()
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-
+app.use(express.static('uploads'));
 const corsOptions = {
   origin: process.env.CLIENT_URL,
   credentials: true,

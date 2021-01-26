@@ -41,12 +41,12 @@
         </div>
       </transition-group>
     </draggable>
-    <b-modal v-model="isImageModalActive" :can-cancel="['x', 'escape']">
+    <b-modal v-model="isImageModalActive" :can-cancel="['x', 'escape']" :on-cancel="cancel">
       <div>
         <cropper
           ref="cropper"
-          v-if="uploadImages[openModel]"
-          :src="uploadImages[openModel].url"
+          v-if="uploadImages[openModal]"
+          :src="uploadImages[openModal].url"
           :auto-zoom="true"
           :stencil-props="{
 		        aspectRatio: 2/3,
@@ -54,7 +54,7 @@
           
         />
         <div class="button-wrapper">
-          <span class="button" @click="crop(openModel)">Add Photo</span>
+          <span class="button" @click="crop(openModal)">Add Photo</span>
         </div>
       </div>
     </b-modal>
@@ -88,7 +88,7 @@ export default {
       }),
       drag: false,
       isImageModalActive: false,
-      openModel: null
+      openModal: null
     };
   },
   computed: {
@@ -133,7 +133,7 @@ export default {
           this.uploadImages[index].url = e.target.result;
           this.uploadImages[index].file = event.target.files[0];
           this.isImageModalActive = true;
-          this.openModel = index;
+          this.openModal = index;
         });
         fileReader.readAsDataURL(event.target.files[0]);
       } else {
@@ -163,6 +163,10 @@ export default {
         this.uploadImages[index].file.name,
         ext
       ).then( (file) => this.uploadImages[index].file = file)
+    },
+    cancel(){
+      this.uploadImages[this.openModal].url = null;
+      this.uploadImages[this.openModal].file = null;
     }
   }
 };

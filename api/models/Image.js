@@ -21,4 +21,7 @@ module.exports = class Image {
   static getUserImages(id){
     return db.execute("SELECT * FROM images WHERE user_id = ? ", [id])
   }
+  static getUserProfile(id){
+    return db.execute("SELECT * FROM images where user_id = ? AND is_profile = 0", [id])
+  }
 }

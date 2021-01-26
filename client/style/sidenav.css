@@ -62,7 +62,7 @@
     grid-template-areas:
     'lgimg lgname lgbtn'
     'lgimg lguname lgbtn';
-    grid-column-gap: 12px;
+    grid-column-gap: 9px;
     padding: 5px 8px;
     margin: auto 20px 40px 15px;
     border-radius: 50px;
@@ -76,15 +76,22 @@
 #logout-btn:hover span{
     color:rgb(195, 7, 63);
 }
-
-
-#profile-img{
+#lgo-img{
     grid-area: lgimg;
-    width: 2.7rem;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
     border-radius: 50%;
-    margin: auto;
+
+}
+.lgo-img-icon{
+    background-color: #eee;
+    display: grid;
+}
+.profile-img{
+    width: 100%;
+    height: auto;
     vertical-align: middle;
-    /* margin-right: 12px; */
 }
 #lgo-name{
     grid-area: lgname;
@@ -126,7 +133,6 @@
         width: 50px;
         height: 50px;
         margin-top: 12px;
-     /* padding: 0px; */
     }
     #thenav li i{
         margin-left: 14px;
@@ -145,6 +151,16 @@
         margin-top: 10px;
         margin-left: 2px;
     }
-    
+    #lgo-img{
+        display: block;
+    }
+    .lgo-img-icon{
+        background-color: initial;
+        display: block;
+    }
+    #lgo-img{
+        width: 25px;
+        height: 25px;
+    }
 
 }

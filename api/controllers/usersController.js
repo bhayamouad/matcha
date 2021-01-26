@@ -375,7 +375,7 @@ exports.saveImages = (req, res) => {
                 if(userImages.length === 0){ 
                     imagesList.forEach(async (imageFile, index) => {  
                         const image = new Image({
-                            path: imageFile.path,
+                            path: imageFile.path.split('/')[1],
                             user_id: req.id_user,
                             is_profile: index 
                         })
@@ -395,20 +395,39 @@ exports.saveImages = (req, res) => {
                                 if(index+1 === userImages.length){
                                     imagesList.forEach(async (imageFile) => {   
                                         const image = new Image({
-                                            path: imageFile.path,
+                                            path: imageFile.path.split('/')[1],
                                             user_id: req.id_user,
                                             is_profile: ++index
                                         })
-                                        await image.save()  
+                                        await image.save() 
                                     })
                                 }
                             }) 
-                            .catch(err => console.log("ERROR UPDATE"))
+                            .catch(err => console.log("ERROR UPDATE"))   
                         })
                     }
                 }
             })
         res.send({error: false}) 
     })
+}
 
+exports.getLoggedUser = async (req, res) => {
+    let loggedUser = {
+        name: null,
+        username: null,
+        profile: null
+    }
+    const [[user]] = await User.getById(req.id_user).catch(err => console.log(err.message))
+    const [[profile]] = await Image.getUserProfile(req.id_user).catch(err => console.log(err.message))
+    if(user){
+        loggedUser.name = `${helpers.capitalize(user.fname)} ${helpers.capitalize(user.lname)}`
+        loggedUser.username = user.login
+    }
+    if(profile)
+        loggedUser.profile = `${process.env.API_URL}/${profile.path}`
+    if(user || profile)
+        res.status(200).send({loggedUser})
+    else
+        res.status(204).send({message:'error loggeduser'})
 }
