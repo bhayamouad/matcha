@@ -371,9 +371,11 @@ exports.saveImages = (req, res) => {
         .then(([userImages]) => {
             let upload = multer({storage}).array('images',5) 
             upload(req, res, async (err) => {
-                let imagesList = req.files  
-                if(userImages.length === 0){ 
-                    imagesList.forEach(async (imageFile, index) => {  
+                let imagesFiles = req.files
+                let imagesUrl = req.body.images
+                console.log(imagesUrl+'trrr')
+                if(userImages.length === 0){
+                    imagesFiles.forEach(async (imageFile, index) => {  
                         const image = new Image({
                             path: imageFile.path.split('/')[1],
                             user_id: req.id_user,
@@ -383,17 +385,17 @@ exports.saveImages = (req, res) => {
                     })
                 }
                 else {
-                    const limit = userImages.length - imagesList.length
+                    const limit = userImages.length - imagesFiles.length
                     if (limit > 0)
                         await Image.deleteUserImages(req.id_user, limit)
                     else{
                         userImages.forEach( (image,index) => {  
-                            Image.updateImage(image.is_profile, imagesList[image.is_profile].path)
+                            Image.updateImage(image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
                             .then(()=>{
-                                imagesList.splice(0, 1) 
-                                fs.unlinkSync(image.path)
+                                imagesFiles.splice(0, 1) 
+                                fs.unlinkSync(`uploads/${image.path}`)
                                 if(index+1 === userImages.length){
-                                    imagesList.forEach(async (imageFile) => {   
+                                    imagesFiles.forEach(async (imageFile) => {   
                                         const image = new Image({
                                             path: imageFile.path.split('/')[1],
                                             user_id: req.id_user,
@@ -403,7 +405,7 @@ exports.saveImages = (req, res) => {
                                     })
                                 }
                             }) 
-                            .catch(err => console.log("ERROR UPDATE"))   
+                            .catch(err => console.log(err.message))   
                         })
                     }
                 }
@@ -430,4 +432,15 @@ exports.getLoggedUser = async (req, res) => {
         res.status(200).send({loggedUser})
     else
         res.status(204).send({message:'error loggeduser'})
+}
+
+exports.getUserImages = async (req, res) => {
+    let images = [null, null, null, null, null]
+    const [userImages] = await Image.getUserImages(req.id_user).catch(err => console.log(err.message))
+    if(userImages){
+        userImages.forEach( (image, index) => {
+            images[index] = `${process.env.API_URL}/${image.path}`
+        })
+    }
+    res.status(200).send({images})
 }

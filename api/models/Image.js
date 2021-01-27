@@ -1,13 +1,13 @@
 const db = require('../setup/db_connection')
 
-module.exports = class Image { 
+module.exports = class Image {
   constructor(image) { 
     this.path = image.path
     this.user_id = image.user_id
     this.is_profile = image.is_profile
-}
+} 
 
-  save () {
+  save (){
     return db.query("INSERT INTO images SET ?", this) 
   }
   static updateImage(pos, path) {

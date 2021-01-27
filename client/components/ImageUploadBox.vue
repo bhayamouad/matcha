@@ -65,15 +65,26 @@
 import draggable from "vuedraggable";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
+const imageToBase64 = require('image-to-base64');
 
-function srcToFile(src, fileName, mimeType){
+function dataUriToFile(src, fileName, mimeType){
     return (fetch(src)
         .then(function(res){return res.arrayBuffer();})
         .then(function(buf){return new File([buf], fileName, {type:mimeType});})
     );
 }
 
-let images = [null, null, null, null, null];
+function srcToFile(src){
+  
+  imageToBase64(src)
+    .then( response => {
+      console.log(response)
+      //return dataUriToFile(response, src, src.split('.')[1]) 
+      }
+    )
+    .catch( error => console.log(error) )
+}
+
 const formData = new FormData();
 export default {
   display: "Transitions",
@@ -83,13 +94,19 @@ export default {
   },
   data() {
     return {
-      uploadImages: images.map((url, index) => {
-        return { url, position: index, file: null };
-      }),
+      uploadImages: [],
       drag: false,
       isImageModalActive: false,
       openModal: null
     };
+  },
+  async beforeCreate() {
+    const res = await this.$axios.$get('/account/getImages')
+    this.uploadImages = res.images.map((url, index) => {
+          console.log(url)
+          srcToFile(url)
+          return{ url, position:index, file: null }
+      })
   },
   computed: {
     dragOptions() {
@@ -109,10 +126,7 @@ export default {
         fileInputElement.click();
         return;
       }
-      if (
-        (index > 0 && this.uploadImages[index - 1].url) ||
-        this.uploadImages[index].url
-      ) {
+      if ((index > 0 && this.uploadImages[index - 1].url) || this.uploadImages[index].url) {
         let fileInputElement = this.$refs.upload[index];
         fileInputElement.click();
         return;
@@ -143,7 +157,7 @@ export default {
     },
     async saveImages() {
       this.uploadImages.forEach((image, index) =>
-        formData.append("images", image.file)
+          formData.append("images", image.file)
       );
       const res = await this.$axios.$post("/account/saveImages", formData, {
         headers: { "content-Type": "multipart/form-data" }
@@ -158,7 +172,7 @@ export default {
       this.isImageModalActive = false
       const mimeType = this.uploadImages[index].url.split(':')[1]
       const ext = mimeType.split(';')[0]
-      srcToFile(
+      dataUriToFile(
         this.uploadImages[index].url,
         this.uploadImages[index].file.name,
         ext
