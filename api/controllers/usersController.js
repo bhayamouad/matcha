@@ -372,8 +372,6 @@ exports.saveImages = (req, res) => {
             let upload = multer({storage}).array('images',5) 
             upload(req, res, async (err) => {
                 let imagesFiles = req.files
-                let imagesUrl = req.body.images
-                console.log(imagesUrl+'trrr')
                 if(userImages.length === 0){
                     imagesFiles.forEach(async (imageFile, index) => {  
                         const image = new Image({
@@ -439,7 +437,7 @@ exports.getUserImages = async (req, res) => {
     const [userImages] = await Image.getUserImages(req.id_user).catch(err => console.log(err.message))
     if(userImages){
         userImages.forEach( (image, index) => {
-            images[index] = `${process.env.API_URL}/${image.path}`
+            images[index] = "data:image/png;base64,"+fs.readFileSync('uploads/'+image.path, 'base64')
         })
     }
     res.status(200).send({images})

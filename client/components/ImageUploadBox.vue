@@ -103,9 +103,9 @@ export default {
   async beforeCreate() {
     const res = await this.$axios.$get('/account/getImages')
     this.uploadImages = res.images.map((url, index) => {
-          console.log(url)
-          srcToFile(url)
-          return{ url, position:index, file: null }
+        console.log(url)
+        dataUriToFile(url, `user-image${index}.png`, 'png')
+        .then(file => { return { url, position:index, file } })
       })
   },
   computed: {
@@ -157,7 +157,10 @@ export default {
     },
     async saveImages() {
       this.uploadImages.forEach((image, index) =>
-          formData.append("images", image.file)
+            {
+              console.log(image.file)
+              formData.append("images", image.file)
+            }
       );
       const res = await this.$axios.$post("/account/saveImages", formData, {
         headers: { "content-Type": "multipart/form-data" }
