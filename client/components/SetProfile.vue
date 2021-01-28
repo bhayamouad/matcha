@@ -148,10 +148,10 @@ export default {
 
       if(this.valid)
       {
-        let newTags = [... tagsList, ...this.tags]// merge the new and the old tags
-        newTags = [...new Set(newTags)] // to escape the duplication in tags to add
-        newTags = newTags.slice(tagsList.length) // get only the new ones
-        const data = {gender:this.gender, birthdate: new Date(this.birthdate.toString()), interest:this.interest, bio:this.bio, tags:this.tags, lat, lng, newTags}
+        // let newTags = [... tagsList, ...this.tags]// merge the new and the old tags
+        // newTags = [...new Set(newTags)] // to escape the duplication in tags to add
+        // newTags = newTags.slice(tagsList.length) // get only the new ones
+        const data = {gender:this.gender, birthdate: new Date(this.birthdate.toString()), interest:this.interest, bio:this.bio, tags:this.tags, lat, lng}
         const res = await this.$axios.$post('/account/setProfile', data)
         if(res.message === 'success')
           return true

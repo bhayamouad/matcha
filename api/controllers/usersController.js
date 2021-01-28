@@ -11,7 +11,7 @@ const Tag = require('../models/Tag')
 const Position = require('../models/Position')
 const Image = require('../models/Image')
 const helpers = require('../tools/helpers')
-const auth = require('../tools/authentication.js')  
+const auth = require('../tools/authentication.js')
 
 
 const storage = multer.diskStorage({
@@ -19,7 +19,7 @@ const storage = multer.diskStorage({
         cb(null, './uploads')
     },
     filename: (req, file, cb) => {
-        cb(null, helpers.hashHmacSha256(new Date().getTime().toString()).key+"."+file.mimetype.split('/')[1])
+        cb(null, helpers.hashHmacSha256(new Date().getTime().toString()).key+".png")
     }
 })
 // ***********Authorization************
@@ -289,7 +289,7 @@ exports.changePassword = (req, res) => {
         .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
 exports.setProfile = async (req, res) => {
-    const { gender, birthdate, interest, bio, tags, lat, lng, newTags } = req.body
+    const { gender, birthdate, interest, bio, tags, lat, lng } = req.body
     const data = {
         gender,
         birthdate: new Date(birthdate.toString()),
@@ -308,7 +308,7 @@ exports.setProfile = async (req, res) => {
                 user_id: req.id_user,
             })
         } catch (error) {
-            return res.send({ message: error.message, error: true })
+            return res.send({ message: error.message, error: true }) 
         }
     }
     else {
@@ -330,7 +330,7 @@ exports.setProfile = async (req, res) => {
             return res.send({ message: error.message, error: true }) 
         }
     }
-    newTags.forEach(async (tag) => {
+    tags.forEach(async (tag) => {
         try {
             await Tag.save(tag)
         } catch (error) {
@@ -369,43 +369,48 @@ exports.acceptPrivacy = (req, res) => {
 exports.saveImages = (req, res) => {
     Image.getUserImages(req.id_user)
         .then(([userImages]) => {
-            let upload = multer({storage}).array('images',5) 
+
+            let upload = multer({storage}).array('images',5)
             upload(req, res, async (err) => {
                 let imagesFiles = req.files
                 if(userImages.length === 0){
-                    imagesFiles.forEach(async (imageFile, index) => {  
+                    imagesFiles.forEach(async (imageFile, index) => {
                         const image = new Image({
                             path: imageFile.path.split('/')[1],
                             user_id: req.id_user,
-                            is_profile: index 
+                            is_profile: index
                         })
-                        await image.save()  
+                        await image.save() 
                     })
                 }
                 else {
-                    const limit = userImages.length - imagesFiles.length
-                    if (limit > 0)
-                        await Image.deleteUserImages(req.id_user, limit)
-                    else{
-                        userImages.forEach( (image,index) => {  
-                            Image.updateImage(image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
-                            .then(()=>{
-                                imagesFiles.splice(0, 1) 
-                                fs.unlinkSync(`uploads/${image.path}`)
-                                if(index+1 === userImages.length){
-                                    imagesFiles.forEach(async (imageFile) => {   
-                                        const image = new Image({
-                                            path: imageFile.path.split('/')[1],
-                                            user_id: req.id_user,
-                                            is_profile: ++index
-                                        })
-                                        await image.save() 
-                                    })
-                                }
-                            }) 
-                            .catch(err => console.log(err.message))   
-                        })
+                    let limit = userImages.length - imagesFiles.length
+                    if (limit > 0){
+                      await Image.deleteUserImages(req.id_user, limit)
+                      let i = userImages.length - 1
+                      while(limit--){
+                          console.log(i)
+                        fs.unlinkSync(`uploads/${userImages[i--].path}`)
+                      }
                     }
+                    userImages.forEach( (image,index) => {
+                        Image.updateImage(image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
+                        .then(()=>{
+                            imagesFiles.splice(0, 1)
+                            fs.unlinkSync(`uploads/${image.path}`)
+                            if(index+1 === userImages.length){
+                                imagesFiles.forEach(async (imageFile) => {   
+                                    const image = new Image({
+                                        path: imageFile.path.split('/')[1],
+                                        user_id: req.id_user,
+                                        is_profile: ++index
+                                    })
+                                    await image.save()
+                                })
+                            }
+                        }) 
+                        .catch(err => console.log(err.message))   
+                    })
                 }
             })
         res.send({error: false}) 

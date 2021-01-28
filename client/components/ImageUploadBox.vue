@@ -65,24 +65,12 @@
 import draggable from "vuedraggable";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
-const imageToBase64 = require('image-to-base64');
 
 function dataUriToFile(src, fileName, mimeType){
     return (fetch(src)
         .then(function(res){return res.arrayBuffer();})
         .then(function(buf){return new File([buf], fileName, {type:mimeType});})
     );
-}
-
-function srcToFile(src){
-  
-  imageToBase64(src)
-    .then( response => {
-      console.log(response)
-      //return dataUriToFile(response, src, src.split('.')[1]) 
-      }
-    )
-    .catch( error => console.log(error) )
 }
 
 const formData = new FormData();
@@ -100,12 +88,16 @@ export default {
       openModal: null
     };
   },
-  async beforeCreate() {
+  async fetch() {
     const res = await this.$axios.$get('/account/getImages')
-    this.uploadImages = res.images.map((url, index) => {
-        console.log(url)
-        dataUriToFile(url, `user-image${index}.png`, 'png')
-        .then(file => { return { url, position:index, file } })
+      res.images.forEach((url,index) => {
+          dataUriToFile(url, `user-image${index}.png`, 'png')
+            .then(file => {
+                if(url)
+                  this.uploadImages.push({url, position: index, file})
+                else
+                  this.uploadImages.push({url, position: index, file: null})
+              })
       })
   },
   computed: {
@@ -156,12 +148,7 @@ export default {
       }
     },
     async saveImages() {
-      this.uploadImages.forEach((image, index) =>
-            {
-              console.log(image.file)
-              formData.append("images", image.file)
-            }
-      );
+      this.uploadImages.forEach( (image, index) => formData.append("images", image.file) )
       const res = await this.$axios.$post("/account/saveImages", formData, {
         headers: { "content-Type": "multipart/form-data" }
       });
