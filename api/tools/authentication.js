@@ -10,16 +10,16 @@ const accTokenExp = 60 * 15
 const refTokenExp = 24 * 3600 * 3
 
 const createAccToken = (user)=>{
-    const {id_user, login, email} = user
+    const {id_user} = user
     const type = 'access'
-    return jwt.sign({id_user, login, email, type}, process.env.SECRET_KEY, { expiresIn: accTokenExp })
+    return jwt.sign({id_user, type}, process.env.SECRET_KEY, { expiresIn: accTokenExp })
 }
 
 const createRefToken = (user)=>{
-    const {id_user, login, email} = user
+    const {id_user} = user
     const key = cryptSHA265(user.id_user+user.password)
     const type = 'refresh'
-    return jwt.sign({id_user, login, email, key, type}, process.env.SECRET_KEY, { expiresIn: refTokenExp })
+    return jwt.sign({id_user, key, type}, process.env.SECRET_KEY, { expiresIn: refTokenExp })
 }
 
 const authorize = (req, res, next)=>{

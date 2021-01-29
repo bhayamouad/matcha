@@ -9,27 +9,28 @@
 const queryString = require('query-string');
 
 export default {
-    data(){
+    data({ $config: { clientURL } }){
         return{
-            fbLink: `https://www.facebook.com/v4.0/dialog/oauth?${this.fbParams()}`,
-            gglLink:  `https://accounts.google.com/o/oauth2/v2/auth?${this.gglParams()}`
+            fbLink: `https://www.facebook.com/v4.0/dialog/oauth?${this.fbParams(clientURL)}`,
+            gglLink:  `https://accounts.google.com/o/oauth2/v2/auth?${this.gglParams(clientURL)}`
         }
     },
     methods:{
-        gglParams(){
+        gglParams(url){
             return queryString.stringify({
                 client_id: `662979618051-fnrho7ms8fjcaaa8vkako0mpe5c51va5.apps.googleusercontent.com`,
-                redirect_uri: 'https://192.168.99.124.nip.io:8080/oauth/google',
-                scope: `https://www.googleapis.com/auth/plus.me email profile`,
+                redirect_uri: `${url}/oauth/google`,
+                scope: 'email profile',
                 response_type: 'code',
                 access_type: 'offline',
                 prompt: 'consent',
             });
         },
-        fbParams(){
+        fbParams(url){
+            console.log(url)
             return queryString.stringify({
                 client_id: '425669022113452',
-                redirect_uri: 'https://192.168.99.124:8080/oauth/facebook',
+                redirect_uri: `${url}/oauth/facebook`,
                 scope: ['email','user_birthday','user_gender'],
                 response_type: 'code',
                 auth_type: 'rerequest',

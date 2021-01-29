@@ -23,8 +23,9 @@ router.get('/getStatus',usersController.authorize, usersController.getStatus)
 router.get('/acceptPrivacy',usersController.authorize, usersController.acceptPrivacy)
 
 router.post('/saveImages', usersController.authorize, usersController.saveImages) 
-router.post('/oauth/google', usersController.gglOauth)
-router.post('/oauth/facebook', usersController.fbOauth)
+
+router.post('/oauth/google', usersController.gglOauth, usersController.connectOrRegister)
+router.post('/oauth/facebook', usersController.fbOauth, usersController.connectOrRegister)
 
 
 module.exports = router
