@@ -1,14 +1,16 @@
 <template>
   <div class="visitorpage">
-        <div v-if="!status" class="welcome-msg">
+        <div  class="welcome-msg">
+                
             <div class="the-msg">
                 <span id="slogan">
                     Online <br> Dating, at it's <br> finest
                 </span>
                 <br><br>
                 <span id="msg-txt">
-                    😂 Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+                    <!-- 😂 Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                    when an unknown printer took a galley of type and scrambled it to make a type specimen book. -->
+                    <img src="@/assets/love.svg">
                     <br><br>
                     🔥 Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
@@ -29,7 +31,7 @@
 <script>
 
 export default {
-middleware: 'authorization',
+middleware: 'outauth',
 head() {
     return {
       title: "Matcha - Welcome",
@@ -42,6 +44,6 @@ data(){
 },
 }
 </script>
-<style src="@/style/homepage.css">
+<style src="@/style/auth.css">
 
 </style>

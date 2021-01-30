@@ -18,8 +18,8 @@ export default {
     methods:{
         gglParams(){
             return queryString.stringify({
-                client_id: `662979618051-fnrho7ms8fjcaaa8vkako0mpe5c51va5.apps.googleusercontent.com`,
-                redirect_uri: 'https://192.168.99.124.nip.io:8080/oauth/google',
+                client_id: this.$config.gglClient,
+                redirect_uri: `${this.$config.clientURL}/oauth/google`,
                 scope: `https://www.googleapis.com/auth/plus.me email profile`,
                 response_type: 'code',
                 access_type: 'offline',
@@ -28,8 +28,8 @@ export default {
         },
         fbParams(){
             return queryString.stringify({
-                client_id: '425669022113452',
-                redirect_uri: 'https://192.168.99.124:8080/oauth/facebook',
+                client_id: this.$config.fbClient,
+                redirect_uri: `${this.$config.clientURL}/oauth/facebook`,
                 scope: ['email','user_birthday','user_gender'],
                 response_type: 'code',
                 auth_type: 'rerequest',

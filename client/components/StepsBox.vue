@@ -55,7 +55,6 @@ export default {
     Account,
     ImageUpload
   },
-  name: "HomePage",
   head() {
     return {
       title: "Matcha"

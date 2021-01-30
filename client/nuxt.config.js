@@ -2,7 +2,9 @@ import fs from 'fs'
 export default {
   // server config
   publicRuntimeConfig: {
-    clientURL: process.env.CLIENT_URL
+    clientURL: process.env.CLIENT_URL,
+    fbClient: process.env.FB_CLIENT,
+    gglClient: process.env.GGL_CLIENT,
   },
   server: {
     https: {

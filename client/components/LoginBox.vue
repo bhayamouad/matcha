@@ -1,8 +1,6 @@
 <template>
   <div class="the-box">
-    <div id="blogo-container">
-      <img id="blogo" src="~/assets/blogo.png" />
-    </div>
+    <div id="blogo-container"><a :href=link><img id="blogo" src="~/assets/blogo.png" /></a></div>
     <div id="login-form" @keyup.enter="login">
       <b-field
         label="Username or Email"
@@ -48,8 +46,9 @@ export default {
   beforeDestroy() {
     this.$snoast.close()
   },
-  data() {
+  data({$config}) {
     return {
+      link: $config.clientURL,
       user: {
         login: "",
         password: ""

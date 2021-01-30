@@ -1,6 +1,6 @@
 <template>
   <div class="the-box">
-    <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
+    <div id="blogo-container"><a :href=link><img id="blogo" src="~/assets/blogo.png" /></a></div>
     <div id="login-form" @keyup.enter="register">
       <div id="fname">
       <b-field label="" id="fname1"
@@ -115,8 +115,9 @@
     return { valid: true, error: null };
   };
 export default {
-  data () {
+  data ({$config}) {
     return {
+      link: $config.clientURL,
       user: {
         fname: '',
         lname: '',

@@ -1,0 +1,13 @@
+html, body{
+    overflow: auto;
+    /* background-color: black; */
+    /* max-width: 1200px;
+    width: 100%;
+    margin: auto; */
+}
+#home-all{
+    max-width: 1200px;
+      width: 100%;
+      margin: auto;
+  }
+

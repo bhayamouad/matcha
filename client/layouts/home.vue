@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="home-all">
     <sidenav></sidenav>
     <nuxt id="content"/>
   </div>
@@ -8,7 +8,7 @@
 <script>
 import Sidenav from "~/components/SideNav";
 export default {
-  middleware: 'authorization',
+  middleware: 'inauth',
   components: {Sidenav},
   head() {
   return {
@@ -31,6 +31,6 @@ export default {
 }
 </script>
 
-<style src="@/style/homeLayout.css">
+<style src="@/style/home.css">
 
 </style>

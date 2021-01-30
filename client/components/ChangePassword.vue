@@ -1,6 +1,6 @@
 <template>
   <div class="the-box">
-    <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
+    <div id="blogo-container"><a :href=link><img id="blogo" src="~/assets/blogo.png" /></a></div>
     <div id="login-form" @keyup.enter="change">
       <b-field
         label="New Password"
@@ -57,8 +57,9 @@ const validateCpassword = (cpassword, npassword) => {
   return { valid: true, error: null };
 };
 export default {
-  data() {
+  data({$config}) {
     return {
+      link: $config.clientURL,
       passwords: {
         npassword: "",
         cpassword: "",

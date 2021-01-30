@@ -19,5 +19,5 @@ export default {
   }
 }
 </script>
-<style src="@/style/homepage.css">
+<style>
 </style>

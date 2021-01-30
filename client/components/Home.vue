@@ -1,7 +1,7 @@
 <template>
   <section> 
-    <steps v-if="status"/>
-    <Matcha v-if="!status"/>
+    <steps v-if="true"/>
+    <!-- <Matcha/> -->
   </section>
 </template>
 
@@ -14,7 +14,6 @@ export default {
     Steps,
     Matcha
   },
-  name: "HomePage",
   head() {
     return {
       title: "Matcha"
@@ -36,5 +35,6 @@ export default {
   },
 }
 </script>
-<style src="@/style/homepage.css">
+<style>
+
 </style>
