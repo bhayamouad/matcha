@@ -29,6 +29,7 @@ html, body{
 }
 .the-msg{
     padding: 10px;
+    text-align: center;
     /* border: solid 2px black; */
     height: 600px;
     max-width: 400px;
@@ -36,9 +37,13 @@ html, body{
 }
 
 #msg-txt{
+    /* font-family: 'Nerko One', cursive; */
     color: black;
-    font-size: 17px;
-    font-weight: 400;
+    font-size: 30px;
+    font-weight: 300;
+}
+#msg-txt img{
+    /* opacity: .8; */
 }
 
 #slogan{

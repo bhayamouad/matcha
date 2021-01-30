@@ -140,7 +140,7 @@ exports.connectOrRegister = (req, res)=>{
         if(e.message === 'no error')
             res.status(200).send({error: false}) 
         else if(e.message === `Duplicate entry '${userdata.email}' for key 'users.email'`) 
-                res.status(200).send({error: 'email is duplicated'})
+                res.status(200).send({error: 'The Email linked to your social media account Already used!'})
         else
             res.status(200).send({error: e.message}) 
     })

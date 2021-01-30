@@ -21,7 +21,7 @@ export default {
     else if(this.$route.params.authsrc == 'facebook' && this.$route.query.code)
     {
       const res = await this.$axios.$post('/account/oauth/facebook', {code : this.$route.query.code})
-      console.log(res.error)
+      // console.log(res.error)
       //need to handle erro ==> snoasts
       if(!res.error)
       {
@@ -31,6 +31,7 @@ export default {
       else
       {
         this.$router.push('/')
+        this.$snoast.toast(this.$buefy, res.error, 'is-danger')
       }
     }
     else{

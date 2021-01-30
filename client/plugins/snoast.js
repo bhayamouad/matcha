@@ -3,7 +3,7 @@ export default ({store, redirect}, inject) => {
         if(Date.now() - store.state.toasts.time > 250)
             {
             const ref = buefy.toast.open({
-                duration: 5000,
+                duration: 7000,
                 message: msg,
                 type: type,
             });

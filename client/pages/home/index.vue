@@ -21,6 +21,6 @@ layout: 'home',
 
 <style>
 #thehome-content{
-    padding-top: 30px;
+    /* padding-top: 30px; */
 }
 </style>
