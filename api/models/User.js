@@ -13,6 +13,15 @@ module.exports = class User {
   create() {
     return db.query('INSERT INTO users SET ?', this)
   }
+  
+  static createOauth(user)
+  {
+    return db.query('INSERT INTO users SET ?', user)
+  }
+
+  static getByOauthId(id){
+    return db.execute('SELECT * FROM users WHERE oauth_id = ? ', [id])
+  }
 
   static updateStatus(id) {
     return db.execute('UPDATE users SET status = 1, expire_token = NULL WHERE id_user = ?', [id])
