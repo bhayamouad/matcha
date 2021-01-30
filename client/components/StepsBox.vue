@@ -85,14 +85,13 @@ export default {
   methods: {
     async send(next) {
       if (this.active === 0) {
-        // const check = await this.$refs.setProfileChild.setProfile()
-        // if (check) {
-        //     this.error = false
-        //     next();
-        // }
-        // else
-        //   this.error = true
-        next()
+        const check = await this.$refs.setProfileChild.setProfile()
+        if (check) {
+            this.error = false
+            next();
+        }
+        else
+          this.error = true
       }
       if (this.active === 1) {
         const check = await this.$refs.imageUploadChild.saveImages()

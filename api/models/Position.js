@@ -9,7 +9,9 @@ module.exports = class Position {
 }
 
   save () {
-    return db.query("INSERT INTO positions SET ?", this)
+    return db.query(`INSERT INTO positions SET ? 
+                      ON DUPLICATE KEY UPDATE 
+                      city = ?, lat = ?, lng = ?, user_id = ?`, [this,this.city,this.lat,this.lng,this.user_id])  
   }
   static update(pos) {
     return db.execute("UPDATE positions SET city = ?, lat = ?, lng = ? WHERE user_id = ?", [pos.city, pos.lat, pos.lng, pos.user_id])

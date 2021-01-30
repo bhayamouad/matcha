@@ -8,7 +8,7 @@ module.exports = class Image {
 } 
 
   save (){
-    return db.query("INSERT INTO images SET ?", this) 
+    return db.query("INSERT INTO images SET ?", this)
   }
   static updateImage(pos, path) {
     return db.execute("UPDATE images SET path = ? WHERE is_profile = ?", [path, pos])

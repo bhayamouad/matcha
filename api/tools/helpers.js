@@ -60,9 +60,15 @@ exports.sendEmail = async (to, subject, html) => {
 exports.getPublicIp = async () => {
 	return await publicIp.v4()
 }
-exports.ipLocationFinderAPI = (ip) => {
+exports.ipLocationFinderAPI = (ip) => { //to solve later !!!!!!!!!!!!
     return new Promise((resolve, reject) => {
-        request(`https://tools.keycdn.com/geo.json?host=${ip}`, { json: true }, (err, res, body) => {
+        options = {
+            url: `https://tools.keycdn.com/geo.json?host=${ip}`,
+            headers: {
+              'User-Agent': 'request'
+            }
+          };
+        request(options, { json: true }, (err, res, body) => {
           if (err) reject(err)
           resolve(body)
         });

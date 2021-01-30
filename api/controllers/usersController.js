@@ -297,46 +297,35 @@ exports.setProfile = async (req, res) => {
         tags: tags.toString(),
         bio
     }
-    let pos = null
+    let position = null
     if (lat && lng) {
-        try {
-            const [location] = await helpers.getLocation(lat, lng)
-            position = new Position({
-                city: `${location.city},${location.country}`,
-                lat,
-                lng,
-                user_id: req.id_user,
-            })
-        } catch (error) {
-            return res.send({ message: error.message, error: true }) 
-        }
+        console.log(lat,lng)
+        const [location] = await helpers.getLocation(lat, lng)
+            .catch(error => { /*return res.send({ message: error.message, error: true }) */ console.log("catch location "+error.message)})
+        position = new Position({
+            city: `${location.city},${location.country}`,
+            lat,
+            lng,
+            user_id: req.id_user,
+        })
+        console.log(position.city+"if lat & lng")  
     }
     else {
-        try { 
-            const ip = await helpers.getPublicIp()
-            const res = await helpers.ipLocationFinderAPI(ip)
+            const ip = await helpers.getPublicIp().catch(error => console.log("catch public ip "+error.message))
+            const res = await helpers.ipLocationFinderAPI(ip).catch(error => console.log("catch finder "+error.message)) // to solve later !!!!!!!
             position = new Position({
                 city: `${res.data.geo.city},${res.data.geo.country_name}`,
                 lat: res.data.geo.latitude,
                 lng: res.data.geo.longitude,
                 user_id: req.id_user,
             })
-            try {
-                await position.save()
-            } catch (err) {
-                await Position.update(position)
-            }
-        } catch (error) {
-            return res.send({ message: error.message, error: true }) 
         }
-    }
+    await position.save().catch( (error) => { /*return res.send({ message: error.message, error: true })*/ console.log("catch save "+error.message)}) 
+
     tags.forEach(async (tag) => {
-        try {
-            await Tag.save(tag)
-        } catch (error) {
-            return res.send({ message: error.message, error: true })
-        }
+            await Tag.save(tag).catch(error => { return res.send({ message: error.message, error: true }) })
     })
+
     User.setProfile(data, req.id_user)
         .then(() => res.status(200).send({ message: `success` }))
         .catch(err => res.send({ message: err.message }))
@@ -389,7 +378,6 @@ exports.saveImages = (req, res) => {
                       await Image.deleteUserImages(req.id_user, limit)
                       let i = userImages.length - 1
                       while(limit--){
-                          console.log(i)
                         fs.unlinkSync(`uploads/${userImages[i--].path}`)
                       }
                     }

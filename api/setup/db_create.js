@@ -1,4 +1,5 @@
 require('dotenv').config()
+const seed = require('./db_seed')
 const mysql = require('mysql2')
 let connection = mysql.createConnection({
       host: process.env.DB_HOST,
@@ -56,7 +57,7 @@ connection.connect(function(err) {
                   
                   connection.query(`CREATE TABLE positions(
                                     id_position int(11) NOT NULL,
-                                    city varchar(20),
+                                    city varchar(25),
                                     lat FLOAT( 10, 6 ),
                                     lng FLOAT( 10, 6 ),
                                     user_id int(11) NOT NULL UNIQUE,
@@ -112,6 +113,7 @@ connection.connect(function(err) {
                   connection.query(`ALTER TABLE blocks ADD FOREIGN KEY (blocker_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   connection.query(`ALTER TABLE blocks ADD FOREIGN KEY (blocked_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   console.log("Database created.");
+                  seed.DBSeeds(connection);
             }
             connection.end();
       });
