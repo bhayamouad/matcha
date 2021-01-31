@@ -47,7 +47,6 @@
         :data="filteredTags"
         icon="label"
         allow-new
-        autocomplete
         :confirm-keys = "['Enter']"
         placeholder="ex: #vegan, #geek, #piercing etc..."
         :before-adding="tagValidate"
@@ -111,7 +110,7 @@ export default {
         bio: null,
         tags: [],
       },
-      isLogin: false,
+      isLogin: true,
       filteredTags: tagsList,
       max: maxYear,
       valid: true,

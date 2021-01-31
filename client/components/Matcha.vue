@@ -1,6 +1,6 @@
 <template>
-    <section class="container">
-    <div class="fixed header">
+    <section>
+    <div class="header">
       <i class="material-icons" @click="index = 0">refresh</i>
       <span>Matcha</span>
       <i class="material-icons">tune</i>
@@ -24,10 +24,10 @@
         class="rounded-borders card card--one">
         <div style="height: 100%">
           <img
-            :src="current.image"
+            :src="$config.baseURL+'/'+current.path"
             class="rounded-borders"/>
           <div class="text">
-            <h2>{{current.title}}</h2>
+            <h2>{{current.login}}</h2>
           </div>
         </div>
       </Vue2InteractDraggable>
@@ -38,21 +38,21 @@
       style="z-index: 2">
       <div style="height: 100%">
         <img
-          :src="next.image"
+          :src="$config.baseURL+'/'+next.path"
           class="rounded-borders"/>
         <div class="text">
-            <h2>{{next.title}}</h2>
+            <h2>{{next.login}}</h2>
           </div>
       </div>
     </div>
     <div
-      v-if="index + 2 < cards.length"
+      v-if="index + 2 < users.length"
       class="rounded-borders card card--three fixed fixed--center"
       style="z-index: 1">
       <div style="height: 100%">
       </div>
     </div>
-    <div class="footer fixed">
+    <div class="foot">
       <div class="btn btn--decline" @click="reject">
           <i class="material-icons">close</i>
       </div>
@@ -80,18 +80,20 @@ export default {
                 draggedLeft: 'reject',
                 draggedUp: 'skip'
               },
-            cards: []
+            users: []
         }
     },
     async fetch (){
-        this.cards = await this.$axios.$get('https://api.nuxtjs.dev/mountains')
+        
+        const data = await this.$axios.$get('/account/getSuggestedUser')
+        this.users = data.users
     },
     computed: {
         current() {
-            return this.cards[this.index]
+            return this.users[this.index]
         },
         next() {
-            return this.cards[this.index + 1]
+            return this.users[this.index + 1]
         }
     },
     methods: {
@@ -123,18 +125,10 @@ export default {
   height: 100vh;
 }
 .header {
-  width: 100%;
-  height: 60vh;
-  z-index: 0;
-  left: 0;
   color: white;
-  text-align: center;
   font-style: italic;
   font-family: 'Engagement', cursive;
   background: #950740;
-  background: -webkit-linear-gradient(to top, #b91d73, #950740);
-  background: linear-gradient(to top, #b91d73, #950740);
-  clip-path: polygon(0 1%, 100% 0%, 100% 76%, 0 89%);
   display: flex;
   justify-content: space-between;
   span {
@@ -147,15 +141,13 @@ export default {
     padding: 24px;
   }
 }
-.footer {
-  width: 77vw;
+.foot {
+  width: 50%;
+  position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   padding-bottom: 30px;
   justify-content: space-around;
-  align-items: center;
 }
 .btn {
   position: relative;
@@ -207,7 +199,7 @@ export default {
 .fixed {
   position: fixed;
   &--center {
-    left: 50%;
+    left: 60%;
     top: 50%;
     transform: translate(-50%, -50%);
   }
@@ -216,8 +208,8 @@ export default {
   border-radius: 12px;
 }
 .card {
-  width: 80vw;
-  height: 60vh;
+  width: 500px;
+  height: 700px;
   color: white;
   img {
     object-fit: cover;

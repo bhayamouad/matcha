@@ -62,4 +62,24 @@ module.exports = class User {
   static setStatusById(id){
     return db.execute('UPDATE users SET status = 2 WHERE id_user = ?', [id])
   }
+
+  static getUserPosById(id){
+    return db.execute(`SELECT u.*, p.* FROM users u INNER JOIN positions p ON p.user_id = u.id_user WHERE u.id_user = ?`,[id])
+  }
+
+  static getUsersPosImg(id){
+
+    return this.getUserPosById(id)
+          .then(([[user]]) => 
+          {
+            //console.log(user.lng)  
+            return db.execute(`SELECT u.id_user, u.login, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age, i.path, ST_Distance_Sphere(point(${user.lng},${user.lat}), point(p.lng, p.lat))/1000 AS distance 
+                                FROM users u 
+                                INNER JOIN images i 
+                                  ON i.user_id = u.id_user 
+                                INNER JOIN positions p 
+                                  ON p.user_id = u.id_user 
+                                WHERE u.id_user <> ?`,[user.id_user]) 
+          })
+  }
 }
