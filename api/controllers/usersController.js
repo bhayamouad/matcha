@@ -79,7 +79,7 @@ exports.fbOauth = (req, res, next) => {
         params: {
           client_id: process.env.CLIENT_FB_ID,
           client_secret: process.env.CLIENT_FB_KEY,
-          redirect_uri: 'https://192.168.99.128:8080/oauth/facebook',
+          redirect_uri: `${process.env.CLIENT_URL}/oauth/facebook`,
           code,
         },
       }).then(({data})=>{
@@ -106,7 +106,8 @@ exports.fbOauth = (req, res, next) => {
       }).then((ret)=>{
         req.userdata = ret
         next() 
-    }).catch(()=>{
+    }).catch((e)=>{ 
+        // console.log(e.message)
         res.status(200).send({error: 'fb oauth Error'})
       })
 } 
@@ -136,7 +137,7 @@ exports.connectOrRegister = (req, res)=>{
         res.status(200).send({error: false})
     })
     .catch((e)=>{
-        console.log(e.message)
+        // console.log(e.message)
         if(e.message === 'no error')
             res.status(200).send({error: false}) 
         else if(e.message === `Duplicate entry '${userdata.email}' for key 'users.email'`) 
@@ -145,41 +146,7 @@ exports.connectOrRegister = (req, res)=>{
             res.status(200).send({error: e.message}) 
     })
 }
-
-// exports.connectOrRegisterdep = async (req, res)=>{
-//     const userdata = req.userdata 
-//     const [[user]] = await User.getByOauthId(userdata.oauth_id)
-//     if(user)
-//     {
-//         const accTok = auth.createAccToken(user)   
-//         const refTok = auth.createRefToken(user)
-//         res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15 })
-//         res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
-//         res.status(200).send({error: false}) 
-//     }
-//     else
-//     {   try{
-//         const [registredUser] = await User.createOauth(userdata)
-//         }catch(e){
-//             if(e.message === `Duplicate entry '${userdata.email}' for key 'users.email'`)
-//             {
-//                 res.status(200).send({error: 'email is duplicated'})
-//                 return  
-//             }
-//         }
-//         const [[newUser]] = await User.getById(registredUser.insertId)
-//         const accTok = auth.createAccToken(newUser)
-//         const refTok = auth.createRefToken(newUser)
-//         res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15 })
-//         res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
-//         res.status(200).send({error: false})
-//     }
-// }
-
-// *********************************                   
- 
-
-
+// *********************************                      
 // *********************************
 
 

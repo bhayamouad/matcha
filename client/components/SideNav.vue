@@ -7,8 +7,7 @@
     </div>
     <ul>
       <a href="/">
-        <li>
-          <i class="fas fa-home"></i>
+        <li><i id="uicon" class="fas fa-home"></i>
           <span class="pg-title">Home</span>
         </li>
       </a>

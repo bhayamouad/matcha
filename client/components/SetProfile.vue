@@ -1,11 +1,13 @@
 <template>
   <div>
+    
     <b-field v-if="!isLogin" label="Username"
       :type="{'is-danger': errors.login}" 
       :message="errors.login"
     >
       <b-input v-model="user.login" placeholder="Username"></b-input> 
     </b-field>
+    
     <b-field label="Gender" 
       :type="{'is-danger': errors.gender}" 
       :message="errors.gender"
@@ -111,7 +113,7 @@ export default {
         bio: null,
         tags: [],
       },
-      isLogin: false,
+      isLogin: true,
       filteredTags: tagsList,
       max: maxYear,
       valid: true,

@@ -14,8 +14,9 @@ export default {
   },
   ssr: false,
   serverMiddleware: [{handler:"redirect-ssl", redirectPort:8080}],
-  // redirectPort: 8080,
   loading: false,
+
+ 
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
     title: 'Matcha',

@@ -91,7 +91,6 @@
 .profile-img{
     width: 100%;
     height: auto;
-    vertical-align: middle;
 }
 #lgo-name{
     grid-area: lgname;
@@ -105,6 +104,10 @@
 #lgo-uname{
     grid-area: lguname;
     color: black;
+    width: 110px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 #lgo-btn{
     grid-area: lgbtn;
@@ -137,6 +140,9 @@
     #thenav li i{
         margin-left: 14px;
         margin-right: 0px;
+    }
+    #uicon{
+        margin-left: 12px!important;
     }
     #logout-btn{
         display: block;
