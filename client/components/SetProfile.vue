@@ -1,20 +1,26 @@
 <template>
   <div>
+    <b-field v-if="!isLogin" label="Username"
+      :type="{'is-danger': errors.login}" 
+      :message="errors.login"
+    >
+      <b-input v-model="user.login" placeholder="Username"></b-input> 
+    </b-field>
     <b-field label="Gender" 
       :type="{'is-danger': errors.gender}" 
       :message="errors.gender"
       
     >
-      <b-radio v-model="gender" name="gender" native-value="M">Male</b-radio>
-      <b-radio v-model="gender" name="gender" native-value="F">Female</b-radio>
-      <b-radio v-model="gender" name="gender" native-value="O">Other</b-radio>
+      <b-radio v-model="user.gender" name="gender" native-value="M">Male</b-radio>
+      <b-radio v-model="user.gender" name="gender" native-value="F">Female</b-radio>
+      <b-radio v-model="user.gender" name="gender" native-value="O">Other</b-radio>
     </b-field>
     <client-only>
       <b-field label="Birthdate"
         :type="{'is-danger': errors.birthdate}" 
         :message="errors.birthdate"
       >
-        <b-datepicker v-model="birthdate" ref="datepicker" :max-date="max" placeholder="Select a date"></b-datepicker>
+        <b-datepicker v-model="user.birthdate" ref="datepicker" :max-date="max" placeholder="Select a date"></b-datepicker>
         <b-button @click="$refs.datepicker.toggle()" icon-left="calendar-today" type="is-primary" />
       </b-field>
     </client-only>
@@ -22,22 +28,22 @@
       :type="{'is-danger': errors.interest}" 
       :message="errors.interest"
     >
-      <b-radio v-model="interest" name="interest" native-value="M">Male</b-radio>
-      <b-radio v-model="interest" name="interest" native-value="F">Female</b-radio>
-      <b-radio v-model="interest" name="interest" native-value="B">Both</b-radio>
+      <b-radio v-model="user.interest" name="interest" native-value="M">Male</b-radio>
+      <b-radio v-model="user.interest" name="interest" native-value="F">Female</b-radio>
+      <b-radio v-model="user.interest" name="interest" native-value="B">Both</b-radio>
     </b-field>
     <b-field label="Biography"
       :type="{'is-danger': errors.bio}" 
       :message="errors.bio"
       >
-      <b-input minlength="20" maxlength="200" type="textarea" v-model="bio" placeholder="Type a short Biography"></b-input>
+      <b-input minlength="20" maxlength="200" type="textarea" v-model="user.bio" placeholder="Type a short Biography"></b-input>
     </b-field>
     <b-field label="Enter some tags"
       :type="{'is-danger': errors.tags}" 
       :message="errors.tags"
     >
       <b-taginput
-        v-model="tags"
+        v-model="user.tags"
         :data="filteredTags"
         icon="label"
         allow-new
@@ -54,6 +60,14 @@
 <script>
 let tagsList = null
 let lat=null, lng=null
+let dataUser = {}
+
+const validateLogin = (login) => {
+    if (!login) return { valid: false, error: "The login is required" };
+    if (login.length > 14)
+      return { valid: false, error: "Login must have maximum 8 characteres" };
+    return { valid: true, error: null };
+  };
 
 const validateGender = gender => {
   if (!gender) return { valid: false, error: "You must choose your gender" }
@@ -85,28 +99,40 @@ const validateTags = tags => {
 }
 
 export default {
-  async beforeCreate() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      lat = position.coords.latitude
-      lng = position.coords.longitude
-    })
-    const result = await this.$axios.$get('/account/getTags')
-    tagsList = result.tags
-  },
   data() {
     const maxYear = new Date();
     maxYear.setFullYear(maxYear.getFullYear() - 18)
     return {
-      gender: null,
-      interest: null,
-      birthdate: null,
-      bio: "",
-      tags: [],
+      user: {
+        login: null,
+        gender: null,
+        interest: null,
+        birthdate: null,
+        bio: null,
+        tags: [],
+      },
+      isLogin: false,
       filteredTags: tagsList,
       max: maxYear,
       valid: true,
       errors: {}
     };
+  },
+  async fetch() {
+    navigator.geolocation.getCurrentPosition((position) => {
+      lat = position.coords.latitude
+      lng = position.coords.longitude
+    })
+    const result = await this.$axios.$get('/account/getDataUser')
+    tagsList = result.data.tagsList
+    dataUser = result.data.user
+    this.user.login = dataUser.login
+    this.user.gender = dataUser.gender
+    this.user.interest = dataUser.interest
+    this.user.birthdate = new Date(dataUser.birthdate)
+    this.user.bio = dataUser.biography
+    this.user.tags = (dataUser.tags) ? dataUser.tags.split(',') : [],
+    this.isLogin = !!dataUser.login
   },
   methods: {
     tagValidate (tag) {
@@ -126,29 +152,33 @@ export default {
       this.errors = {}
       this.valid = true
       
-      const validGender = validateGender(this.gender)
+      const validLogin = validateLogin(this.user.login)
+      this.errors.login = validLogin.error
+      if (this.valid) this.valid = validLogin.valid
+
+      const validGender = validateGender(this.user.gender)
       this.errors.gender = validGender.error
       if (this.valid) this.valid = validGender.valid
       
-      const validInterest = validateInterest(this.interest)
+      const validInterest = validateInterest(this.user.interest)
       this.errors.interest = validInterest.error
       if (this.valid) this.valid = validInterest.valid
 
-      const validBirthDate = validateBirthDate(this.birthdate)
+      const validBirthDate = validateBirthDate(this.user.birthdate)
       this.errors.birthdate = validBirthDate.error
       if (this.valid) this.valid = validBirthDate.valid
 
-      const validBiography = validateBiography(this.bio)
+      const validBiography = validateBiography(this.user.bio)
       this.errors.bio = validBiography.error
       if (this.valid) this.valid = validBiography.valid
 
-      const validTags = validateTags(this.tags)
+      const validTags = validateTags(this.user.tags)
       this.errors.tags = validTags.error
       if (this.valid) this.valid = validTags.valid
 
       if(this.valid)
       {
-        const data = {gender:this.gender, birthdate: new Date(this.birthdate.toString()), interest:this.interest, bio:this.bio, tags:this.tags, lat, lng}
+        const data = {login: this.user.login, gender:this.user.gender, birthdate: new Date(this.user.birthdate.toString()), interest:this.user.interest, bio:this.user.bio, tags:this.user.tags, lat, lng}
         console.log(data)
         const res = await this.$axios.$post('/account/setProfile', data)
         if(res.message === 'success')

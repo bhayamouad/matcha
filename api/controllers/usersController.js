@@ -44,7 +44,7 @@ exports.gglOauth = (req, res, next) => {
         data: {
           client_id: process.env.CLIENT_GGL_ID,
           client_secret: process.env.CLIENT_GGL_KEY,
-          redirect_uri: 'https://192.168.99.124:8080/oauth/google',
+          redirect_uri: 'https://192.168.99.128:8080/oauth/google',
           grant_type: 'authorization_code',
           code,
         }, 
@@ -79,7 +79,7 @@ exports.fbOauth = (req, res, next) => {
         params: {
           client_id: process.env.CLIENT_FB_ID,
           client_secret: process.env.CLIENT_FB_KEY,
-          redirect_uri: 'https://192.168.99.124:8080/oauth/facebook',
+          redirect_uri: 'https://192.168.99.128:8080/oauth/facebook',
           code,
         },
       }).then(({data})=>{
@@ -136,7 +136,7 @@ exports.connectOrRegister = (req, res)=>{
         res.status(200).send({error: false})
     })
     .catch((e)=>{
-        // console.log(e.message)
+        console.log(e.message)
         if(e.message === 'no error')
             res.status(200).send({error: false}) 
         else if(e.message === `Duplicate entry '${userdata.email}' for key 'users.email'`) 
@@ -147,7 +147,7 @@ exports.connectOrRegister = (req, res)=>{
 }
 
 // exports.connectOrRegisterdep = async (req, res)=>{
-//     const userdata = req.userdata
+//     const userdata = req.userdata 
 //     const [[user]] = await User.getByOauthId(userdata.oauth_id)
 //     if(user)
 //     {
@@ -187,7 +187,7 @@ exports.connectOrRegister = (req, res)=>{
 exports.registerValidation = (req, res, next) => { 
     if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation 
     const { email, login } = req.body;
-    User.ifUnique(email, login)
+    User.ifUnique(email, login) 
         .then((ret) => {
             if (ret[0][0][0] || ret[1][0][0]) {
                 let emailerr = false
@@ -375,8 +375,9 @@ exports.changePassword = (req, res) => {
         .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
 exports.setProfile = async (req, res) => {
-    const { gender, birthdate, interest, bio, tags, lat, lng } = req.body
+    const { login, gender, birthdate, interest, bio, tags, lat, lng } = req.body
     const data = {
+        login,
         gender,
         birthdate: new Date(birthdate.toString()),
         interest,
@@ -385,7 +386,6 @@ exports.setProfile = async (req, res) => {
     }
     let position = null
     if (lat && lng) {
-        console.log(lat,lng)
         const [location] = await helpers.getLocation(lat, lng)
             .catch(error => { /*return res.send({ message: error.message, error: true }) */ console.log("catch location "+error.message)})
         position = new Position({
@@ -412,21 +412,26 @@ exports.setProfile = async (req, res) => {
             await Tag.save(tag).catch(error => { return res.send({ message: error.message, error: true }) })
     })
 
-    User.setProfile(data, req.id_user)
+    User.setProfile(data, req.id_user) 
         .then(() => res.status(200).send({ message: `success` }))
         .catch(err => res.send({ message: err.message }))
 }
 
-exports.getTags = (req, res) => {
+exports.getData = (req, res) => {
+    let data = {
+        user: {},
+        tagsList: []
+    }
     Tag.getAll()
-        .then(([tags]) => {
-            const tagsList = []
-            tags.forEach(tag => {
-                tagsList.push(tag.tag) 
-            });
-            res.send({ tags: tagsList })
+    .then( async ([tags]) => {
+        tags.forEach(tag => {
+            data.tagsList.push(tag.tag) 
+        });
+        const [[user]] = await User.getById(req.id_user).catch(err => { return res.send({ message: err.message}) } )
+        data.user = user
+        return res.send({ data })
         })
-        .catch(err => res.send({ message: err.message }))
+        .catch(err => { return res.send({ message: err.message}) })
 }
 
 exports.getStatus = (req, res) => { 
@@ -483,7 +488,7 @@ exports.saveImages = (req, res) => {
                                 })
                             }
                         }) 
-                        .catch(err => console.log(err.message))   
+                        .catch(err => console.log(err.message))    
                     })
                 }
             })
@@ -501,7 +506,7 @@ exports.getLoggedUser = async (req, res) => {
     const [[profile]] = await Image.getUserProfile(req.id_user).catch(err => console.log(err.message))
     if(user){
         loggedUser.name = `${helpers.capitalize(user.fname)} ${helpers.capitalize(user.lname)}`
-        loggedUser.username = user.login
+        loggedUser.username = (user.login) ? user.login : 'user'+user.id_user
     }
     if(profile)
         loggedUser.profile = `${process.env.API_URL}/${profile.path}`
@@ -516,7 +521,7 @@ exports.getUserImages = async (req, res) => {
     const [userImages] = await Image.getUserImages(req.id_user).catch(err => console.log(err.message))
     if(userImages){
         userImages.forEach( (image, index) => {
-            images[index] = "data:image/png;base64,"+fs.readFileSync('uploads/'+image.path, 'base64')
+            images[index] = "data:image/png;base64,"+fs.readFileSync('uploads/'+image.path, 'base64') 
         })
     }
     res.status(200).send({images})

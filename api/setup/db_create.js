@@ -18,7 +18,7 @@ connection.connect(function(err) {
                         fname varchar(25) NOT NULL,
                         lname varchar(25) NOT NULL,
                         email varchar(40) NOT NULL UNIQUE,
-                        login varchar(25) DEFAULT NULL,
+                        login varchar(25) DEFAULT NULL UNIQUE,
                         password varchar(255) DEFAULT NULL,
                         oauth_id varchar(255) DEFAULT NULL,
                         gender ENUM('M', 'F', 'O', '0') DEFAULT '0',
