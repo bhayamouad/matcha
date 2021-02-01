@@ -4,7 +4,7 @@ export default {
   publicRuntimeConfig: {
     clientURL: process.env.CLIENT_URL,
     fbClient: process.env.FB_CLIENT,
-    gglClient: process.env.GGL_CLIENT,
+    e42Client: process.env.E42_CLIENT
   },
   server: {
     https: {

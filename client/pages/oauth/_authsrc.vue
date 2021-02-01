@@ -12,17 +12,23 @@ export default {
             }
   },
  async beforeCreate(){
-    if(this.$route.params.authsrc == 'google' && this.$route.query.code)
+   if(this.$route.params.authsrc == '42' && this.$route.query.code)
     {
-      const res = await this.$axios.$post('/account/oauth/google', {code : this.$route.query.code})
+      const res = await this.$axios.$post('/account/oauth/42', {code : this.$route.query.code})
       if(!res.error)
+      {
+        this.$store.commit('auth/logIn', true)
         this.$router.push('/')
+      }
+      else
+      {
+        this.$router.push('/')
+        this.$snoast.toast(this.$buefy, res.error, 'is-danger')
+      }
     }
     else if(this.$route.params.authsrc == 'facebook' && this.$route.query.code)
     {
       const res = await this.$axios.$post('/account/oauth/facebook', {code : this.$route.query.code})
-      // console.log(res.error)
-      //need to handle erro ==> snoasts
       if(!res.error)
       {
         this.$store.commit('auth/logIn', true)

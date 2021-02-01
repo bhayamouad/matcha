@@ -1,7 +1,7 @@
 <template>
   <div id="auth-cmp">
       <a :href=fbLink><div id="fb-btn" > <i class="fab fa-facebook-f"></i> &nbsp;Facebook</div></a>
-      <a :href=gglLink><div id="ggl-btn"><i class="fab fa-google"></i> &nbsp;Google</div></a>
+      <a :href=e42Link><div id="ggl-btn"> &nbsp;<b>42</b> Newtork</div></a>
   </div>
 </template>
 
@@ -12,18 +12,15 @@ export default {
     data(){
         return{
             fbLink: `https://www.facebook.com/v4.0/dialog/oauth?${this.fbParams()}`,
-            gglLink:  `https://accounts.google.com/o/oauth2/v2/auth?${this.gglParams()}`
+            e42Link:  `https://api.intra.42.fr/oauth/authorize?${this.e42Params()}`
         }
     },
     methods:{
-        gglParams(){
+        e42Params(){
             return queryString.stringify({
-                client_id: this.$config.gglClient,
-                redirect_uri: `${this.$config.clientURL}/oauth/google`,
-                scope: `https://www.googleapis.com/auth/plus.me email profile`,
+                client_id: this.$config.e42Client,
+                redirect_uri: `${this.$config.clientURL}/oauth/42`,
                 response_type: 'code',
-                access_type: 'offline',
-                prompt: 'consent',
             });
         },
         fbParams(){
@@ -63,9 +60,10 @@ export default {
     text-align: center;
 }
 #ggl-btn{
-    background-color: #DB4437;
+    background-color: #00babc;
     grid-area: fbb;
 }
+
 #fb-btn{
     background-color: #4267B2;
     grid-area: gglb;

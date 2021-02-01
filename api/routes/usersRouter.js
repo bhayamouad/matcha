@@ -23,7 +23,7 @@ router.get('/acceptPrivacy',usersController.authorize, usersController.acceptPri
 
 router.post('/saveImages', usersController.authorize, usersController.saveImages) 
 
-router.post('/oauth/google', usersController.gglOauth, usersController.connectOrRegister)
+router.post('/oauth/42', usersController.e42Oauth, usersController.connectOrRegister)
 router.post('/oauth/facebook', usersController.fbOauth, usersController.connectOrRegister)
 
 router.get('/loggedUser', usersController.authorize, usersController.getLoggedUser)

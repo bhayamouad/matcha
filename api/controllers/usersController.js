@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
         cb(null, helpers.hashHmacSha256(new Date().getTime().toString()).key+".png")
     }
 })
-// ***********Authorization************
+// ***********Authorization************ 
 
 exports.authorize = (req, res, next) => auth.authorize(req, res, next)
 
@@ -34,40 +34,43 @@ exports.authorized = (req, res) => { res.status(200).send({ state: 'AUTHORIZED',
 
 // ************Oauth**************** 
 
-exports.gglOauth = (req, res, next) => {
-    // console.log(req.body)
-    // res.send(req.body)
+exports.e42Oauth = (req, res, next) => {
     const code = req.body.code
     axios({
-        url: `https://oauth2.googleapis.com/token`,
+        url: `https://api.intra.42.fr/oauth/token`,
         method: 'post',
-        data: {
-          client_id: process.env.CLIENT_GGL_ID,
-          client_secret: process.env.CLIENT_GGL_KEY,
-          redirect_uri: 'https://192.168.99.128:8080/oauth/google',
-          grant_type: 'authorization_code',
-          code,
+        params: {
+            grant_type: 'authorization_code',
+            code,
+            client_id: process.env.CLIENT_42_ID,
+            client_secret: process.env.CLIENT_42_KEY,
+            redirect_uri: `${process.env.CLIENT_URL}/oauth/42`,
+            headers: {'content-type': 'application/x-www-form-urlencoded'}  
         }, 
-      }).then(({data})=>{
-            return data.access_token;
-      }).then((access_token)=>{
+      }).then(({data})=>{ 
+          console.log(`before axios: ${data.access_token}`) 
           return axios({
-            url: 'https://www.googleapis.com/userinfo/v2/me',
+            url: 'https://api.intra.42.fr/v2/me',
             method: 'get',
             headers: {
-              Authorization: `Bearer ${access_token}`,
+                Authorization: `Bearer ${data.access_token}`,  
             },
-          });
-      }).then(({data})=>{
-        console.log(data)
-        return 
-        const {id, email, given_name:fname, family_name:lname, birthday:birthdate, gender} = data
-        return {id, email, fname, lname, birthdate, gender}
+          })      
+      }).then(({data})=>{ 
+        const {id , email, first_name:fname, last_name:lname} = data
+        const userdata = {
+          oauth_id: `e42${id}`,
+          fname,
+          lname,
+          email,
+          status: 1
+        } 
+        return userdata; 
     }).then((ret)=>{
-        req.userdata = ret
-        next()
-  }).catch(()=>{
-          console.log('error')
+      req.userdata = ret
+      next() 
+  }).catch((e)=>{ 
+          console.log(e.message)            
       })
 }
 
@@ -146,7 +149,7 @@ exports.connectOrRegister = (req, res)=>{
             res.status(200).send({error: e.message}) 
     })
 }
-// *********************************                      
+// *********************************                    
 // *********************************
 
 
