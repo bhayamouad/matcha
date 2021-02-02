@@ -73,13 +73,19 @@ module.exports = class User {
           .then(([[user]]) => 
           {
             //console.log(user.lng)  
+            let whereGender = null
+            if(user.interest === 'B' || user.interest === 'O') 
+             whereGender = `u.gender = 'F' OR u.gender = 'M'`
+            else
+              whereGender = `u.gender = '${user.interest}'`
             return db.execute(`SELECT u.id_user, u.login, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age, i.path, ST_Distance_Sphere(point(${user.lng},${user.lat}), point(p.lng, p.lat))/1000 AS distance 
                                 FROM users u 
                                 INNER JOIN images i 
                                   ON i.user_id = u.id_user 
                                 INNER JOIN positions p 
                                   ON p.user_id = u.id_user 
-                                WHERE u.id_user <> ?`,[user.id_user]) 
+                                WHERE u.id_user <> ? AND ${whereGender}
+                                ORDER BY age, distance`,[user.id_user]) 
           })
   }
 }

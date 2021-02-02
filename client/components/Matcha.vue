@@ -14,11 +14,11 @@
         v-if="isVisible"
         :interact-out-of-sight-x-coordinate="600"
         :interact-max-rotation="15"
-        :interact-x-threshold="600"
-        :interact-y-threshold="600"
+        :interact-x-threshold="100"
+        :interact-y-threshold="100"
         :interact-event-bus-events="interactEventBus"
         interact-block-drag-down
-        @draggedRight="emitAndNext('match')"
+        @draggedRight="emitAndNext('like')"
         @draggedLeft="emitAndNext('reject')"
         @draggedUp="emitAndNext('skip')"
         class="rounded-borders card card--one">
@@ -59,7 +59,7 @@
       <div class="btn btn--skip" @click="skip">
           <i class="material-icons">call_missed</i>
       </div>
-      <div class="btn btn--like" @click="match">
+      <div class="btn btn--like" @click="like">
           <i class="material-icons">favorite</i>
       </div>
     </div>
@@ -76,7 +76,7 @@ export default {
             isVisible: true,
             index: 0,
             interactEventBus: {
-                draggedRight: 'match',
+                draggedRight: 'like',
                 draggedLeft: 'reject',
                 draggedUp: 'skip'
               },
@@ -97,8 +97,8 @@ export default {
         }
     },
     methods: {
-        match() {
-          InteractEventBus.$emit('match')
+        like() {
+          InteractEventBus.$emit('like')
         },
         reject() {
           InteractEventBus.$emit('reject')
@@ -108,6 +108,9 @@ export default {
         },
         emitAndNext(event) {
             this.$emit(event, this.index)
+            if(event === 'like'){
+              console.log(this.users[this.index].id_user)
+            }
             setTimeout(() => this.isVisible = false, 200)
             setTimeout(() => {
                 this.index++
