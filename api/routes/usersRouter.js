@@ -1,4 +1,4 @@
-const router = require('express').Router() 
+const router = require('express').Router()  
 
 const usersController = require('../controllers/usersController')
 
@@ -29,5 +29,6 @@ router.post('/oauth/facebook', usersController.fbOauth, usersController.connectO
 router.get('/loggedUser', usersController.authorize, usersController.getLoggedUser)
 router.get('/getImages', usersController.authorize, usersController.getUserImages)
 
+router.get('/getSuggestedUser', usersController.authorize, usersController.getSuggestedUser)
 
 module.exports = router

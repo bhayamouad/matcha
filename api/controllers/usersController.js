@@ -357,27 +357,24 @@ exports.setProfile = async (req, res) => {
     let position = null
     if (lat && lng) {
         const [location] = await helpers.getLocation(lat, lng)
-            .catch(error => { /*return res.send({ message: error.message, error: true }) */ console.log("catch location "+error.message)})
         position = new Position({
             city: `${location.city},${location.country}`,
             lat,
             lng,
             user_id: req.id_user,
         })
-        console.log(position.city+"if lat & lng")  
+        await position.save()
     }
-    else {
-            const ip = await helpers.getPublicIp().catch(error => console.log("catch public ip "+error.message))
-            const res = await helpers.ipLocationFinderAPI(ip).catch(error => console.log("catch finder "+error.message)) // to solve later !!!!!!!
-            position = new Position({
-                city: `${res.data.geo.city},${res.data.geo.country_name}`,
-                lat: res.data.geo.latitude,
-                lng: res.data.geo.longitude,
-                user_id: req.id_user,
-            })
-        }
-    await position.save().catch( (error) => { /*return res.send({ message: error.message, error: true })*/ console.log("catch save "+error.message)}) 
-
+    // else {
+    //         const ip = await helpers.getPublicIp().catch(error => console.log("catch public ip "+error.message))
+    //         const res = await helpers.ipLocationFinderAPI(ip).catch(error => console.log("catch finder "+error.message)) // to solve later !!!!!!!
+    //         position = new Position({
+    //             city: `${res.data.geo.city},${res.data.geo.country_name}`,
+    //             lat: res.data.geo.latitude,
+    //             lng: res.data.geo.longitude,
+    //             user_id: req.id_user,
+    //         })
+    //     }
     tags.forEach(async (tag) => {
             await Tag.save(tag).catch(error => { return res.send({ message: error.message, error: true }) })
     })
@@ -423,6 +420,9 @@ exports.saveImages = (req, res) => {
             let upload = multer({storage}).array('images',5)
             upload(req, res, async (err) => {
                 let imagesFiles = req.files
+                console.log(userImages)
+                console.log("==============================")
+                console.log(imagesFiles)
                 if(userImages.length === 0){
                     imagesFiles.forEach(async (imageFile, index) => {
                         const image = new Image({
@@ -439,11 +439,13 @@ exports.saveImages = (req, res) => {
                       await Image.deleteUserImages(req.id_user, limit)
                       let i = userImages.length - 1
                       while(limit--){
-                        fs.unlinkSync(`uploads/${userImages[i--].path}`)
+                        fs.unlinkSync(`uploads/${userImages[i--].path}`) 
                       }
                     }
                     userImages.forEach( (image,index) => {
-                        Image.updateImage(image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
+                        console.log(image)
+                        console.log(imagesFiles[image.is_profile].path.split('/')[1])
+                        Image.updateImage(req.id_user ,image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
                         .then(()=>{
                             imagesFiles.splice(0, 1)
                             fs.unlinkSync(`uploads/${image.path}`)
@@ -495,4 +497,12 @@ exports.getUserImages = async (req, res) => {
         })
     }
     res.status(200).send({images})
+}
+
+exports.getSuggestedUser = (req, res) => { 
+    User.getUsersPosImg(req.id_user)
+        .then( ([users]) => { 
+            res.status(200).send({users})
+        })
+        .catch(err => console.log(err.message)) 
 }

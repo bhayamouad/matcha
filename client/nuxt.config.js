@@ -2,6 +2,7 @@ import fs from 'fs'
 export default {
   // server config
   publicRuntimeConfig: {
+    baseURL: process.env.BASE_URL,
     clientURL: process.env.CLIENT_URL,
     fbClient: process.env.FB_CLIENT,
     e42Client: process.env.E42_CLIENT

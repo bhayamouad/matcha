@@ -49,7 +49,6 @@
         :data="filteredTags"
         icon="label"
         allow-new
-        autocomplete
         :confirm-keys = "['Enter']"
         placeholder="ex: #vegan, #geek, #piercing etc..."
         :before-adding="tagValidate"

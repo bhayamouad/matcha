@@ -105,7 +105,7 @@ export default {
         if (!this.check) this.errorCheck = "You must accept our privacy policy";
         else {
           const res = await this.$axios.$get("/account/acceptPrivacy");
-          if (!res.error) this.$router.push('/')
+          if (!res.error) this.$router.go()
         }
       }
     }
