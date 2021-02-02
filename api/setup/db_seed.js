@@ -3,25 +3,25 @@ exports.DBSeeds = (connection) => {
     connection.connect(function(err) {
         if (err) throw err;
     
-        connection.query(`INSERT INTO users (id_user, fname, lname, email, login, password, gender , birthdate, interest , biography , tags , rating , status, token, expire_token)
+        connection.query(`INSERT INTO users (id_user, fname, lname, email, login, password, gender, birthdate, interest, biography, rating, status, token, expire_token)
                             VALUES
-                                (10,'Emmie','Nicolas','emmie.nicolas@example.com','beautifulbird','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1990-11-09','M','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#shopping,#travel,#dating,#love',50,2,NULL,NULL),
-                                (11,'Karl','Johnson','karl.johnson@example.com','bigpeacock','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1985-11-30','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#cooking,#travel,#vegan',40,2,NULL,NULL),
-                                (12,'Finn','Morris','finn.morris@example.com','whitelion','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1997-12-02','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#girls,#travel,#football,#fitness,#yoga',20,2,NULL,NULL),
-                                (13,'Romane','Perez','romane.perez@example.com','brownelephant','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1995-04-30','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#girls,#cooking,#love',10,2,NULL,NULL),
-                                (14,'Lucia','Hammeren','lucia.hammeren@example.com','tinykoala','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1974-06-18','M','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#travel,#relationship,#sex,#funny',60,2,NULL,NULL),
-                                (15,'Romane','Renaud','romane.renaud@example.com','silvercat','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1960-11-09','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#cats,#dogs,#animals,#safari',50,2,NULL,NULL),
-                                (16,'Melike','Arslanoğlu','melike.arslanoglu@example.com','tinymeercat','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1997-12-08','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#tiktok,#love,#serious_dating',50,2,NULL,NULL),
-                                (17,'Regina','Daniels','regina.daniels@example.com','redtiger','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1987-09-18','M','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#animals,#safari,#travel,#cats_lover',50,2,NULL,NULL),
-                                (18,'Louis','Jones','louis.jones@example.com','ticklishbear','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1991-02-08','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#test,#tiktok,#love,#serious_dating',50,2,NULL,NULL),
-                                (19,'Don','George','don.george@example.com','happyfish','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1971-10-13','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#fishing,#cooking,#love,#serious_dating',50,2,NULL,NULL),
-                                (20,'Frank Michael','Reiser','frank-michael.reiser@example.com','orangecat','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1994-01-09','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#high_tech,#geek,#sex,#hello_World',30,2,NULL,NULL),
-                                (21,'Gabriel','Molina','gabriel.molina@example.com','smallelephant','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1998-03-03','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#test,#tiktok,#love,#serious_dating',50,2,NULL,NULL),
-                                (22,'علیرضا','احمدی','aalyrd.hmdy@example.com','blackelephant','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1984-09-18','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#football,#sports,#love',0,2,NULL,NULL),
-                                (23,'Cristobal','Santana','cristobal.santana@example.com','bluebear793','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1978-03-31','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#test,#programming,#hello_world',70,2,NULL,NULL),
-                                (24,'Alyssa','Elliott','alyssa.elliott@example.com','whiteladybug240','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1991-07-18','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#funny,#love,#sex,#travel,#open_mind,#programming,#geek,#surf',50,2,NULL,NULL),
-                                (25,'Nikolaj','Nielsen','nikolaj.nielsen@example.com','sadbird','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1979-10-19','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#tiktok,#matcha,#date,#open_mind,#surf',50,2,NULL,NULL),
-                                (26,'Kristina','Silva','kristina.silva@example.com','redbird','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1990-02-02','M','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.','#matcha',50,2,NULL,NULL)
+                                (10,'Emmie','Nicolas','emmie.nicolas@example.com','beautifulbird','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1990-11-09','M','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL),
+                                (11,'Karl','Johnson','karl.johnson@example.com','bigpeacock','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1985-11-30','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',40,2,NULL,NULL),
+                                (12,'Finn','Morris','finn.morris@example.com','whitelion','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1997-12-02','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',20,2,NULL,NULL),
+                                (13,'Romane','Perez','romane.perez@example.com','brownelephant','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1995-04-30','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',10,2,NULL,NULL),
+                                (14,'Lucia','Hammeren','lucia.hammeren@example.com','tinykoala','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1974-06-18','M','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',60,2,NULL,NULL),
+                                (15,'Romane','Renaud','romane.renaud@example.com','silvercat','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1960-11-09','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL),
+                                (16,'Melike','Arslanoğlu','melike.arslanoglu@example.com','tinymeercat','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1997-12-08','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL),
+                                (17,'Regina','Daniels','regina.daniels@example.com','redtiger','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1987-09-18','M','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL),
+                                (18,'Louis','Jones','louis.jones@example.com','ticklishbear','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1991-02-08','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL),
+                                (19,'Don','George','don.george@example.com','happyfish','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1971-10-13','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL),
+                                (20,'Frank Michael','Reiser','frank-michael.reiser@example.com','orangecat','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1994-01-09','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',30,2,NULL,NULL),
+                                (21,'Gabriel','Molina','gabriel.molina@example.com','smallelephant','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1998-03-03','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL),
+                                (22,'علیرضا','احمدی','aalyrd.hmdy@example.com','blackelephant','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1984-09-18','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',0,2,NULL,NULL),
+                                (23,'Cristobal','Santana','cristobal.santana@example.com','bluebear793','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1978-03-31','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',70,2,NULL,NULL),
+                                (24,'Alyssa','Elliott','alyssa.elliott@example.com','whiteladybug240','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1991-07-18','B','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL),
+                                (25,'Nikolaj','Nielsen','nikolaj.nielsen@example.com','sadbird','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','M','1979-10-19','F','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL),
+                                (26,'Kristina','Silva','kristina.silva@example.com','redbird','$2b$10$acTQ8iA5pt1WwsNN9KC4zOH8P6YlR982U56sMa2D2CpVVH.pVsT1S','F','1990-02-02','M','Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.',50,2,NULL,NULL)
                         ;`);
         connection.query(`INSERT INTO images (id_image, path, user_id, is_profile)
                             VALUES
@@ -64,40 +64,58 @@ exports.DBSeeds = (connection) => {
                                 (17, 'Khouribga,Morocco', 32.8751717,-6.9023538, 25),
                                 (18, 'Casablanca,Morocco', 33.5700651,-7.6447744, 26)
                         ;`);
-        connection.query(`INSERT IGNORE INTO tags (tag)
+        connection.query(`INSERT IGNORE INTO tags (id_tag, tag)
                             VALUES           
-                                ('#shopping'),
-                                ('#travel'),
-                                ('#dating'),
-                                ('#date'),
-                                ('#matcha'),
-                                ('#surf'),
-                                ('#open_mind'),
-                                ('#programming'),
-                                ('#sports'),
-                                ('#hello_World'),
-                                ('#geek'),
-                                ('#high_tech'),
-                                ('#fishing'),
-                                ('#test'),
-                                ('#cats_lover'),
-                                ('#serious_dating'),
-                                ('#tiktok'),
-                                ('#safari'),
-                                ('#animals'),
-                                ('#dogs'),
-                                ('#cats'),
-                                ('#funny'),
-                                ('#sex'),
-                                ('#yoga'),
-                                ('#fitness'),
-                                ('#football'),
-                                ('#girls'),
-                                ('#vegan'),
-                                ('#cooking'),
-                                ('#love')
-                        ;`);
-            
+                                (1, '#shopping'),
+                                (2,'#travel'),
+                                (3, '#dating'),
+                                (4, '#date'),
+                                (5, '#matcha'),
+                                (6, '#surf'),
+                                (7, '#open_mind'),
+                                (8, '#programming'),
+                                (9, '#sports'),
+                                (10, '#hello_World'),
+                                (11, '#geek'),
+                                (12, '#high_tech'),
+                                (13, '#fishing'),
+                                (14, '#test'),
+                                (15, '#cats_lover'),
+                                (16, '#serious_dating'),
+                                (17, '#tiktok'),
+                                (18, '#safari'),
+                                (19, '#animals'),
+                                (20, '#dogs'),
+                                (21, '#cats'),
+                                (22, '#funny'),
+                                (23, '#sex'),
+                                (24, '#yoga'),
+                                (25, '#fitness'),
+                                (26, '#football'),
+                                (27, '#girls'),
+                                (28, '#vegan'),
+                                (29, '#cooking'),
+                                (30, '#love')
+                        ;`); 
+        connection.query(`INSERT INTO users_tags (tag_id, user_id) 
+                            VALUES
+                                (1,10),(2,10),(3,10),(30,10),
+                                (29,11),(2,11),(28,11),
+                                (27,12),(2,12),(26,12),(25,12),(24,12),
+                                (27,13),(29,13),(30,13),
+                                (2,14),(23,14),(22,14),
+                                (21,15),(20,15),(19,15),(18,15),
+                                (17,16),(30,16),(16,16),
+                                (19,17),(18,17),(2,17),(15,17),
+                                (14,18),(17,18),(30,18),(16,18),
+                                (13,19),(29,19),(30,19),(16,19),
+                                (12,20),(11,20),(23,20),(10,20),
+                                (14,21),(17,21),(30,21),(16,21),
+                                (26,22),(9,22),(30,22),
+                                (14,23),(8,23),(10,23),
+                                (22,24),(30,24),(23,24),(2,24),(7,24),(8,24),(11,24),(6,24),
+                                (17,25),(5,25),(4,25),(7,25),(6,25),
+                                (5,26) ;`)
         console.log("database seeding success");
         connection.end();
     })

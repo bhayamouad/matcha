@@ -23,9 +23,8 @@ connection.connect(function(err) {
                         oauth_id varchar(255) DEFAULT NULL,
                         gender ENUM('M', 'F', 'O', '0') DEFAULT '0',
                         birthdate date DEFAULT NULL,
-                        interest ENUM('M', 'F', 'B', '0') DEFAULT '0',
+                        interest ENUM('M', 'F', 'B') DEFAULT 'B',
                         biography varchar(200),
-                        tags varchar(255),
                         rating int(3) DEFAULT 0,
                         status int(1) NOT NULL DEFAULT 0,
                         token varchar(255),
@@ -49,12 +48,23 @@ connection.connect(function(err) {
                   connection.query(`ALTER TABLE images ADD FOREIGN KEY (user_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 
                   connection.query(`CREATE TABLE tags(
-                              tag varchar(25) NOT NULL,
-                              created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-                              updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
+                                          id_tag int(11) NOT NULL,
+                                          tag varchar(25) NOT NULL UNIQUE,
+                                          created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+                                          updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
                         );`);
 
-                  connection.query(`ALTER TABLE tags ADD PRIMARY KEY (tag);`);
+                  connection.query(`ALTER TABLE tags ADD PRIMARY KEY (id_tag);`);
+                  connection.query(`ALTER TABLE tags MODIFY id_tag int(11) NOT NULL AUTO_INCREMENT;`);
+
+                  connection.query(`CREATE TABLE users_tags(
+                                    tag_id int(11) NOT NULL,
+                                    user_id int(11) NOT NULL,
+                                    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+                                    );`)
+                  connection.query(`ALTER TABLE users_tags ADD PRIMARY KEY (tag_id, user_id);`);
+                  connection.query(`ALTER TABLE users_tags ADD FOREIGN KEY (user_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
+                  connection.query(`ALTER TABLE users_tags ADD FOREIGN KEY (tag_id) REFERENCES tags (id_tag) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   
                   connection.query(`CREATE TABLE positions(
                                     id_position int(11) NOT NULL,

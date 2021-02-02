@@ -375,10 +375,22 @@ exports.setProfile = async (req, res) => {
     //             user_id: req.id_user,
     //         })
     //     }
-    tags.forEach(async (tag) => {
-            await Tag.save(tag).catch(error => { return res.send({ message: error.message, error: true }) })
-    })
+    tags.forEach( (tag) => {
+            Tag.getByTag(tag)
+                .then( async ([[res]]) => { 
+                    if(!res)
+                    {
+                        Tag.save(tag)
+                            .then( async ([newTag]) => await Tag.saveUserTag(req.id_user, newTag.insertId))
+                            .catch(error => console.log(error.message))
+                    }
+                    else
+                        await Tag.saveUserTag(req.id_user,res.id_tag)
+                })
+                .catch(error => { console.log(error.message)})
+             
 
+    })
     User.setProfile(data, req.id_user) 
         .then(() => res.status(200).send({ message: `success` }))
         .catch(err => res.send({ message: err.message }))

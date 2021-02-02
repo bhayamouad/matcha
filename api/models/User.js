@@ -54,7 +54,7 @@ module.exports = class User {
     return db.execute('UPDATE users SET password = ?, token = NULL, expire_token = NULL WHERE id_user = ?', [password, id])
   }
   static setProfile(data, id) {
-    return db.execute('UPDATE users SET login = ?, gender = ?, birthdate = ?, interest = ?, tags = ?, biography = ? WHERE id_user = ?', [data.login, data.gender,data.birthdate, data.interest, data.tags, data.bio, id])
+    return db.execute('UPDATE users SET login = ?, gender = ?, birthdate = ?, interest = ?, biography = ? WHERE id_user = ?', [data.login, data.gender,data.birthdate, data.interest, data.bio, id])
   }
   static getStatusById(id){
     return db.execute('SELECT status FROM users WHERE id_user = ?', [id])
@@ -74,7 +74,7 @@ module.exports = class User {
           {
             //console.log(user.lng)  
             let whereGender = null
-            if(user.interest === 'B' || user.interest === 'O') 
+            if(user.interest === 'B') 
              whereGender = `u.gender = 'F' OR u.gender = 'M'`
             else
               whereGender = `u.gender = '${user.interest}'`
@@ -85,7 +85,7 @@ module.exports = class User {
                                 INNER JOIN positions p 
                                   ON p.user_id = u.id_user 
                                 WHERE u.id_user <> ? AND ${whereGender}
-                                ORDER BY age, distance`,[user.id_user]) 
+                                ORDER BY age, distance, u.rating`,[user.id_user]) 
           })
   }
 }
