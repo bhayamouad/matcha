@@ -106,10 +106,10 @@ export default {
         skip() {
           InteractEventBus.$emit('skip')
         },
-        emitAndNext(event) {
+        async emitAndNext(event) {
             this.$emit(event, this.index)
             if(event === 'like'){
-              console.log(this.users[this.index].id_user)
+              const response = await this.$axios.$post('/matcha/like', { idLiked:this.users[this.index].id_user }) 
             }
             setTimeout(() => this.isVisible = false, 200)
             setTimeout(() => {

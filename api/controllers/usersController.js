@@ -399,15 +399,20 @@ exports.setProfile = async (req, res) => {
 exports.getData = (req, res) => {
     let data = {
         user: {},
-        tagsList: []
+        tagsList: [],
+        userTags:[]
     }
     Tag.getAll()
     .then( async ([tags]) => {
         tags.forEach(tag => {
             data.tagsList.push(tag.tag) 
         });
-        const [[user]] = await User.getById(req.id_user).catch(err => { return res.send({ message: err.message}) } )
+        const [[user]] = await User.getById(req.id_user) 
         data.user = user
+        const [userTags] = await Tag.getByUser(req.id_user)
+        userTags.forEach(tag => {
+            data.userTags.push(tag.tag) 
+        });
         return res.send({ data })
         })
         .catch(err => { return res.send({ message: err.message}) })
@@ -432,9 +437,6 @@ exports.saveImages = (req, res) => {
             let upload = multer({storage}).array('images',5)
             upload(req, res, async (err) => {
                 let imagesFiles = req.files
-                console.log(userImages)
-                console.log("==============================")
-                console.log(imagesFiles)
                 if(userImages.length === 0){
                     imagesFiles.forEach(async (imageFile, index) => {
                         const image = new Image({
@@ -511,7 +513,7 @@ exports.getUserImages = async (req, res) => {
     res.status(200).send({images})
 }
 
-exports.getSuggestedUser = (req, res) => { 
+exports.getSuggestedUser = (req, res) => {
     User.getUsersPosImg(req.id_user)
         .then( ([users]) => { 
             res.status(200).send({users})

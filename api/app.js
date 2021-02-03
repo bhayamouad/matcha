@@ -24,8 +24,10 @@ app.get('/test', (req, res)=> {
   res.send(`The API is running!`)
 })
 const usersRouter = require('./routes/usersRouter')
+const matchaRouter = require('./routes/matchaRouter')
 
-app.use('/account',usersRouter)
+app.use('/account', usersRouter)
+app.use('/matcha', matchaRouter)
 
 https.createServer({
     key: fs.readFileSync('/etc/ssl/private/matchasigned.key'),

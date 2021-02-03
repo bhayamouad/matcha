@@ -14,5 +14,8 @@ static getAll () {
 static saveUserTag(idUser,idTag){
     return db.execute(`INSERT IGNORE INTO users_tags (tag_id, user_id) values (?,?)`,[idTag, idUser])
 }
+static getByUser(id){
+    return db.execute(`SELECT t.tag FROM users_tags ut INNER JOIN tags t ON t.id_tag = ut.tag_id WHERE user_id = ? ORDER BY t.tag`,[id])
+}
 
 }

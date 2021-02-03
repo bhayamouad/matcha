@@ -132,7 +132,7 @@ export default {
     this.user.interest = dataUser.interest
     this.user.birthdate = new Date(dataUser.birthdate)
     this.user.bio = dataUser.biography
-    this.user.tags = (dataUser.tags) ? dataUser.tags.split(',') : [],
+    this.user.tags = result.data.userTags,
     this.isLogin = !!dataUser.login
   },
   methods: {
