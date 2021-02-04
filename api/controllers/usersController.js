@@ -419,7 +419,6 @@ exports.setProfile = async (req, res) => {
                 }
             }) 
             .then(ret => {
-                console.log(ret)
                 Tag.saveUserTag(uid, ret)
                 .then(ret => {return ret})
                 .catch(e => console.log('save user-tag error'))
