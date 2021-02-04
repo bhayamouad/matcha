@@ -1,10 +1,5 @@
 <template>
     <section>
-    <div class="header">
-      <i class="material-icons" @click="index = 0">refresh</i>
-      <span>Matcha</span>
-      <i class="material-icons">tune</i>
-    </div>
     <div
       v-if="current"
       class="fixed fixed--center"
@@ -24,7 +19,7 @@
         class="rounded-borders card card--one">
         <div style="height: 100%">
           <img
-            :src="$config.baseURL+'/'+current.path"
+            :src="$config.baseURL+'/'+current.images.split(',')[0]"
             class="rounded-borders"/>
           <div class="text">
             <h2>{{current.login}}</h2>
@@ -38,7 +33,7 @@
       style="z-index: 2">
       <div style="height: 100%">
         <img
-          :src="$config.baseURL+'/'+next.path"
+          :src="$config.baseURL+'/'+next.images.split(',')[0]"
           class="rounded-borders"/>
         <div class="text">
             <h2>{{next.login}}</h2>
@@ -87,13 +82,15 @@ export default {
         
         const data = await this.$axios.$get('/account/getSuggestedUser')
         this.users = data.users
+        
     },
     computed: {
         current() {
-            return this.users[this.index]
+          const current = this.users[this.index]
+            return current
         },
         next() {
-            return this.users[this.index + 1]
+          return this.users[this.index + 1]
         }
     },
     methods: {
@@ -109,7 +106,12 @@ export default {
         async emitAndNext(event) {
             this.$emit(event, this.index)
             if(event === 'like'){
-              const response = await this.$axios.$post('/matcha/like', { idLiked:this.users[this.index].id_user }) 
+              const response = await this.$axios.$post('/matcha/like', { idLiked:this.users[this.index].id_user })
+              // if(!response.error)
+              //   this.users.splice(this.index,1)
+            }
+            if(event === 'reject'){
+              const response = await this.$axios.$post('/matcha/reject', { idDisliked: this.users[this.index].id_user })
             }
             setTimeout(() => this.isVisible = false, 200)
             setTimeout(() => {

@@ -79,38 +79,33 @@ connection.connect(function(err) {
                   connection.query(`ALTER TABLE positions MODIFY id_position int(11) NOT NULL AUTO_INCREMENT;`);
                   connection.query(`ALTER TABLE positions ADD FOREIGN KEY (user_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 
-                  connection.query(`CREATE TABLE matchs(
-                                    id_match int(11) NOT NULL,
+                  connection.query(`CREATE TABLE matches(
                                     first_profile int(11) NOT NULL,
                                     second_profile int(11) NOT NULL,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                               );`);
 
-                  connection.query(`ALTER TABLE matchs ADD PRIMARY KEY (id_match);`)
-                  connection.query(`ALTER TABLE matchs ADD FOREIGN KEY (first_profile) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
-                  connection.query(`ALTER TABLE matchs ADD FOREIGN KEY (second_profile) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
+                  connection.query(`ALTER TABLE matches ADD PRIMARY KEY (first_profile, second_profile);`)
+                  connection.query(`ALTER TABLE matches ADD FOREIGN KEY (first_profile) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
+                  connection.query(`ALTER TABLE matches ADD FOREIGN KEY (second_profile) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 
                   connection.query(`CREATE TABLE likes(
-                                    id_like int(11) NOT NULL,
                                     liker_id int(11) NOT NULL,
                                     liked_id int(11) NOT NULL,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                               );`);
 
-                  connection.query(`ALTER TABLE likes ADD PRIMARY KEY (id_like);`)
-                  connection.query(`ALTER TABLE likes MODIFY id_like int(11) NOT NULL AUTO_INCREMENT;`);
+                  connection.query(`ALTER TABLE likes ADD PRIMARY KEY (liker_id, liked_id);`)
                   connection.query(`ALTER TABLE likes ADD FOREIGN KEY (liker_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   connection.query(`ALTER TABLE likes ADD FOREIGN KEY (liked_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 
                   connection.query(`CREATE TABLE dislikes(
-                                    id_dislike int(11) NOT NULL,
                                     disliker_id int(11) NOT NULL,
                                     disliked_id int(11) NOT NULL,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                               );`);
 
-                  connection.query(`ALTER TABLE dislikes ADD PRIMARY KEY (id_dislike);`)
-                  connection.query(`ALTER TABLE dislikes MODIFY id_dislike int(11) NOT NULL AUTO_INCREMENT;`);
+                  connection.query(`ALTER TABLE dislikes ADD PRIMARY KEY (disliker_id, disliked_id);`)
                   connection.query(`ALTER TABLE dislikes ADD FOREIGN KEY (disliker_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   connection.query(`ALTER TABLE dislikes ADD FOREIGN KEY (disliked_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   

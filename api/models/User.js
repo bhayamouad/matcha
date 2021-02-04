@@ -74,17 +74,21 @@ module.exports = class User {
           {
             let whereGender = null
             if(user.interest === 'B') 
-             whereGender = `u.gender = 'F' OR u.gender = 'M'`
+             whereGender = `(u.gender = 'F' OR u.gender = 'M')`
             else
               whereGender = `u.gender = '${user.interest}'`
-            return db.execute(`SELECT u.id_user, u.login, u.rating, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age, i.path, ST_Distance_Sphere(point(${user.lng},${user.lat}), point(p.lng, p.lat))/1000 AS distance,
+            return db.execute(`SELECT DISTINCT(u.id_user), u.login, u.rating, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age, (SELECT GROUP_CONCAT(path ORDER BY path ASC SEPARATOR ',') FROM images where user_id = u.id_user) as images, ST_Distance_Sphere(point(${user.lng},${user.lat}), point(p.lng, p.lat))/1000 AS distance,
                                 (select count(*) from users_tags ut1 INNER join users_tags ut2 on ut1.tag_id = ut2.tag_id where ut1.user_id = ${user.id_user} and ut2.user_id = u.id_user) AS common_tags
                                   FROM users u
                                   INNER JOIN images i 
                                     ON i.user_id = u.id_user 
                                   INNER JOIN positions p 
                                     ON p.user_id = u.id_user 
-                                  WHERE u.id_user <> ? AND ${whereGender} AND ST_Distance_Sphere(point(-6.897877,32.882202), point(p.lng, p.lat))/1000 < 150
+                                  WHERE u.id_user <> ? 
+                                    AND ${whereGender} 
+                                    AND ST_Distance_Sphere(point(${user.lng},${user.lat}), point(p.lng, p.lat))/1000 < 150
+                                    AND u.id_user NOT IN (SELECT liked_id FROM likes where liker_id = ${user.id_user} AND liked_id = u.id_user)
+                                    AND u.id_user NOT IN (SELECT disliked_id FROM dislikes WHERE disliker_id = ${user.id_user} AND disliked_id = u.id_user)
                                   ORDER BY common_tags DESC, u.rating DESC`,[user.id_user])
           })
           
