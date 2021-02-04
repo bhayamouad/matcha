@@ -344,6 +344,8 @@ exports.changePassword = (req, res) => {
         })
         .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
+
+
 exports.setProfile = async (req, res) => {
     const { login, gender, birthdate, interest, bio, tags, lat, lng } = req.body
     const data = {
@@ -375,22 +377,59 @@ exports.setProfile = async (req, res) => {
     //             user_id: req.id_user,
     //         })
     //     }
-    tags.forEach( (tag) => {
-            Tag.getByTag(tag)
-                .then( async ([[res]]) => { 
-                    if(!res)
-                    {
-                        Tag.save(tag)
-                            .then( async ([newTag]) => await Tag.saveUserTag(req.id_user, newTag.insertId))
-                            .catch(error => console.log(error.message))
-                    }
-                    else
-                        await Tag.saveUserTag(req.id_user,res.id_tag)
-                })
-                .catch(error => { console.log(error.message)})
-             
 
+
+    const uid = req.id_user;
+    let tagsToDelete = [];
+    let tagsToAdd = []
+    Tag.getUserTags(uid) 
+    .then(([ret])=>{
+
+        ret.forEach((elm)=> {
+            if(!tags.includes(elm.tag))
+                tagsToDelete.push(elm.id_tag)
+        })
+        tagsToDelete = tagsToDelete.toString() 
+        if(tagsToDelete)
+        {
+            Tag.deleteTags(uid, tagsToDelete)     
+            .catch((e)=>{console.log(`::::${e.message}`)})      
+        }
+
+        tags.forEach((elm)=> {
+            let flag = false;
+            ret.forEach((r_elm)=>{
+                if(elm == r_elm.tag) 
+                    flag = true;
+            })
+            if(!flag)  
+                tagsToAdd.push(elm) 
+        })
+        // const tagsIdsToAdd = [];
+
+        tagsToAdd.forEach((tag) => {
+            Tag.getByTag(tag) 
+            .then(([[ret]])=> {
+                if (ret)
+                    return ret.id_tag
+                else{
+                return Tag.save(tag) 
+                .then(([ret]) => {return ret.insertId})
+                .catch(e => console.log('save error'))
+                }
+            }) 
+            .then(ret => {
+                console.log(ret)
+                Tag.saveUserTag(uid, ret)
+                .then(ret => {return ret})
+                .catch(e => console.log('save user-tag error'))
+            })
+            .catch(e => console.log(e.message))
+        })
     })
+    .catch((e)=> {console.log(e.message)})
+
+   
     User.setProfile(data, req.id_user) 
         .then(() => res.status(200).send({ message: `success` }))
         .catch(err => res.send({ message: err.message }))
