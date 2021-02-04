@@ -553,7 +553,7 @@ exports.getUserImages = async (req, res) => {
 
 exports.getSuggestedUser = (req, res) => {
     User.getUsersPosImg(req.id_user)
-        .then( ([users]) => { 
+        .then( ([users]) => {
             res.status(200).send({users})
         })
         .catch(err => console.log(err.message)) 
