@@ -15,7 +15,7 @@ router.post('/change-password',usersController.changePassword)
 
 router.post('/authorization', usersController.authorize, usersController.authorized) 
 
-router.post('/setProfile', usersController.authorize, usersController.setProfile) 
+router.post('/setProfile', usersController.authorize, usersController.checkIfExist, usersController.setProfile) 
 
 router.get('/getDataUser', usersController.authorize, usersController.getData)
 router.get('/getStatus',usersController.authorize, usersController.getStatus)

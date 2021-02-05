@@ -1,7 +1,25 @@
 <template>
   <div>
     
-    <b-field v-if="!isLogin" label="Username"
+    <b-field v-if="!(parent=='steps')" label="First Name"
+      :type="{'is-danger': errors.fname}" 
+      :message="errors.fname"
+    >
+      <b-input v-model="user.fname" placeholder="First Name"></b-input> 
+    </b-field>
+    <b-field v-if="!(parent=='steps')" label="Last Name"
+      :type="{'is-danger': errors.lname}" 
+      :message="errors.lname"
+    >
+      <b-input v-model="user.lname" placeholder="Last Name"></b-input> 
+    </b-field>
+    <b-field v-if="!(parent=='steps')" label="Email"
+      :type="{'is-danger': errors.email}" 
+      :message="errors.email"
+    >
+      <b-input v-model="user.email" placeholder="Email"></b-input> 
+    </b-field>
+    <b-field v-if="(!isLogin) && (parent=='steps')" label="Username"
       :type="{'is-danger': errors.login}" 
       :message="errors.login"
     >
@@ -63,6 +81,35 @@ let tagsList = null
 let lat=null, lng=null
 let dataUser = {}
 
+const validateFname = (fname) => {
+    if (!fname) return { valid: false, error: "The First name is required" };
+    if (fname.length < 3)
+      return {
+        valid: false,
+        error: "The First name must have more than 2 characters",
+      };
+    return { valid: true, error: null };
+  };
+  const validateLname = (lname) => {
+    if (!lname) return { valid: false, error: "The Last name is required" };
+    if (lname.length < 3)
+      return {
+        valid: false,
+        error: "The Last name must have more than 2 characters",
+      };
+    return { valid: true, error: null };
+  };
+  const validateEmail = (email) => {
+    if (!email) return { valid: false, error: "The Email is required" };
+    if (
+      !email.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      )
+    )
+      return { valid: false, error: "Please enter a valid email" };
+    return { valid: true, error: null };
+  };
+
 const validateLogin = (login) => {
     if (!login) return { valid: false, error: "The login is required" };
     if (login.length > 14)
@@ -77,7 +124,7 @@ const validateGender = gender => {
 
 const validateInterest = interest => {
   if (!interest)
-    return { valid: false, error: "You must choose your Sexual orientation" }
+    return { valid: false, error: "You must choose your Sexual orientation" } 
   return { valid: true, error: null }
 }
 
@@ -100,11 +147,15 @@ const validateTags = tags => {
 }
 
 export default {
+  props:['parent'],
   data() {
     const maxYear = new Date();
     maxYear.setFullYear(maxYear.getFullYear() - 18)
     return {
       user: {
+        fname: null,
+        lname: null,
+        email: null,
         login: null,
         gender: null,
         interest: null,
@@ -127,10 +178,13 @@ export default {
     const result = await this.$axios.$get('/account/getDataUser')
     tagsList = result.data.tagsList
     dataUser = result.data.user
+    this.user.fname = dataUser.fname
+    this.user.lname = dataUser.lname
+    this.user.email = dataUser.email
     this.user.login = dataUser.login
-    this.user.gender = dataUser.gender
+    this.user.gender = (dataUser.gender === '0') ? null : dataUser.gender
     this.user.interest = dataUser.interest
-    this.user.birthdate = new Date(dataUser.birthdate)
+    this.user.birthdate = (dataUser.birthdate) ? new Date(dataUser.birthdate) : null
     this.user.bio = dataUser.biography
     this.user.tags = result.data.userTags,
     this.isLogin = !!dataUser.login
@@ -153,6 +207,18 @@ export default {
       this.errors = {}
       this.valid = true
       
+      const validFname = validateFname(this.user.fname)
+      this.errors.fname = validFname.error
+      if (this.valid) this.valid = validFname.valid
+      
+      const validLname = validateLname(this.user.lname)
+      this.errors.lname = validLname.error
+      if (this.valid) this.valid = validLname.valid
+
+      const validEmail = validateEmail(this.user.email)
+      this.errors.email = validEmail.error
+      if (this.valid) this.valid = validEmail.valid
+
       const validLogin = validateLogin(this.user.login)
       this.errors.login = validLogin.error
       if (this.valid) this.valid = validLogin.valid
@@ -179,11 +245,44 @@ export default {
 
       if(this.valid)
       {
-        const data = {login: this.user.login, gender:this.user.gender, birthdate: new Date(this.user.birthdate.toString()), interest:this.user.interest, bio:this.user.bio, tags:this.user.tags, lat, lng}
-        console.log(data)
+        const data = {
+          fname:this.user.fname,
+          lname:this.user.lname,
+          email:this.user.email,
+          login: this.user.login,
+          gender:this.user.gender, 
+          birthdate: new Date(this.user.birthdate.toString()),
+          interest:this.user.interest, 
+          bio:this.user.bio, 
+          tags:this.user.tags, 
+          lat, 
+          lng
+          }
         const res = await this.$axios.$post('/account/setProfile', data)
+        if(res.emailerr)
+        {
+            this.valid = false;
+            this.errors.email = "This email already exists"
+        }
+        if(res.loginerr)
+        {
+            this.valid = false;
+            this.errors.login = "This username already exists"
+        }
         if(res.message === 'success')
-          return true
+            return true 
+      }
+      
+        this.user = {
+        fname: this.user.fname,
+        lname: this.user.lname,
+        email: this.user.email,
+        login: this.user.login,
+        gender: this.user.gender,
+        interest: this.user.interest,
+        birthdate: this.user.birthdate,
+        bio: this.user.bio,
+        tags: this.user.tags,
       }
         return false
     }

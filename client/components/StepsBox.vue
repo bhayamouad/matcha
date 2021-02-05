@@ -2,7 +2,7 @@
   <div id="steps-id">
     <b-steps :type="stepType" size="is-medium" v-model="active">
       <b-step-item label="Account" icon="account-key" :clickable="isStepsClickable">
-        <set-profile ref="setProfileChild" />
+        <set-profile :parent="parent" ref="setProfileChild" />
       </b-step-item>
       <b-step-item label="Pictures" icon="image" :clickable="isStepsClickable">
           <image-upload ref="imageUploadChild"></image-upload>
@@ -46,13 +46,11 @@
 
 <script>
 import SetProfile from "@/components/SetProfile.vue";
-import Account from "@/components/Account.vue";
 import ImageUpload from "@/components/ImageUploadBox.vue";
 
 export default {
   components: {
     SetProfile,
-    Account,
     ImageUpload
   },
   head() {
@@ -78,7 +76,8 @@ export default {
       isStepsClickable: false,
       check: false,
       error: null,
-      errorCheck: ""
+      errorCheck: "",
+      parent: 'steps'
     };
   },
   methods: {

@@ -23,7 +23,7 @@
           <span class="pg-title">Notifications</span>
         </li>
       </a>
-      <a href="#Profile">
+      <a href="/profile">
         <li>
           <i class="fas fa-user"></i>
           <span class="pg-title">Profile</span>

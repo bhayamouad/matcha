@@ -50,11 +50,28 @@ module.exports = class User {
 
     return Promise.all([ret1, ret2])
   }
+
+  static checkIfExist(id, email, login){
+    const ret1 = db.execute('SELECT id_user FROM users WHERE email = ? AND id_user <> ?', [email, id])
+    const ret2 = db.execute('SELECT id_user FROM users WHERE login = ? AND id_user <> ?', [login, id])
+
+    return Promise.all([ret1, ret2])
+  }
+
   static setPassword(password, id) {
     return db.execute('UPDATE users SET password = ?, token = NULL, expire_token = NULL WHERE id_user = ?', [password, id])
   }
   static setProfile(data, id) {
-    return db.execute('UPDATE users SET login = ?, gender = ?, birthdate = ?, interest = ?, biography = ? WHERE id_user = ?', [data.login, data.gender,data.birthdate, data.interest, data.bio, id])
+    return db.execute(`UPDATE users SET 
+                                      fname = ?, 
+                                      lname = ?, 
+                                      email = ?, 
+                                      login = ?, 
+                                      gender = ?, 
+                                      birthdate = ?, 
+                                      interest = ?, 
+                                      biography = ? 
+                                    WHERE id_user = ?`, [data.fname, data.lname, data.email, data.login, data.gender,data.birthdate, data.interest, data.bio, id])
   }
   static getStatusById(id){
     return db.execute('SELECT status FROM users WHERE id_user = ?', [id])
@@ -77,7 +94,7 @@ module.exports = class User {
              whereGender = `(u.gender = 'F' OR u.gender = 'M')`
             else
               whereGender = `u.gender = '${user.interest}'`
-            return db.execute(`SELECT DISTINCT(u.id_user), u.login, u.rating, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age, (SELECT GROUP_CONCAT(path ORDER BY path ASC SEPARATOR ',') FROM images where user_id = u.id_user) as images, ST_Distance_Sphere(point(${user.lng},${user.lat}), point(p.lng, p.lat))/1000 AS distance,
+            return db.execute(`SELECT DISTINCT(u.id_user), u.login, u.rating, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age, (SELECT GROUP_CONCAT(path ORDER BY is_profile ASC SEPARATOR ',') FROM images where user_id = u.id_user) as images, ST_Distance_Sphere(point(${user.lng},${user.lat}), point(p.lng, p.lat))/1000 AS distance,
                                 (select count(*) from users_tags ut1 INNER join users_tags ut2 on ut1.tag_id = ut2.tag_id where ut1.user_id = ${user.id_user} and ut2.user_id = u.id_user) AS common_tags
                                   FROM users u
                                   INNER JOIN images i 
