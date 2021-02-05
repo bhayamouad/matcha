@@ -35,6 +35,12 @@
           <span class="pg-title">Settings</span>
         </li>
       </a>
+       <a href="#History">
+        <li>
+          <i class="fas fa-history"></i>
+          <span class="pg-title">History</span>
+        </li>
+      </a>
     </ul>
     <div v-on:click="logout" id="logout-btn">
       <span id="lgo-img" :class="{ 'lgo-img-icon': !loggedUser.profile }">
