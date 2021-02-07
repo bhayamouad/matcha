@@ -7,7 +7,11 @@ html, body{
 }
 #home-all{
     max-width: 1200px;
-      width: 100%;
-      margin: auto;
+    width: 100%;
+    margin: auto;
+  }
+  #content{
+    min-height: 100vh;
+    border-right: solid 1px #ebeef0;
   }
 
