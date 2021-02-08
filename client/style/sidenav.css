@@ -6,7 +6,7 @@
     z-index: 1;
     padding: 10px 0px;
     border-right: solid 1px #ebeef0;
-    overflow: auto;
+    /* overflow: auto; */
     margin-right: 240px;
     display: flex;
     flex-direction: column;

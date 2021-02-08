@@ -6,7 +6,7 @@
       </a>
     </div>
     <ul>
-      <a href="/">
+      <a href="/home">
         <li><i id="uicon" class="fas fa-home"></i>
           <span class="pg-title">Home</span>
         </li>
@@ -33,6 +33,12 @@
         <li>
           <i class="fas fa-cog"></i>
           <span class="pg-title">Settings</span>
+        </li>
+      </a>
+       <a href="/history">
+        <li>
+          <i class="fas fa-history"></i>
+          <span class="pg-title">History</span>
         </li>
       </a>
     </ul>
