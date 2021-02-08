@@ -36,6 +36,7 @@ export default {
   layout: "home",
   data() {
     return {
+        error:null,
         active:0
     };
   },
@@ -43,14 +44,14 @@ export default {
       async save(){
           if(this.active){
               const check = await this.$refs.profile.setProfile()
-              if (!check) this.$snoast.toast(this.$buefy, "Oups There is an Error", 'is-danger')
-              else this.$snoast.toast(this.$buefy, "your Profile was changed successfuly", 'is-success')
+              if (check) this.$snoast.toast(this.$buefy, "your Profile was changed successfuly", 'is-success')
           }
           else{
               const check = await this.$refs.images.saveImages()
-              if (!check) this.$snoast.toast(this.$buefy, "Oups There is an Error", 'is-danger')
-              else this.$snoast.toast(this.$buefy, "your Images were changed successfuly", 'is-success')
+              if (check) this.$snoast.toast(this.$buefy, "your Images were changed successfuly", 'is-success')
           }
+          if(this.error)
+            this.$snoast.toast(this.$buefy, "Oups There is an Error", 'is-danger')
       }
   },
 };

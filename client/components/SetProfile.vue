@@ -258,7 +258,6 @@ export default {
           lat, 
           lng
           }
-        console.log(data)
         const res = await this.$axios.$post('/account/setProfile', data)
         if(res.emailerr)
         {
@@ -271,7 +270,7 @@ export default {
             this.errors.login = "This username already exists"
         }
         if(res.message === 'success')
-            return true 
+            return true
       }
       
         this.user = {

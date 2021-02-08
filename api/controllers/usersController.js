@@ -516,7 +516,6 @@ exports.saveImages = (req, res) => {
                       }
                     }
                     userImages.forEach( (image,index) => {
-                        console.log(imagesFiles[image.is_profile])
                         Image.updateImage(req.id_user ,image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
                         .then(()=>{
                             imagesFiles.splice(0, 1)
