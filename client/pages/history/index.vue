@@ -40,7 +40,7 @@ export default {
 
 #page-title{
     color: black;
-    border-bottom: solid 1px #ebeef0;
+    border-bottom: solid 3px #ebeef0;
     padding: 10px 30px;
     height: 50px;
 }
@@ -58,6 +58,9 @@ export default {
     color: black;
     padding: 7px 30px;
     border-bottom: solid 1px #ebeef0;
+}
+#page-cnt li:hover{
+    background-color: #ebeef0;
 }
 
 </style>
