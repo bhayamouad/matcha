@@ -136,7 +136,7 @@ exports.connectOrRegister = (req, res)=>{
         const accTok = auth.createAccToken(newUser)
         const refTok = auth.createRefToken(newUser)
         res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15 }) 
-        res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
+        res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 }) 
         res.status(200).send({error: false})
     })
     .catch((e)=>{
@@ -364,8 +364,11 @@ exports.changePassword = (req, res) => {
         .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
 }
 exports.setProfile = async (req, res) => {
-    const { login, gender, birthdate, interest, bio, tags, lat, lng } = req.body
+    const { fname, lname, email, login, gender, birthdate, interest, bio, tags, lat, lng } = req.body
     const data = {
+        fname,
+        lname,
+        email,
         login,
         gender,
         birthdate: new Date(birthdate.toString()),
@@ -445,7 +448,8 @@ exports.setProfile = async (req, res) => {
     })
     .catch((e)=> {console.log(e.message)})
 
-   
+    console.log(data);
+    console.log(req.id_user);
     User.setProfile(data, req.id_user) 
         .then(() => res.status(200).send({ message: `success` }))
         .catch(err => res.send({ message: err.message }))
@@ -512,8 +516,7 @@ exports.saveImages = (req, res) => {
                       }
                     }
                     userImages.forEach( (image,index) => {
-                        console.log(image)
-                        console.log(imagesFiles[image.is_profile].path.split('/')[1])
+                        console.log(imagesFiles[image.is_profile])
                         Image.updateImage(req.id_user ,image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
                         .then(()=>{
                             imagesFiles.splice(0, 1)

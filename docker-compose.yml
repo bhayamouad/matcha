@@ -31,6 +31,8 @@ services:
             - persistent:/var/lib/mysql
         networks:
             - default
+        cap_add:
+            - SYS_NICE 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         links: 

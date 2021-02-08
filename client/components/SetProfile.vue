@@ -258,6 +258,7 @@ export default {
           lat, 
           lng
           }
+        console.log(data)
         const res = await this.$axios.$post('/account/setProfile', data)
         if(res.emailerr)
         {
