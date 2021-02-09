@@ -153,8 +153,10 @@ export default {
         headers: { "content-Type": "multipart/form-data" }
       });
       formData.delete("images");
-      if (res.error) return false;
-      return true;
+      if (!res.error) return true;
+      else
+          this.$snoast.toast(this.$buefy, "Oups There is an Error", 'is-danger')
+      return false;
     },
     crop(index) {
       const { canvas } = this.$refs.cropper.getResult();

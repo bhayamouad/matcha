@@ -271,6 +271,8 @@ export default {
         }
         if(res.message === 'success')
             return true
+        if(!(res.message === 'success') && this.valid)
+          this.$snoast.toast(this.$buefy, "Oups There is an Error", 'is-danger')
       }
       
         this.user = {
