@@ -62,12 +62,9 @@ export default {
           );
       }
       if(this.active === 2){
-        const pos = await this.$refs.location.savePosition()
-        this.$snoast.toast(
-            this.$buefy,
-            `your position is ${pos.lat}, ${pos.lng}`,
-            "is-success"
-          );
+        const res = await this.$refs.location.savePosition()
+        if(res === 'success')
+          this.$snoast.toast(this.$buefy, `your position was changed`, "is-success")
       }
       else {
         check = await this.$refs.images.saveImages();

@@ -574,6 +574,19 @@ exports.getSuggestedUser = (req, res) => {
     User.getUsersPosImg(req.id_user)
         .then( ([users]) => {
             res.status(200).send({users})
-        })
+        }) 
         .catch(err => console.log(err.message)) 
+}
+
+exports.getPositon = (req, res) => {
+    Position.getByIdUser(req.id_user)
+        .then(([[pos]]) => res.status(200).send({position:pos}))
+        .catch(err => console.log(err.message))
+}
+
+exports.setPosition = (req, res) => {
+    const {lat, lng} = req.body
+    Position.update(lat,lng, req.id_user)
+        .then(() => res.status(200).send({ message: 'success' }))
+        .catch((err) => console.log(err.message))
 }

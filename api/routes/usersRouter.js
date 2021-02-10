@@ -31,4 +31,7 @@ router.get('/getImages', usersController.authorize, usersController.getUserImage
 
 router.get('/getSuggestedUser', usersController.authorize, usersController.getSuggestedUser)
 
+router.get('/getPosition', usersController.authorize, usersController.getPositon)
+router.put('/setPosition', usersController.authorize, usersController.setPosition)
+
 module.exports = router
