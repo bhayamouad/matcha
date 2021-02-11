@@ -1,9 +1,10 @@
 const History = require('../models/History')
 
 exports.getHistory = (req, res) =>{
-    History.getHistory(req.id_user)
+    // console.log(req.body) 
+    History.getHistory(req.id_user, req.body.from, req.body.num)
     .then(([ret])=>{ 
-        console.log(ret);   
+        // console.log(ret);   
         res.status(200).send({data: ret, error: false}); 
     })
     .catch(e => {

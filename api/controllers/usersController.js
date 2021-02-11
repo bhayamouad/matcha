@@ -48,7 +48,6 @@ exports.e42Oauth = (req, res, next) => {
             headers: {'content-type': 'application/x-www-form-urlencoded'}  
         }, 
       }).then(({data})=>{ 
-          console.log(`before axios: ${data.access_token}`) 
           return axios({
             url: 'https://api.intra.42.fr/v2/me',
             method: 'get',
@@ -131,13 +130,17 @@ exports.connectOrRegister = (req, res)=>{
         else
             return User.createOauth(userdata)
     }).then(([registredUser])=>{
-        return User.getById(registredUser.insertId); 
-    }).then(([[newUser]])=>{
+        return User.oauthUpLogin(registredUser.insertId)
+        .then(_=> {return registredUser.insertId})
+    }).then((id)=>{
+        return User.getById(id); 
+    })
+    .then(([[newUser]])=>{
         const accTok = auth.createAccToken(newUser)
         const refTok = auth.createRefToken(newUser)
         res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15 }) 
         res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 }) 
-        res.status(200).send({error: false})
+        res.status(200).send({error: false}) 
     })
     .catch((e)=>{
         // console.log(e.message)

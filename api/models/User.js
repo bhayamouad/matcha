@@ -19,6 +19,11 @@ module.exports = class User {
     return db.query('INSERT INTO users SET ?', user)
   }
 
+  static oauthUpLogin(id)
+  {
+    return db.execute(`UPDATE users SET login='User${id}' WHERE id_user=${id}`)
+  }
+
   static getByOauthId(id){
     return db.execute('SELECT * FROM users WHERE oauth_id = ? ', [id])
   }

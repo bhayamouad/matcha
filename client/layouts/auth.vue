@@ -10,7 +10,7 @@
                 <span id="msg-txt">
                     <!-- 😂 Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                     when an unknown printer took a galley of type and scrambled it to make a type specimen book. -->
-                    <img src="@/assets/love.svg">
+                    <img src="@/assets/slove.svg">
                     
                     " If you’re looking for love 🥰, want to start dating, or just keep it casual 🍆 🍑, you need to be on Matcha 🔥 "
                     <!-- <br><br>
