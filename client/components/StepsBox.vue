@@ -1,13 +1,8 @@
 <template>
   <div id="steps-id">
+   
     <b-steps :type="stepType" size="is-medium" v-model="active">
-      <b-step-item label="Account" icon="account-key" :clickable="isStepsClickable">
-        <set-profile :parent="parent" ref="setProfileChild" />
-      </b-step-item>
-      <b-step-item label="Pictures" icon="image" :clickable="isStepsClickable">
-          <image-upload ref="imageUploadChild"></image-upload>
-      </b-step-item>
-      <b-step-item label="Profile" icon="account" :clickable="isStepsClickable">
+       <b-step-item label="Conditions" icon="account" :clickable="isStepsClickable">
         <div class>
           <div class>
             <span id="lstep-title">Our Commitment To You</span>
@@ -21,10 +16,16 @@
               We work hard to keep your information secure We have teams dedicated to keeping your data safe and secure. We constantly update our security practices and invest in our security efforts to enhance the safety of your information.
             </span>
             <b-field label="Privacy Policy" :type="{'is-danger': errorCheck}" :message="errorCheck">
-              <b-checkbox v-model="check">I accept</b-checkbox>
+              <b-checkbox v-model="check">I accept Your Conditions</b-checkbox>
             </b-field>
           </div>
         </div>
+      </b-step-item>
+      <b-step-item label="Account" icon="account-key" :clickable="isStepsClickable">
+        <set-profile :parent="parent" ref="setProfileChild" />
+      </b-step-item>
+      <b-step-item label="Pictures" icon="image" :clickable="isStepsClickable">
+          <image-upload ref="imageUploadChild"></image-upload>
       </b-step-item>
       <template slot="navigation" slot-scope="{previous, next}">
         <div class="field is-grouped is-grouped-centered">
@@ -82,7 +83,7 @@ export default {
   },
   methods: {
     async send(next) {
-      if (this.active === 0) {
+      if (this.active === 1) {
         const check = await this.$refs.setProfileChild.setProfile()
         if (check) {
             this.error = false
@@ -91,20 +92,20 @@ export default {
         else
           this.error = true
       }
-      if (this.active === 1) {
+      if (this.active === 2) {
         const check = await this.$refs.imageUploadChild.saveImages()
         if (check) {
           this.error = false
-          next()
+          this.$router.go()
         }
         else
           this.error = true
       }
-      if (this.active === 2) {
+      if (this.active === 0) {
         if (!this.check) this.errorCheck = "You must accept our privacy policy";
         else {
           const res = await this.$axios.$get("/account/acceptPrivacy");
-          if (!res.error) this.$router.go()
+          if (!res.error) next()
         }
       }
     }

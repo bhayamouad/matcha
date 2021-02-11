@@ -76,8 +76,8 @@ module.exports = class User {
   static getStatusById(id){
     return db.execute('SELECT status FROM users WHERE id_user = ?', [id])
   }
-  static setStatusById(id){
-    return db.execute('UPDATE users SET status = 2 WHERE id_user = ?', [id])
+  static setStatusById(status, id){
+    return db.execute('UPDATE users SET status = ? WHERE id_user = ?', [status, id])
   }
 
   static getUserPosById(id){
