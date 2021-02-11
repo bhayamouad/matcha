@@ -10,7 +10,7 @@ exports.hashHmacSha256 = (string) => crypto.AES.encrypt(string, process.env.SECR
 
 const geoOptions = {
     provider: 'google',
-    apiKey: 'AIzaSyAmDARYa-puuDsAWPOU2nfKCC_RusalumM',
+    apiKey: process.env.GMAPIKEY,
     formatter: null
 }
 

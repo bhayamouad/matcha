@@ -13,9 +13,9 @@
         :interact-y-threshold="100"
         :interact-event-bus-events="interactEventBus"
         interact-block-drag-down
-        @draggedRight="emitAndNext('like')"
-        @draggedLeft="emitAndNext('reject')"
-        @draggedUp="emitAndNext('skip')"
+        @draggedRight="emitAndNext('like', status)"
+        @draggedLeft="emitAndNext('reject', status)"
+        @draggedUp="emitAndNext('skip', status)"
         class="rounded-borders card card--one">
         <div style="height: 100%">
           <img
@@ -65,6 +65,7 @@
 import { Vue2InteractDraggable, InteractEventBus } from 'vue2-interact'
 
 export default {
+  props:['status'],
     components: { Vue2InteractDraggable },
     data () {
         return {
@@ -103,21 +104,32 @@ export default {
         skip() {
           InteractEventBus.$emit('skip')
         },
-        async emitAndNext(event) {
+        async emitAndNext(event, status) {
+          console.log(status)
+          if(status === 2){
             this.$emit(event, this.index)
             if(event === 'like'){
-              const response = await this.$axios.$post('/matcha/like', { idLiked:this.users[this.index].id_user })
-              // if(!response.error)
-              //   this.users.splice(this.index,1)
+              await this.$axios.$post('/matcha/like', { idLiked:this.users[this.index].id_user })
             }
             if(event === 'reject'){
-              const response = await this.$axios.$post('/matcha/reject', { idDisliked: this.users[this.index].id_user })
+              await this.$axios.$post('/matcha/reject', { idDisliked: this.users[this.index].id_user })
             }
             setTimeout(() => this.isVisible = false, 200)
             setTimeout(() => {
                 this.index++
                 this.isVisible = true
             }, 200)
+          }
+          else{
+            this.$emit('skip')
+            setTimeout(() => this.isVisible = false, 200)
+            setTimeout(() => {
+                this.index
+                this.isVisible = true
+            }, 200)
+            this.$snoast.toast(this.$buefy, "You must add at least one image to your profile", 'is-danger')
+          }
+            
         }
     }
 }

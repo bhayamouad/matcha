@@ -1,7 +1,7 @@
 <template>
   <section> 
     <steps v-if="status == 1"/>
-    <Matcha v-if="status == 2"/>
+    <Matcha :status="status" v-if="status > 1"/>
   </section>
 </template>
 

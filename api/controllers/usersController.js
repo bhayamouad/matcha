@@ -487,18 +487,24 @@ exports.getStatus = (req, res) => {
 }
 
 exports.acceptPrivacy = (req, res) => {
-    User.setStatusById(req.id_user)
+    User.setStatusById(2, req.id_user)
         .then(() => res.status(200).send({error: false}))
-        .catch(err => res.send({message:err.message, error: true}))   
+        .catch(err => res.send({message:err.message, error: true}))
 }
  
 exports.saveImages = (req, res) => {
     Image.getUserImages(req.id_user)
-        .then(([userImages]) => {
-
+        .then(async ([userImages]) => {
             let upload = multer({storage}).array('images',5)
             upload(req, res, async (err) => {
                 let imagesFiles = req.files
+                if(imagesFiles.length === 0){
+                    await User.setStatusById(3, req.id_user)
+                }
+                else{
+                    await User.setStatusById(2, req.id_user)
+                }
+
                 if(userImages.length === 0){
                     imagesFiles.forEach(async (imageFile, index) => {
                         const image = new Image({
@@ -577,6 +583,19 @@ exports.getSuggestedUser = (req, res) => {
     User.getUsersPosImg(req.id_user)
         .then( ([users]) => {
             res.status(200).send({users})
-        })
+        }) 
         .catch(err => console.log(err.message)) 
+}
+
+exports.getPositon = (req, res) => {
+    Position.getByIdUser(req.id_user)
+        .then(([[pos]]) => res.status(200).send({position:pos}))
+        .catch(err => console.log(err.message))
+}
+
+exports.setPosition = (req, res) => {
+    const {lat, lng} = req.body
+    Position.update(lat,lng, req.id_user)
+        .then(() => res.status(200).send({ message: 'success' }))
+        .catch((err) => console.log(err.message))
 }

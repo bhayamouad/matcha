@@ -7,6 +7,10 @@ export default {
     fbClient: process.env.FB_CLIENT,
     e42Client: process.env.E42_CLIENT
   },
+  env:{
+    apiKey: process.env.GMAPIKEY
+  },
+
   server: {
     https: {
       key: fs.readFileSync('/etc/ssl/private/matchasigned.key'),
@@ -42,7 +46,7 @@ export default {
   ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: ['~/plugins/snoast.js'],
+  plugins: ['~/plugins/snoast.js', '~/plugins/googleMaps.js'],
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
 
