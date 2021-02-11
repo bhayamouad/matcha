@@ -83,6 +83,7 @@ export default {
         
         const data = await this.$axios.$get('/account/getSuggestedUser')
         this.users = data.users
+        console.log(this.users)
         
     },
     computed: {
@@ -106,7 +107,7 @@ export default {
         },
         async emitAndNext(event, status) {
           console.log(status)
-          if(status === 2){
+          if(status === 3){
             this.$emit(event, this.index)
             if(event === 'like'){
               await this.$axios.$post('/matcha/like', { idLiked:this.users[this.index].id_user })

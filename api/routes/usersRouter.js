@@ -19,7 +19,6 @@ router.post('/setProfile', usersController.authorize, usersController.checkIfExi
 
 router.get('/getDataUser', usersController.authorize, usersController.getData)
 router.get('/getStatus',usersController.authorize, usersController.getStatus)
-router.get('/acceptPrivacy',usersController.authorize, usersController.acceptPrivacy)
 
 router.post('/saveImages', usersController.authorize, usersController.saveImages) 
 

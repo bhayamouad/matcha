@@ -103,10 +103,7 @@ export default {
       }
       if (this.active === 0) {
         if (!this.check) this.errorCheck = "You must accept our privacy policy";
-        else {
-          const res = await this.$axios.$get("/account/acceptPrivacy");
-          if (!res.error) next()
-        }
+        else next()
       }
     }
   }
