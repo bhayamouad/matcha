@@ -17,14 +17,36 @@
         @draggedLeft="emitAndNext('reject', status)"
         @draggedUp="emitAndNext('skip', status)"
         class="rounded-borders card card--one">
-        <div style="height: 100%">
+        <!-- <div style="height: 100%">
           <img
             :src="$config.baseURL+'/'+current.images.split(',')[0]"
             class="rounded-borders"/>
           <div class="text">
             <h2>{{current.login}}</h2>
           </div>
-        </div>
+        </div> -->
+        <b-carousel-list :data="current.images.split(',')" :items-to-show="1">
+        <template #item="image">
+            <div class="card">
+                <div class="card-image">
+                    <figure class="image is-5by4">
+                        <a @click="info(list.index)"><img :src="$config.baseURL+'/'+current.images.split(',')[image.index]"></a>
+                    </figure>
+                </div>
+                <div class="card-content">
+                    <div class="content">
+                        <p class="title is-6">{{ current.login }}</p>
+                        <p class="subtitle is-7"></p>
+                        <b-field grouped >
+                            <p class="control" v-if="current.rating">
+                                <b-rate :value="current.rating" show-score disabled/>
+                            </p>
+                        </b-field>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </b-carousel-list>
       </Vue2InteractDraggable>
     </div>
     <div
@@ -83,13 +105,11 @@ export default {
         
         const data = await this.$axios.$get('/account/getSuggestedUser')
         this.users = data.users
-        console.log(this.users)
-        
+        console.log(this.users);
     },
     computed: {
         current() {
-          const current = this.users[this.index]
-            return current
+            return this.users[this.index]
         },
         next() {
           return this.users[this.index + 1]
@@ -106,7 +126,6 @@ export default {
           InteractEventBus.$emit('skip')
         },
         async emitAndNext(event, status) {
-          console.log(status)
           if(status === 3){
             this.$emit(event, this.index)
             if(event === 'like'){
@@ -226,8 +245,8 @@ export default {
   border-radius: 12px;
 }
 .card {
-  width: 500px;
-  height: 700px;
+  width: 280px;
+  height: 420px;
   color: white;
   img {
     object-fit: cover;

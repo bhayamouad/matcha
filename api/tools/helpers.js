@@ -77,13 +77,3 @@ exports.ipLocationFinderAPI = (ip) => { //to solve later !!!!!!!!!!!!
 exports.capitalize = (string) => {
     return string.replace(/^\w/, (c) => c.toUpperCase());
 }
-exports.includesObject = (myarr, str) =>
-{
-    // myarr.forEach(elm => {
-    //     if (elm.tag === str)
-    //         return true
-    //     else
-    //         return false
-    // });
-    console.log(`+-+-+`+myarr)
-}
