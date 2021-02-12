@@ -1,5 +1,5 @@
 const state = ()=> ({
-    loggedIn: false
+    loggedIn: false,
 })
 const mutations = {
     logIn(state){

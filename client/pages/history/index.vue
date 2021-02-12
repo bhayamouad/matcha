@@ -18,9 +18,10 @@
 <script>
 import moment from 'moment'
 
-let hpr = 3;
-let f
-const num = hpr;
+let hpr = 5;
+let num = 15;
+let from = 0;
+// const num = hpr;
 export default {
     mounted () {
   this.scroll()
@@ -36,7 +37,7 @@ export default {
     },
     async mounted () {
     await new Promise(r => {
-        setTimeout(r, 600)
+        setTimeout(r, 400)
     });
     const listElm = document.querySelector('#page-cnt');
     listElm.addEventListener('scroll', async e => {
@@ -63,9 +64,9 @@ export default {
                 }, 10 * 1000)
             },
     async fetchNew(){
-        const ret = await this.$axios.$post('/matcha/gethistory', {from: hpr, num: num+1});
-        hpr+=num;
-        if(!ret.error)
+        const ret = await this.$axios.$post('/matcha/gethistory', {from: from, num: num + 1});
+    from += num;
+    if(!ret.error)
         {
             if(ret.data[num])
             {
@@ -75,18 +76,17 @@ export default {
             else
                 this.more = false;
             this.history = this.history.concat(ret.data);
-            
         }
         }
     },
     async fetch()
     {
-        const ret = await this.$axios.$post('/matcha/gethistory', {from: 0, num: hpr + 1});
+        const ret = await this.$axios.$post('/matcha/gethistory', {from: 0, num: num + 1});
         if(!ret.error)
         {
             if(ret.data.length)
             {
-                if(ret.data[hpr])
+                if(ret.data[num])
                 {
                     this.more = true;
                     ret.data.pop()
@@ -98,6 +98,8 @@ export default {
             else
                 this.history = null;
         }
+        from = num;
+        num = hpr;
     }
 }
 </script>
@@ -129,7 +131,7 @@ export default {
     border-bottom: solid 1px #ebeef0;
 }
 #page-cnt ul{
-    margin-bottom: 85vh;
+    margin-bottom: 50vh;
 }
 #page-cnt li:hover{
     background-color: #f0f3f5;

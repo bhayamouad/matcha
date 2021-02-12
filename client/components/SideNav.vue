@@ -11,6 +11,8 @@
           <span class="pg-title">Home</span>
         </li>
       </a>
+
+    <div v-if="loggedUser.status > 1">
       <a href="#Messages">
         <li>
           <i class="fas fa-envelope"></i>
@@ -41,10 +43,37 @@
           <span class="pg-title">History</span>
         </li>
       </a>
+      </div>
+
+
+      <div class="nolink" v-else>
+        <li>
+          <i class="fas fa-envelope"></i>
+          <span class="pg-title">Messages</span>
+        </li>
+        <li>
+          <i class="fas fa-bell"></i>
+          <span class="pg-title">Notifications</span>
+        </li>
+        <li>
+          <i class="fas fa-user"></i>
+          <span class="pg-title">Profile</span>
+        </li>
+        <li>
+          <i class="fas fa-cog"></i>
+          <span class="pg-title">Settings</span>
+        </li>
+        <li>
+          <i class="fas fa-history"></i>
+          <span class="pg-title">History</span>
+        </li>
+      </div>
+
+      
     </ul>
     <div v-on:click="logout" id="logout-btn">
-      <span id="lgo-img" :class="{ 'lgo-img-icon': !loggedUser.profile }">
-        <img v-if="loggedUser.profile" class="profile-img" :src="loggedUser.profile"/>
+      <span id="lgo-img" :class="{'lgo-img-icon': !loggedUser.profile}">
+        <img  v-if="loggedUser.profile" class="profile-img" :src="loggedUser.profile"/>
         <b-icon v-else icon="account" class="profile-img"></b-icon>
       </span>
       <span id="lgo-name">{{loggedUser.name}}</span>
@@ -62,8 +91,9 @@ export default {
       loggedUser: {
         name: null,
         username: null,
-        profile: null
-      }
+        profile: null,
+      },
+      
     }
   },
   async fetch() {

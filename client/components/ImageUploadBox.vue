@@ -169,6 +169,10 @@ export default {
         this.uploadImages[index].file.name,
         ext
       ).then( (file) => this.uploadImages[index].file = file)
+      // if(index == 0)
+      // {
+      //   document.querySelector('#lgo-img').innerHTML = `<img id="primg" v-if="loggedUser.profile" class="profile-img" :src="${"/>`
+      // }
     },
     cancel(){
       this.uploadImages[this.openModal].url = null;

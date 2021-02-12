@@ -57,6 +57,10 @@
     background-color: rgb(195, 7, 63, 0.2);
 }
 
+.nolink:hover{
+   cursor: no-drop;     
+}
+
 #logout-btn{
     display: grid;
     grid-template-areas:

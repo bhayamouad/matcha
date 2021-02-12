@@ -559,6 +559,7 @@ exports.getLoggedUser = async (req, res) => {
     if(user){
         loggedUser.name = `${helpers.capitalize(user.fname)} ${helpers.capitalize(user.lname)}`
         loggedUser.username = (user.login) ? user.login : 'user'+user.id_user
+        loggedUser.status = user.status
     }
     if(profile)
         loggedUser.profile = `${process.env.API_URL}/${profile.path}`
