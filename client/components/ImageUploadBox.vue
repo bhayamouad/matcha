@@ -153,7 +153,13 @@ export default {
         headers: { "content-Type": "multipart/form-data" }
       });
       formData.delete("images");
-      if (!res.error) return true;
+      if (!res.error) {
+        if(this.uploadImages[0].url)
+          document.querySelector('#lgo-img').innerHTML=`<img  class="profile-img" src="${this.uploadImages[0].url}"/>`
+        else
+          document.querySelector('#lgo-img').innerHTML=`<span class="icon profile-img"><i class="mdi mdi-account mdi-24px"></i></span>`
+        return true;
+      }
       else
           this.$snoast.toast(this.$buefy, "Oups There is an Error", 'is-danger')
       return false;
