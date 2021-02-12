@@ -3,7 +3,6 @@ const Match = require('../models/Match')
 exports.like = (req, res) => {
     Like.add(req.id_user, req.body.idLiked).then( async () => {
         const [check] = await Like.getLikesByLikedId(req.body.idLiked, req.id_user)
-        console.log(check) 
         if(check.length){
             Match.add(req.body.idLiked, req.id_user)  
                 .then(()=>{

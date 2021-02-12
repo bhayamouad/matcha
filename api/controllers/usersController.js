@@ -68,9 +68,7 @@ exports.e42Oauth = (req, res, next) => {
     }).then((ret)=>{
       req.userdata = ret
       next() 
-  }).catch((e)=>{ 
-          console.log(e.message)            
-      })
+  }).catch((e)=> console.log(e.message))
 }
 
 exports.fbOauth = (req, res, next) => {
@@ -109,7 +107,6 @@ exports.fbOauth = (req, res, next) => {
         req.userdata = ret
         next() 
     }).catch((e)=>{ 
-        // console.log(e.message)
         res.status(200).send({error: 'fb oauth Error'})
       })
 } 
@@ -143,7 +140,6 @@ exports.connectOrRegister = (req, res)=>{
         res.status(200).send({error: false}) 
     })
     .catch((e)=>{
-        // console.log(e.message)
         if(e.message === 'no error')
             res.status(200).send({error: false}) 
         else if(e.message === `Duplicate entry '${userdata.email}' for key 'users.email'`) 
@@ -450,9 +446,6 @@ exports.setProfile = async (req, res) => {
         })
     })
     .catch((e)=> {console.log(e.message)})
-
-    console.log(data);
-    console.log(req.id_user);
     User.setProfile(data, req.id_user) 
         .then(() => res.status(200).send({ message: `success` }))
         .catch(err => res.send({ message: err.message }))
@@ -485,12 +478,6 @@ exports.getStatus = (req, res) => {
         .then(([[user]]) => res.status(200).send({status: user.status, error: false}))
         .catch(err => res.send({ message:err.message, error: true}))
 }
-
-exports.acceptPrivacy = (req, res) => {
-    User.setStatusById(2, req.id_user)
-        .then(() => res.status(200).send({error: false}))
-        .catch(err => res.send({message:err.message, error: true}))
-}
  
 exports.saveImages = (req, res) => {
     Image.getUserImages(req.id_user)
@@ -499,50 +486,48 @@ exports.saveImages = (req, res) => {
             upload(req, res, async (err) => {
                 let imagesFiles = req.files
                 if(imagesFiles.length === 0){
-                    await User.setStatusById(3, req.id_user)
-                }
-                else{
                     await User.setStatusById(2, req.id_user)
                 }
-
-                if(userImages.length === 0){
-                    imagesFiles.forEach(async (imageFile, index) => {
-                        const image = new Image({
-                            path: imageFile.path.split('/')[1],
-                            user_id: req.id_user,
-                            is_profile: index
+                else
+                    await User.setStatusById(3, req.id_user)
+                    if(userImages.length === 0){
+                        imagesFiles.forEach(async (imageFile, index) => {
+                            const image = new Image({
+                                path: imageFile.path.split('/')[1],
+                                user_id: req.id_user,
+                                is_profile: index
+                            })
+                            await image.save() 
                         })
-                        await image.save() 
-                    })
-                }
-                else {
-                    let limit = userImages.length - imagesFiles.length
-                    if (limit > 0){
-                      await Image.deleteUserImages(req.id_user, limit)
-                      let i = userImages.length - 1
-                      while(limit--){
-                        fs.unlinkSync(`uploads/${userImages[i--].path}`) 
-                      }
                     }
-                    userImages.forEach( (image,index) => {
-                        Image.updateImage(req.id_user ,image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
-                        .then(()=>{
-                            imagesFiles.splice(0, 1)
-                            fs.unlinkSync(`uploads/${image.path}`)
-                            if(index+1 === userImages.length){
-                                imagesFiles.forEach(async (imageFile) => {   
-                                    const image = new Image({
-                                        path: imageFile.path.split('/')[1],
-                                        user_id: req.id_user,
-                                        is_profile: ++index
+                    else {
+                        let limit = userImages.length - imagesFiles.length
+                        if (limit > 0){
+                          await Image.deleteUserImages(req.id_user, limit)
+                          let i = userImages.length - 1
+                          while(limit--){
+                            fs.unlinkSync(`uploads/${userImages[i--].path}`) 
+                          }
+                        }
+                        userImages.forEach( (image,index) => {
+                            Image.updateImage(req.id_user ,image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
+                            .then(()=>{
+                                imagesFiles.splice(0, 1)
+                                fs.unlinkSync(`uploads/${image.path}`)
+                                if(index+1 === userImages.length){
+                                    imagesFiles.forEach(async (imageFile) => {   
+                                        const image = new Image({
+                                            path: imageFile.path.split('/')[1],
+                                            user_id: req.id_user,
+                                            is_profile: ++index
+                                        })
+                                        await image.save()
                                     })
-                                    await image.save()
-                                })
-                            }
-                        }) 
-                        .catch(err => console.log(err.message))    
-                    })
-                }
+                                }
+                            }) 
+                            .catch(err => console.log(err.message))    
+                        })
+                    }
             })
         res.send({error: false}) 
     })

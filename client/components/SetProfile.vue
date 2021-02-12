@@ -19,7 +19,7 @@
     >
       <b-input v-model="user.email" placeholder="Email"></b-input> 
     </b-field>
-    <b-field v-if="(!isLogin) && (parent=='steps')" label="Username"
+    <b-field v-if="isLogin || !(parent=='steps') "  label="Username"
       :type="{'is-danger': errors.login}" 
       :message="errors.login"
     >
@@ -187,7 +187,7 @@ export default {
     this.user.birthdate = (dataUser.birthdate) ? new Date(dataUser.birthdate) : null
     this.user.bio = dataUser.biography
     this.user.tags = result.data.userTags,
-    this.isLogin = !!dataUser.login
+    this.isLogin = !!dataUser.oauth_id
   },
   methods: {
     tagValidate (tag) {
