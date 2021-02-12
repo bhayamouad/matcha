@@ -99,7 +99,7 @@ module.exports = class User {
              whereGender = `(u.gender = 'F' OR u.gender = 'M')`
             else
               whereGender = `u.gender = '${user.interest}'`
-            return db.execute(`SELECT DISTINCT(u.id_user), u.login, u.rating, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age, (SELECT GROUP_CONCAT(path ORDER BY is_profile ASC SEPARATOR ',') FROM images where user_id = u.id_user) as images, ST_Distance_Sphere(point(${user.lng},${user.lat}), point(p.lng, p.lat))/1000 AS distance,
+            return db.execute(`SELECT DISTINCT(u.id_user), u.fname, u.lname, u.login, u.rating, p.city, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age, (SELECT GROUP_CONCAT(path ORDER BY is_profile ASC SEPARATOR ',') FROM images where user_id = u.id_user) as images, ST_Distance_Sphere(point(${user.lng},${user.lat}), point(p.lng, p.lat))/1000 AS distance,
                                 (select count(*) from users_tags ut1 INNER join users_tags ut2 on ut1.tag_id = ut2.tag_id where ut1.user_id = ${user.id_user} and ut2.user_id = u.id_user) AS common_tags
                                   FROM users u
                                   INNER JOIN images i 
