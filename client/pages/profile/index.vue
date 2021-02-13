@@ -61,7 +61,7 @@ export default {
             "is-success"
           );
       }
-      if(this.active === 2){
+      else if(this.active === 2){
         const res = await this.$refs.location.savePosition()
         if(res === 'success')
           this.$snoast.toast(this.$buefy, `your position was changed`, "is-success")

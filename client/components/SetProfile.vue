@@ -269,8 +269,11 @@ export default {
             this.valid = false;
             this.errors.login = "This username already exists"
         }
-        if(res.message === 'success')
-            return true
+        if(res.message === 'success'){
+          document.querySelector('#lgo-name').innerHTML = `${this.user.fname.replace(/^\w/, (c) => c.toUpperCase())} ${this.user.lname.replace(/^\w/, (c) => c.toUpperCase())}`
+          document.querySelector('#lgo-uname').innerHTML= this.user.login
+          return true
+        }
         if(!(res.message === 'success') && this.valid)
           this.$snoast.toast(this.$buefy, "Oups There is an Error", 'is-danger')
       }
