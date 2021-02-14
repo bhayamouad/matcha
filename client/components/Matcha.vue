@@ -1,5 +1,10 @@
 <template>
   <section>
+    <div class="header">
+      <!-- <i class="material-icons" @click="index = 0">refresh</i> -->
+      <span>test</span>
+      <!-- <i class="material-icons">tune</i> -->
+    </div>
     <div
       v-if="current"
       class="fixed fixed--center"
@@ -156,6 +161,7 @@ export default {
   background: #eceff1;
   width: 100%;
   height: 100vh;
+  // position: relative;
 }
 .header {
   color: white;
@@ -164,18 +170,12 @@ export default {
   background: #950740;
   display: flex;
   justify-content: space-between;
-  span {
-    display: block;
-    font-size: 4rem;
-    padding-top: 2rem;
-    text-shadow: 1px 1px 1px red;
-  }
-  i {
-    padding: 24px;
-  }
+  height: 150px;
 }
 .foot {
+  background-color: green;
   width: 50%;
+  display: flex;
   position: absolute;
   bottom: 0;
   display: flex;

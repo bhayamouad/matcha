@@ -12,6 +12,6 @@ html, body{
   }
   #content{
     min-height: 100vh;
-    border-right: solid 1px #ebeef0;
+    /* border-right: solid 1px #ebeef0; */
   }
 
