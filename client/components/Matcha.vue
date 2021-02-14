@@ -73,7 +73,7 @@
       </div>
     </div>
     <b-modal v-model="isMapModalActive" :can-cancel="['x', 'escape']">
-      <position-maps :users="users"/>
+      <position-maps ref="posMap" :users="users"/>
     </b-modal>
   </section>
 </template>
