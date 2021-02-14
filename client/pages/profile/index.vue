@@ -20,7 +20,7 @@
           <b-icon icon="map-marker"></b-icon>
           <span>Location</span>
         </template>
-        <position-maps ref="location"/>
+        <position-maps :users="false" ref="location"/>
       </b-tab-item>
     </b-tabs>
     <div class="field is-grouped is-grouped-centered">

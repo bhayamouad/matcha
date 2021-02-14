@@ -1,5 +1,6 @@
 <template>
   <section>
+    <button class="btn" @click="openMap">maps</button>
     <div
       v-if="current"
       class="fixed fixed--center"
@@ -71,15 +72,21 @@
         <i class="material-icons">favorite</i>
       </div>
     </div>
+    <b-modal v-model="isMapModalActive" :can-cancel="['x', 'escape']">
+      <position-maps :users="users"/>
+    </b-modal>
   </section>
 </template>
 
 <script>
 import { Vue2InteractDraggable, InteractEventBus } from "vue2-interact";
-
+import PositionMaps from "@/components/PositionMaps.vue"
 export default {
   props: ["status"],
-  components: { Vue2InteractDraggable },
+  components: { 
+    Vue2InteractDraggable,
+    PositionMaps
+  },
   data() {
     return {
       isVisible: true,
@@ -89,7 +96,8 @@ export default {
         draggedLeft: "reject",
         draggedUp: "skip"
       },
-      users: []
+      users: [],
+      isMapModalActive: false
     };
   },
   async fetch() {
@@ -146,6 +154,9 @@ export default {
           "is-danger"
         );
       }
+    },
+    openMap(){
+      this.isMapModalActive = true
     }
   }
 };

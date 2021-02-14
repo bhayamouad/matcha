@@ -2,21 +2,36 @@
   <div>
     <GmapMap
       id="map"
+      ref="mapRef"
       :options="defaultMapOptions"
-      v-if="position.lat || position.lng"
-      :center="position"
+      :center="(!users)?position:{lat:0,lng:0}"
       :zoom="15"
       map-type-id="terrain"
       style="width: 100%; height: 500px"
     >
+      <div v-if="users">
+        <GmapMarker
+          :key="index"
+          v-for="(m, index) in users"
+          :position="{lat: m.lat, lng: m.lng}"
+          @click="toggleInfoWindow(m,index)"/>
+      </div>
       <GmapMarker
         :position="(newPosition.lat)? newPosition : position"
-        :draggable="true"
+        :draggable="draggable"
         @drag="updateCoordinates"
-        :icon="{ url: require('../assets/maps-and-flags.svg')}"
+        :icon="{ url: require('../assets/location.svg')}"
       />
+      <!-- <gmap-info-window
+        :options="infoOptions"
+        :position="infoWindowPos"
+        :opened="infoWinOpen"
+        @closeclick="infoWinOpen=false"
+      >
+        <div v-html="infoContent"></div>
+      </gmap-info-window> -->
     </GmapMap>
-    <div id="geolocation" @click="geolocation">
+    <div v-if="!users" id="geolocation" @click="geolocation">
       <img src="../assets/gps.svg" />
     </div>
   </div>
@@ -24,16 +39,19 @@
 
 <script>
 export default {
+  props:['users'],
   data() {
     return {
-      position: { lat: null, lng: null },
+      position: { lat: 0, lng: 0 },
       newPosition: { lat: null, lng: null },
       defaultMapOptions: {
         clickableIcons: false,
         streetViewControl: false,
         panControlOptions: false,
         gestureHandling: "greedy"
-      }
+      },
+      draggable: (this.users) ? false : true,
+      map:null
     };
   },
   async fetch() {
@@ -41,6 +59,16 @@ export default {
     this.position.lat = res.position.lat;
     this.position.lng = res.position.lng;
   },
+  mounted() {
+      //set bounds of the map
+        this.$refs.mapRef.$mapPromise.then((map) => {
+          const bounds = new google.maps.LatLngBounds()
+          for (let m of this.users) {
+            bounds.extend({lat: m.lat, lng: m.lng})
+          }
+          map.fitBounds(bounds);
+        });
+    },
   methods: {
     updateCoordinates(location) {
       this.newPosition = {
@@ -81,7 +109,7 @@ export default {
           }
         }
       );
-    }
+    },
   }
 };
 </script>
