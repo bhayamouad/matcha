@@ -1,10 +1,11 @@
 <template>
-  <section>
+  <section id="section">
     <div class="header">
       <!-- <i class="material-icons" @click="index = 0">refresh</i> -->
       <span>test</span>
       <!-- <i class="material-icons">tune</i> -->
     </div>
+
     <div
       v-if="current"
       class="fixed fixed--center"
@@ -100,7 +101,6 @@ export default {
   async fetch() {
     const data = await this.$axios.$get("/account/getSuggestedUser");
     this.users = data.users;
-    console.log(this.users);
   },
   computed: {
     current() {
@@ -147,7 +147,7 @@ export default {
         }, 200);
         this.$snoast.toast(
           this.$buefy,
-          "You must add at least one image to your profile",
+          "You must add at least one Picture to complete this Action",
           "is-danger"
         );
       }
@@ -163,6 +163,10 @@ export default {
   height: 100vh;
   // position: relative;
 }
+section{
+  position: relative;
+  height: 100vh;
+}
 .header {
   color: white;
   font-style: italic;
@@ -173,8 +177,7 @@ export default {
   height: 150px;
 }
 .foot {
-  background-color: green;
-  width: 50%;
+  width: 100%;
   display: flex;
   position: absolute;
   bottom: 0;
