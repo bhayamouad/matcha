@@ -1,6 +1,13 @@
 <template>
   <section>
     <button class="btn" @click="openMap">maps</button>
+  <section id="section">
+    <div class="header">
+      <!-- <i class="material-icons" @click="index = 0">refresh</i> -->
+      <span>test</span>
+      <!-- <i class="material-icons">tune</i> -->
+    </div>
+
     <div
       v-if="current"
       class="fixed fixed--center"
@@ -103,7 +110,6 @@ export default {
   async fetch() {
     const data = await this.$axios.$get("/account/getSuggestedUser");
     this.users = data.users;
-    console.log(this.users);
   },
   computed: {
     current() {
@@ -150,7 +156,7 @@ export default {
         }, 200);
         this.$snoast.toast(
           this.$buefy,
-          "You must add at least one image to your profile",
+          "You must add at least one Picture to complete this Action",
           "is-danger"
         );
       }
@@ -167,6 +173,11 @@ export default {
   background: #eceff1;
   width: 100%;
   height: 100vh;
+  // position: relative;
+}
+section{
+  position: relative;
+  height: 100vh;
 }
 .header {
   color: white;
@@ -175,18 +186,11 @@ export default {
   background: #950740;
   display: flex;
   justify-content: space-between;
-  span {
-    display: block;
-    font-size: 4rem;
-    padding-top: 2rem;
-    text-shadow: 1px 1px 1px red;
-  }
-  i {
-    padding: 24px;
-  }
+  height: 150px;
 }
 .foot {
-  width: 50%;
+  width: 100%;
+  display: flex;
   position: absolute;
   bottom: 0;
   display: flex;
