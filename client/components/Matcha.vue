@@ -1,10 +1,9 @@
 <template>
-  <section>
-    <button class="btn" @click="openMap">maps</button>
   <section id="section">
     <div class="header">
       <!-- <i class="material-icons" @click="index = 0">refresh</i> -->
       <span>test</span>
+      <button class="btn" @click="openMap">maps</button>
       <!-- <i class="material-icons">tune</i> -->
     </div>
 
