@@ -7,15 +7,9 @@ import verifyBox from "@/components/VerifyEmail"
 
 export default {
   layout:'auth',
-  middleware: 'loggedIn',
   name: "VerifyEmail",
   components: {
     verifyBox
-  },
-  data(){
-    return{
-    status: this.$store.state.auth.loggedIn
-    }
   }
 }
 </script>

@@ -14,19 +14,6 @@ export default {
   return {
     title: "Matcha",
   };
-  },
-  methods: {
-      async logoutnow()
-      {
-          const res = await this.$axios.get('/account/logout')
-          this.$store.commit('auth/logOut')
-          this.$router.go()
-      }
-  },
-  data(){
-    return{
-    status: this.$store.state.auth.loggedIn
-    }
   }
 }
 </script>

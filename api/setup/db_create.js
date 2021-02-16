@@ -152,6 +152,7 @@ connection.connect(function(err) {
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                                     );`);
                   connection.query(`ALTER TABLE reports ADD PRIMARY KEY (id_report);`);
+                  connection.query(`ALTER TABLE reports MODIFY id_report int(11) NOT NULL AUTO_INCREMENT;`);
                   connection.query(`ALTER TABLE reports ADD FOREIGN KEY (reporter_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   connection.query(`ALTER TABLE reports ADD FOREIGN KEY (reported_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 
@@ -162,6 +163,7 @@ connection.connect(function(err) {
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                                     );`);
                   connection.query(`ALTER TABLE blocks ADD PRIMARY KEY (id_block);`);
+                  connection.query(`ALTER TABLE blocks MODIFY id_block int(11) NOT NULL AUTO_INCREMENT;`);
                   connection.query(`ALTER TABLE blocks ADD FOREIGN KEY (blocker_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   connection.query(`ALTER TABLE blocks ADD FOREIGN KEY (blocked_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   console.log("Database created.");

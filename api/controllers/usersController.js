@@ -148,10 +148,14 @@ exports.connectOrRegister = (req, res)=>{
             res.status(200).send({error: e.message}) 
     })
 }
-// *********************************                    
-// *********************************
 
-
+exports.isOauth = (req, res) => {
+    User.getById(req.id_user)
+        .then(([[user]]) => {
+            res.status(200).send({ pass: !!user.password})
+        })
+        .catch( err => console.log(err.mesage))
+}
 
 exports.registerValidation = (req, res, next) => { 
     if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation 
@@ -194,6 +198,20 @@ exports.checkIfExist = (req, res, next) => {
         .catch(err => res.status(500).send({ message: err.message, error: true }))
 }
 
+exports.checkIfValidPass = (req, res, next) => {
+    const { opassword } = req.body; 
+    if(!opassword) next()
+    else {
+        User.getById(req.id_user) 
+            .then( async ([[user]]) => {
+                const passCompare = await bcrypt.compare(opassword, user.password)
+                if (!passCompare) res.status(200).send({passError: true})
+                else next()
+            })
+            .catch(err => res.status(500).send({ message: err.message, error: true }))
+    }
+}
+
 exports.registerAccount = (req, res) => {
     token = helpers.hashHmacSha256(Date.now().toString())
     bcrypt.genSalt(10)
@@ -218,7 +236,6 @@ exports.registerAccount = (req, res) => {
         })
         .catch(err => res.status(500).send({ message: err.message, error: true }))
 }
-
 
 exports.verifyAccount = (req, res) => {
     let token = req.params.token
@@ -268,7 +285,6 @@ exports.logOut = (req, res) => {
     res.clearCookie('refTok');
     res.send({ error: false })
 }
-
 
 exports.updateToken = (req, res) => {
     token = helpers.hashHmacSha256(Date.now().toString())
@@ -342,12 +358,9 @@ exports.passwordToken = (req, res) => {
 }
 
 exports.changePassword = (req, res) => {
-    User.getByToken(req.body.token)
-        .then(([[user]]) => {
-            const now = new Date().getTime()
-            const update = new Date(user.expire_token)
-            const diff = Math.floor((now - update) / 60000)
-            if (diff <= 3) {
+    if(req.id_user){
+        User.getById(req.id_user)
+            .then(([[user]]) => {
                 bcrypt.genSalt(10)
                     .then((salt) => { return bcrypt.hash(req.body.npassword, salt) })
                     .then(hashPassword => {
@@ -356,11 +369,30 @@ exports.changePassword = (req, res) => {
                             .catch((err) => res.status('500').send({ message: err.message, error: true }))
                     })
                     .catch(err => res.status('500').send({ message: err.message, error: true }))
-            }
-            else
-                res.status(200).send({ message: 'link expired', error: true })
-        })
-        .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
+            })
+            .catch(err => res.status('500').send({ message: err.message, error: true }))
+    }
+    if(req.body.token) {
+        User.getByToken(req.body.token)
+            .then(([[user]]) => {
+                const now = new Date().getTime()
+                const update = new Date(user.expire_token)
+                const diff = Math.floor((now - update) / 60000)
+                if (diff <= 3) {
+                    bcrypt.genSalt(10)
+                        .then((salt) => { return bcrypt.hash(req.body.npassword, salt) })
+                        .then(hashPassword => {
+                            User.setPassword(hashPassword, user.id_user)
+                                .then(() => res.send({ message: 'password changed', error: false }))
+                                .catch((err) => res.status('500').send({ message: err.message, error: true }))
+                        })
+                        .catch(err => res.status('500').send({ message: err.message, error: true }))
+                }
+                else
+                    res.status(200).send({ message: 'link expired', error: true })
+            })
+            .catch(() => res.status(200).send({ message: 'link incorrect', error: true }))
+    }
 }
 exports.setProfile = async (req, res) => {
     const { fname, lname, email, login, gender, birthdate, interest, bio, tags, lat, lng } = req.body

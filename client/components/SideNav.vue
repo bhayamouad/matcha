@@ -6,43 +6,43 @@
       </a>
     </div>
     <ul>
-      <a href="/home">
+      <nuxt-link to="/home">
         <li><i id="uicon" class="fas fa-home"></i>
           <span class="pg-title">Home</span>
         </li>
-      </a>
+      </nuxt-link>
 
     <div v-if="loggedUser.status > 1">
-      <a href="#Messages">
+      <nuxt-link to="#messages">
         <li>
           <i class="fas fa-envelope"></i>
           <span class="pg-title">Messages</span>
         </li>
-      </a>
-      <a href="#Notifications">
+      </nuxt-link>
+      <nuxt-link to="#notification">
         <li>
           <i class="fas fa-bell"></i>
           <span class="pg-title">Notifications</span>
         </li>
-      </a>
-      <a href="/profile">
+      </nuxt-link>
+      <nuxt-link to="/profile">
         <li>
           <i class="fas fa-user"></i>
           <span class="pg-title">Profile</span>
         </li>
-      </a>
-      <a href="#Settings">
+      </nuxt-link>
+      <nuxt-link to="/settings">
         <li>
           <i class="fas fa-cog"></i>
           <span class="pg-title">Settings</span>
         </li>
-      </a>
-       <a href="/history">
+      </nuxt-link>
+      <nuxt-link to="/history">
         <li>
           <i class="fas fa-history"></i>
           <span class="pg-title">History</span>
         </li>
-      </a>
+      </nuxt-link>
       </div>
 
 

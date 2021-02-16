@@ -11,12 +11,6 @@ import loginbox from "~/components/LoginBox";
 export default {
   layout: 'auth',
   name: "HomePage",
-  
-  data(){
-    return{
-    loggedIn: this.$store.state.auth.loggedIn
-    }
-  },
   components: {loginbox}
 };
 </script>

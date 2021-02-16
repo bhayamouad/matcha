@@ -2,10 +2,21 @@
   <section id="section">
     <div class="header">
       <!-- <i class="material-icons" @click="index = 0">refresh</i> -->
-      <span>test</span>
       <button class="btn" @click="openMap">maps</button>
-      <!-- <i class="material-icons">tune</i> -->
+      <b-field>
+            <b-slider v-model="ageGap" type="is-success" :min="18" :max="50" :custom-formatter=" val => (val===50)?val.toString()+'+':val.toString()" :step="1" rounded tooltip-always @change="filters"/>
+      </b-field>
+      <b-field style="margin-top:40px">
+            <b-slider v-model="rateGap" type="is-success" :min="0" :max="5" :custom-formatter=" val => val+ '☆'" :step="1" rounded tooltip-always @change="filters"/>
+      </b-field>
+      <b-field  style="margin-top:40px">
+            <b-slider type="is-success" v-model="distance" :min="5" :max="50" :custom-formatter=" val => val+ ' Km'" :step="1" lazy rounded tooltip-always @change="filters"></b-slider>
+        </b-field>
+      <b-field>
+        <b-numberinput v-model="commonTags" :max="5" :min="0" @input="filters"></b-numberinput>
+    </b-field>
     </div>
+      
 
     <div
       v-if="current"
@@ -29,7 +40,7 @@
         <b-carousel  :autoplay="false" :indicator="(current.images.split(',').length > 1) ? true: false" indicator-position="is-top" indicator-style="is-lines" :repeat="false" animated="fade">
           <b-carousel-item style="transition: none !important;" v-for="(image, i) in current.images.split(',')" :key="i">
             <div class="card">
-              <img :src="$config.baseURL+'/'+current.images.split(',')[i]" />
+              <img :src="$config.baseURL+'/'+image" />
             </div>
           </b-carousel-item>
         </b-carousel>
@@ -47,7 +58,7 @@
       <b-carousel  :autoplay="false" :indicator="(next.images.split(',').length > 1) ? true: false" indicator-position="is-top" indicator-style="is-lines" :repeat="false" animated="fade">
           <b-carousel-item style="transition: none !important;" v-for="(image, i) in next.images.split(',')" :key="i">
             <div class="card">
-              <img :src="$config.baseURL+'/'+next.images.split(',')[i]" />
+              <img :src="$config.baseURL+'/'+image" />
             </div>
           </b-carousel-item>
         </b-carousel>
@@ -87,6 +98,7 @@
 <script>
 import { Vue2InteractDraggable, InteractEventBus } from "vue2-interact";
 import PositionMaps from "@/components/PositionMaps.vue"
+let data = []
 export default {
   props: ["status"],
   components: { 
@@ -103,12 +115,16 @@ export default {
         draggedUp: "skip"
       },
       users: [],
-      isMapModalActive: false
-    };
+      isMapModalActive: false,
+      ageGap: [18, 50],
+      rateGap:[0, 5],
+      distance:50,
+      commonTags: null
+    }
   },
   async fetch() {
-    const data = await this.$axios.$get("/account/getSuggestedUser");
-    this.users = data.users;
+    data = await this.$axios.$get("/account/getSuggestedUser");
+    this.users = data.users;    
   },
   computed: {
     current() {
@@ -162,6 +178,17 @@ export default {
     },
     openMap(){
       this.isMapModalActive = true
+    },
+    filters(){
+      this.users = data.users.filter((user)=>{
+        console.log(this.users);
+        if ((user.age >= this.ageGap[0] && user.age <= this.ageGap[1]) 
+            && ((user.rating*5/100) >= this.rateGap[0] && (user.rating*5/100) <= this.rateGap[1]) 
+            && (user.distance <= this.distance)
+            && (user.common_tags === this.commonTags))
+          return true
+        return false
+       })
     }
   }
 };
@@ -180,11 +207,7 @@ section{
 }
 .header {
   color: white;
-  font-style: italic;
-  font-family: "Engagement", cursive;
   background: #950740;
-  display: flex;
-  justify-content: space-between;
   height: 150px;
 }
 .foot {

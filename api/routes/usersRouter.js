@@ -12,6 +12,8 @@ router.get('/verify/:token', usersController.verifyAccount)
 router.post('/reset',usersController.resetPassword)
 router.get('/reset/:token',usersController.passwordToken)
 router.post('/change-password',usersController.changePassword)
+router.put('/change-password', usersController.authorize, usersController.checkIfValidPass,usersController.changePassword) 
+
 
 router.post('/authorization', usersController.authorize, usersController.authorized) 
 
@@ -24,6 +26,7 @@ router.post('/saveImages', usersController.authorize, usersController.saveImages
 
 router.post('/oauth/42', usersController.e42Oauth, usersController.connectOrRegister)
 router.post('/oauth/facebook', usersController.fbOauth, usersController.connectOrRegister)
+router.get('/isoauth', usersController.authorize, usersController.isOauth)
 
 router.get('/loggedUser', usersController.authorize, usersController.getLoggedUser)
 router.get('/getImages', usersController.authorize, usersController.getUserImages)

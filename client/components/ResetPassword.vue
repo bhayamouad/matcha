@@ -1,6 +1,5 @@
 <template>
-  <div class="the-box">
-<div id="blogo-container"><a :href=link><img id="blogo" src="~/assets/blogo.png" /></a></div>
+  <div>
     <div id="login-form" @keyup.enter="sendEmail">
       <b-field
         label="Username or Email"
