@@ -48,7 +48,7 @@
 
 <script>
 export default {
-  props: ["users"],
+  props: ["users", "distance"],
   data() {
     return {
       position: { lat: 0, lng: 0 },
@@ -59,7 +59,7 @@ export default {
         panControlOptions: false,
         gestureHandling: "greedy"
       },
-      radius: 50000,
+      radius: this.distance*1000,
       draggable: this.users ? false : true,
       map: null,
       infoOptions: {
