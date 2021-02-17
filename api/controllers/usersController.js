@@ -585,3 +585,40 @@ exports.setPosition = (req, res) => {
         .then(() => res.status(200).send({ message: 'success' }))
         .catch((err) => console.log(err.message))
 }
+
+exports.getProfileInfo = (req, res) => {
+    
+    const username = req.body.username
+    
+    User.getUserByUsername(username)
+    .then(([[user]]) => { 
+        // console.log(user)
+        if(!user)
+            throw Error("notFound");
+         return User.checkIfBlocked(req.id_user, user.id_user)
+        .then(([[ret]]) => {
+            if(!ret)
+                return user
+            else
+                return null
+        }) 
+        .catch(e => res.status(200).send({error: e.message}))   
+    })
+    .then((user) => {
+        if(user)
+        {
+            if(user.id_user == req.id_user)
+                res.status(200).send({error: false, user, block: false, is_me: true})
+            else
+                res.status(200).send({error: false, user, block: false,  is_me: false})
+        }
+        else
+            res.status(200).send({error: false, block: true})  
+    })
+    .catch(e => {
+        if(e.message == 'notFound')
+            res.status(200).send({error: false,user: null})
+        else
+            res.status(200).send({error: e.message})
+    })
+}

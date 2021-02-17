@@ -145,23 +145,20 @@ connection.connect(function(err) {
                   connection.query(`ALTER TABLE messages ADD FOREIGN KEY (receiver_id) REFERENCES users (id_user) ON DELETE SET NULL;`);
 
                   connection.query(`CREATE TABLE reports (
-                                    id_report int(11) NOT NULL,
-                                    reason varchar(50) NOT NULL,
                                     reporter_id int(11) NOT NULL,
                                     reported_id int(11) NOT NULL,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                                     );`);
-                  connection.query(`ALTER TABLE reports ADD PRIMARY KEY (id_report);`);
+                  connection.query(`ALTER TABLE reports ADD PRIMARY KEY (reporter_id, reported_id);`);
                   connection.query(`ALTER TABLE reports ADD FOREIGN KEY (reporter_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   connection.query(`ALTER TABLE reports ADD FOREIGN KEY (reported_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 
                   connection.query(`CREATE TABLE blocks (
-                                    id_block int(11) NOT NULL,
                                     blocker_id int(11) NOT NULL,
                                     blocked_id int(11) NOT NULL,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                                     );`);
-                  connection.query(`ALTER TABLE blocks ADD PRIMARY KEY (id_block);`);
+                  connection.query(`ALTER TABLE reports ADD PRIMARY KEY (blocker_id, blocked_id);`);
                   connection.query(`ALTER TABLE blocks ADD FOREIGN KEY (blocker_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   connection.query(`ALTER TABLE blocks ADD FOREIGN KEY (blocked_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   console.log("Database created.");

@@ -1,0 +1,122 @@
+#content{
+    padding-top: 40px;
+}
+#profile-card{
+    color: black;
+    /* text-align: center; */
+    width: 95%;
+    max-width: 600px;
+    background-color: #F5F5F5;
+    margin: auto;
+    border-radius: 10px;
+}
+#card-info{
+    padding: 20px 30px;
+    border-radius: 10px;
+}
+#user-action{
+    float: right;
+    /* color: black; */
+    /* color: var(--main-color); */
+}
+.act-icons{
+    margin-right: 10px;
+    margin-top: 10px;
+    font-size: 26px;
+}
+#rating{
+    padding-top: 20px;
+    margin-left: auto;
+}
+#prf-name-cnt{
+    width: 100%;
+    margin-bottom: -10px;
+    display: flex;
+}
+#prf-name{
+    max-width: 60%;
+    margin-top: 7px;
+    font-size: 30px;
+    font-weight: 700;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#prf-age{
+    margin-top: 7px;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.usr-gender{
+    font-size: 30px;
+    margin-top: 17px;
+    margin-left: 15px;
+}
+
+#sta-cnt{
+    margin-top: -2px;
+}
+#usr-state{
+    font-size:12px;
+    margin-left: 20px;
+}
+#usr-state i{
+    font-size: 5px;
+}
+#prf-username{
+    width: 100%;
+}
+
+#prf-bio{
+    word-wrap: break-word;
+    width: 100%;
+    margin-top: 12px;
+}
+
+.prf-txts{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#interest{
+    /* width: 80%;
+    margin: auto;
+    text-align: center; */
+    margin-top: 5px;
+}
+#interest span{
+    font-weight: 600;
+}
+.usr-int{
+    margin-left: 5px;
+    font-size: 20px;
+
+}
+#tags{
+    width: 80%;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#single-tag{
+    background-color: white;
+}
+.hero-body{
+    padding: 0;
+    max-height: 600px;
+    border-radius: 10px 10px 0px 0px;
+    /* overflow: hidden; */
+}
+.crsl-img{
+    width: 100%;
+    border-radius: 10px 10px 0px 0px;
+}
+#prf-images{
+    /* background-color: red; */
+    padding: 0;
+}
