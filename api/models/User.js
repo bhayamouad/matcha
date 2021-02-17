@@ -116,23 +116,46 @@ module.exports = class User {
                                     AND u.id_user NOT IN (SELECT disliked_id FROM dislikes WHERE disliker_id = ${user.id_user} AND disliked_id = u.id_user)
                                   ORDER BY common_tags DESC, u.rating DESC`,[user.id_user])
           })
+        }
+  static getUserPosImgSearch(id, search){
+    console.log(search);
+    
+    return this.getUserPosById(id)
+      .then(([[user]]) => {
+        let whereTags = true
+        if(search.tags.lenght){
+          whereTags = "("
+          search.tags.forEach((tag,index) => {
+              whereTags += `${(index !== 0)? " OR " :""} tag = "${tag}"`
+          });
+          whereTags += ")"
+        }
+        return db.execute(`SELECT DISTINCT(u.id_user), u.login, u.rating, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age,
+                            (SELECT GROUP_CONCAT(path ORDER BY is_profile ASC SEPARATOR ',') FROM images where user_id = u.id_user) as images, 
+                            (SELECT GROUP_CONCAT(tag ORDER BY tag ASC SEPARATOR ',') FROM tags JOIN users_tags ON tags.id_tag = users_tags.tag_id WHERE users_tags.user_id = u.id_user AND ${whereTags}) AS tags,
+                            ST_Distance_Sphere(point(-6.897802,32.882179), point(p.lng, p.lat))/1000 AS distance,
+                            (select count(*) from users_tags ut1 INNER join users_tags ut2 on ut1.tag_id = ut2.tag_id where ut1.user_id = 34 and ut2.user_id = u.id_user) AS common_tags
+                                          FROM users u
+                                          INNER JOIN images i 
+                                            ON i.user_id = u.id_user 
+                                          INNER JOIN positions p 
+                                            ON p.user_id = u.id_user
+                                          LEFT JOIN users_tags ut ON u.id_user = ut.user_id
+                                          JOIN tags t ON ut.tag_id = t.id_tag
+                                          WHERE u.id_user <> 34
+                                            AND (u.gender = 'F' AND
+                                              CASE u.interest WHEN 'B'
+                                                THEN TRUE
+                                                ELSE u.interest = 'M' END)
+                                            AND (ST_Distance_Sphere(point(-6.897802,32.882179), point(p.lng, p.lat))/1000) BETWEEN ${search.distance[0]} AND ${search.distance[1]}
+                                            AND u.id_user NOT IN (SELECT liked_id FROM likes where liker_id = 34 AND liked_id = u.id_user)
+                                            AND u.id_user NOT IN (SELECT disliked_id FROM dislikes WHERE disliker_id = 34 AND disliked_id = u.id_user)
+                                            AND TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) BETWEEN ${search.ageGap[0]} AND ${search.ageGap[1]}
+                                            AND rating BETWEEN ${search.rateGap[0]/5*100} AND ${search.rateGap[1]/5*100}
+                                            AND (SELECT GROUP_CONCAT(tag ORDER BY tag ASC SEPARATOR ',') FROM tags JOIN users_tags ON tags.id_tag = users_tags.tag_id WHERE users_tags.user_id = u.id_user AND ${whereTags}) IS NOT NULL
+        `)
+      })
+  }      
 
-          // SELECT DISTINCT(u.id_user), u.login, u.rating, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age, (SELECT GROUP_CONCAT(path ORDER BY is_profile ASC SEPARATOR ',') FROM images where user_id = u.id_user) as images, ST_Distance_Sphere(point(-6.897802,32.882179), point(p.lng, p.lat))/1000 AS distance,
-          //                       (select count(*) from users_tags ut1 INNER join users_tags ut2 on ut1.tag_id = ut2.tag_id where ut1.user_id = 34 and ut2.user_id = u.id_user) AS common_tags
-          //                         FROM users u
-          //                         INNER JOIN images i 
-          //                           ON i.user_id = u.id_user 
-          //                         INNER JOIN positions p 
-          //                           ON p.user_id = u.id_user 
-          //                         WHERE u.id_user <> 34 
-          //                           AND (u.gender = 'F' AND 
-          //                             CASE u.interest WHEN 'B' 
-          //                               THEN TRUE
-          //                               ELSE u.interest = 'M' )
-          //                           AND ST_Distance_Sphere(point(-6.897802,32.882179), point(p.lng, p.lat))/1000 < 150
-          //                           AND u.id_user NOT IN (SELECT liked_id FROM likes where liker_id = 34 AND liked_id = u.id_user)
-          //                           AND u.id_user NOT IN (SELECT disliked_id FROM dislikes WHERE disliker_id = 34 AND disliked_id = u.id_user)
-          //                         ORDER BY common_tags DESC, u.rating DESC
-          
-  }
+                  
 }

@@ -3,28 +3,98 @@
     <div class="header">
       <!-- <i class="material-icons" @click="index = 0">refresh</i> -->
       <button class="btn" @click="openMap">maps</button>
-      
-    <b-tooltip type="is-light" :triggers="['click']" :auto-close="['outside', 'escape']" position="is-bottom">
-            <template v-slot:content>
-                <div style="width:250px">
-                  <b-field class="filters">
-                    <b-slider v-model="ageGap" type="is-success" :min="18" :max="50" :custom-formatter=" val => (val===50)?val.toString()+'+':val.toString()" :step="1" rounded tooltip-always @change="filters"/>
-                  </b-field>
-                  <b-field class="filters">
-                    <b-slider v-model="rateGap" type="is-success" :min="0" :max="5" :custom-formatter=" val => val+ '☆'" :step="1" rounded tooltip-always @change="filters"/>
-                  </b-field>
-                  <b-field class="filters">
-                    <b-slider type="is-success" v-model="distance" :min="5" :max="50" :custom-formatter=" val => val+ ' Km'" :step="1" lazy rounded tooltip-always @change="filters"></b-slider>
-                  </b-field>
-                  <b-field class="filters">
-                    <b-numberinput v-model="commonTags" :max="5" :min="0" @input="filters"></b-numberinput>
-                  </b-field>
-                </div>
-            </template>
-            <b-button label="Action" type="is-light" />
-        </b-tooltip>
+
+      <b-tooltip
+        type="is-light"
+        :triggers="['click']"
+        :auto-close="['outside', 'escape']"
+        position="is-bottom"
+      >
+        <template v-slot:content>
+          <div style="width:250px">
+            <b-field class="filters">
+              <b-slider
+                v-model="ageGap"
+                type="is-success"
+                :min="18"
+                :max="50"
+                :custom-formatter=" val => (val===50)?val.toString()+'+':val.toString()"
+                :step="1"
+                rounded
+                tooltip-always
+                @change="filters"
+              />
+            </b-field>
+            <b-field class="filters">
+              <b-slider
+                v-model="rateGap"
+                type="is-success"
+                :min="0"
+                :max="5"
+                :custom-formatter=" val => val+ '☆'"
+                :step="1"
+                rounded
+                tooltip-always
+                @change="filters"
+              />
+            </b-field>
+            <b-field class="filters">
+              <b-slider
+                type="is-success"
+                v-model="distance"
+                :min="5"
+                :max="50"
+                :custom-formatter=" val => val+ ' Km'"
+                :step="1"
+                lazy
+                rounded
+                tooltip-always
+                @change="filters"
+              ></b-slider>
+            </b-field>
+            <b-field class="filters">
+              <b-numberinput v-model="commonTags" :max="5" :min="0" @input="filters"></b-numberinput>
+            </b-field>
+          </div>
+        </template>
+        <b-button label="Filters" type="is-light" />
+      </b-tooltip>
+      <b-tooltip
+        type="is-light"
+        :triggers="['click']"
+        :auto-close="['outside', 'escape']"
+        position="is-bottom"
+      >
+        <template v-slot:content>
+          <div style="width:450px">
+            <b-checkbox v-model="sortGroup" native-value="1" @input="sort">
+                Age
+            </b-checkbox>
+            <b-checkbox v-model="sortGroup" native-value="2" @input="sort">
+                Location
+            </b-checkbox>
+            <b-checkbox v-model="sortGroup" native-value="3" @input="sort">
+                Fame Rating
+            </b-checkbox>
+            <b-checkbox v-model="sortGroup" native-value="4" @input="sort">
+                Common Tags
+            </b-checkbox>
+          </div>
+        </template>
+        <b-button label="Sort" type="is-light" />
+      </b-tooltip>
+      <b-sidebar
+      type="is-light"
+      :fullheight="true"
+      :fullwidth="false"
+      :overlay="true"
+      :right="true"
+      v-model="open"
+      >
+      <search @trr="moreUsers"/>
+    </b-sidebar>
+    <b-button @click="open = true">Find More Match</b-button>
     </div>
-      
 
     <div
       v-if="current"
@@ -45,8 +115,19 @@
         @draggedUp="emitAndNext('skip', status)"
         class="rounded-borders card card--one"
       >
-        <b-carousel  :autoplay="false" :indicator="(current.images.split(',').length > 1) ? true: false" indicator-position="is-top" indicator-style="is-lines" :repeat="false" animated="fade">
-          <b-carousel-item style="transition: none !important;" v-for="(image, i) in current.images.split(',')" :key="i">
+        <b-carousel
+          :autoplay="false"
+          :indicator="(current.images.split(',').length > 1) ? true: false"
+          indicator-position="is-top"
+          indicator-style="is-lines"
+          :repeat="false"
+          animated="fade"
+        >
+          <b-carousel-item
+            style="transition: none !important;"
+            v-for="(image, i) in current.images.split(',')"
+            :key="i"
+          >
             <div class="card">
               <img :src="$config.baseURL+'/'+image" />
             </div>
@@ -54,30 +135,57 @@
         </b-carousel>
         <div id="info-content">
           <p class="is-6">
-            <span class="overflow">
-              {{ current.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{current.lname.replace(/^\w/, (c) => c.toUpperCase())}}
-            </span>, {{current.age}}</p>
-          <p class="overflow is-7"><i class="fas fa-home"></i> Lives in {{current.city}}</p>
-          <p class="is-7"><i style="margin-left: 3px;" class="fas fa-map-marker-alt"></i> {{Math.ceil(current.distance)}} Km away</p>
+            <span
+              class="overflow"
+            >{{ current.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{current.lname.replace(/^\w/, (c) => c.toUpperCase())}}</span>
+            , {{current.age}}
+          </p>
+          <p class="overflow is-7">
+            <i class="fas fa-home"></i>
+            Lives in {{current.city}}
+          </p>
+          <p class="is-7">
+            <i style="margin-left: 3px;" class="fas fa-map-marker-alt"></i>
+            {{Math.ceil(current.distance)}} Km away
+          </p>
         </div>
       </Vue2InteractDraggable>
     </div>
     <div v-if="next" class="rounded-borders card fixed fixed--center" style="z-index: 2">
-      <b-carousel  :autoplay="false" :indicator="(next.images.split(',').length > 1) ? true: false" indicator-position="is-top" indicator-style="is-lines" :repeat="false" animated="fade">
-          <b-carousel-item style="transition: none !important;" v-for="(image, i) in next.images.split(',')" :key="i">
-            <div class="card">
-              <img :src="$config.baseURL+'/'+image" />
-            </div>
-          </b-carousel-item>
-        </b-carousel>
-        <div id="info-content">
-          <p class="is-6">
-            <span class="overflow">
-              {{ next.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{next.lname.replace(/^\w/, (c) => c.toUpperCase())}}
-            </span>, {{next.age}}</p>
-          <p class="overflow is-7"><i class="fas fa-home"></i> Lives in {{next.city}}</p>
-          <p class="is-7"> <i class="fas fa-map-marker-alt"></i> {{Math.ceil(next.distance)}} Km away</p>
-        </div>
+      <b-carousel
+        :autoplay="false"
+        :indicator="(next.images.split(',').length > 1) ? true: false"
+        indicator-position="is-top"
+        indicator-style="is-lines"
+        :repeat="false"
+        animated="fade"
+      >
+        <b-carousel-item
+          style="transition: none !important;"
+          v-for="(image, i) in next.images.split(',')"
+          :key="i"
+        >
+          <div class="card">
+            <img :src="$config.baseURL+'/'+image" />
+          </div>
+        </b-carousel-item>
+      </b-carousel>
+      <div id="info-content">
+        <p class="is-6">
+          <span
+            class="overflow"
+          >{{ next.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{next.lname.replace(/^\w/, (c) => c.toUpperCase())}}</span>
+          , {{next.age}}
+        </p>
+        <p class="overflow is-7">
+          <i class="fas fa-home"></i>
+          Lives in {{next.city}}
+        </p>
+        <p class="is-7">
+          <i class="fas fa-map-marker-alt"></i>
+          {{Math.ceil(next.distance)}} Km away
+        </p>
+      </div>
     </div>
     <div
       v-if="index + 2 < users.length"
@@ -98,20 +206,22 @@
       </div>
     </div>
     <b-modal v-model="isMapModalActive" :can-cancel="['x', 'escape']">
-      <position-maps ref="posMap" :users="users" :distance="distance"/>
+      <position-maps ref="posMap" :users="users" :distance="distance" />
     </b-modal>
   </section>
 </template>
 
 <script>
 import { Vue2InteractDraggable, InteractEventBus } from "vue2-interact";
-import PositionMaps from "@/components/PositionMaps.vue"
-let data = []
+import PositionMaps from "@/components/PositionMaps.vue";
+import Search from "@/Components/Search.vue"
+let data = [];
 export default {
   props: ["status"],
-  components: { 
+  components: {
     Vue2InteractDraggable,
-    PositionMaps
+    PositionMaps,
+    Search
   },
   data() {
     return {
@@ -125,14 +235,18 @@ export default {
       users: [],
       isMapModalActive: false,
       ageGap: [18, 50],
-      rateGap:[0, 5],
-      distance:50,
-      commonTags: null
-    }
+      rateGap: [0, 5],
+      distance: 50,
+      commonTags: 0,
+      sortGroup:[],
+      open: false
+    };
   },
   async fetch() {
     data = await this.$axios.$get("/account/getSuggestedUser");
-    this.users = data.users;    
+    this.users = data.users;
+    console.log(this.users);
+    
   },
   computed: {
     current() {
@@ -141,10 +255,9 @@ export default {
     next() {
       return this.users[this.index + 1];
     },
-    commonTag(){
-      if(this.commonTags === -1)
-        return null
-      return this.commonTags
+    commonTag() {
+      if (this.commonTags === -1) return null;
+      return this.commonTags;
     }
   },
   methods: {
@@ -189,20 +302,34 @@ export default {
         );
       }
     },
-    openMap(){
-      this.isMapModalActive = true
+    openMap() {
+      this.isMapModalActive = true;
     },
-    filters(){
-      this.users = data.users.filter((user)=>{
-        if ((user.age >= this.ageGap[0] && user.age <= this.ageGap[1]) 
-            && ((user.rating*5/100) >= this.rateGap[0] && (user.rating*5/100) <= this.rateGap[1]) 
-            && (user.distance <= this.distance)){
-              if(!(user.common_tags === this.commonTags) && this.commonTags != null)
-                return false
-              return true
-            }
-        return false
-       })
+    filters() {
+      this.users = data.users.filter(user => {
+        if ( (user.age >= this.ageGap[0] && user.age <= this.ageGap[1]) 
+          && ((user.rating * 5) / 100 >= this.rateGap[0] && (user.rating * 5) / 100 <= this.rateGap[1]) 
+          && (user.distance <= this.distance)
+          && (user.common_tags >= this.commonTag))
+          return true;
+        return false;
+      });
+    },
+    sort(){
+      this.sortGroup.forEach(by => {
+        if(by === "1")
+          this.users = this.users.sort( (user1, user2) => user1.age - user2.age)
+        if(by === "2")
+          this.users = this.users.sort( (user1, user2) => user1.distance - user2.distance )
+        if(by === "3")
+          this.users = this.users.sort( (user1, user2) => user2.rating - user1.rating)
+        if(by === "4")
+          this.users = this.users.sort( (user1, user2) => user2.common_tags - user1.common_tags)
+      })
+    },
+    moreUsers(data){
+      this.open = false
+      this.users = data
     }
   }
 };
@@ -215,7 +342,7 @@ export default {
   height: 100vh;
   // position: relative;
 }
-section{
+section {
   position: relative;
   height: 100vh;
 }
@@ -337,21 +464,21 @@ section{
   animation: appear 200ms ease-in;
 }
 
-#info-content{
+#info-content {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   padding: 10px;
-  background-color: rgb(0,0,0,0.5);
+  background-color: rgb(0, 0, 0, 0.5);
 }
-.overflow{
+.overflow {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.filters{
+.filters {
   margin-bottom: 50px;
 }
 
