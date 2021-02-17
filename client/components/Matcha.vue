@@ -4,20 +4,22 @@
       <!-- <i class="material-icons" @click="index = 0">refresh</i> -->
       <button class="btn" @click="openMap">maps</button>
       
-    <b-tooltip type="is-light" :triggers="['click']" :auto-close="['outside', 'escape']">
+    <b-tooltip type="is-light" :triggers="['click']" :auto-close="['outside', 'escape']" position="is-bottom">
             <template v-slot:content>
-                <b-field>
-                  <b-slider v-model="ageGap" type="is-success" :min="18" :max="50" :custom-formatter=" val => (val===50)?val.toString()+'+':val.toString()" :step="1" rounded tooltip-always @change="filters"/>
-                </b-field>
-                <b-field style="margin-top:40px">
-                  <b-slider v-model="rateGap" type="is-success" :min="0" :max="5" :custom-formatter=" val => val+ '☆'" :step="1" rounded tooltip-always @change="filters"/>
-                </b-field>
-                <b-field  style="margin-top:40px">
-                  <b-slider type="is-success" v-model="distance" :min="5" :max="50" :custom-formatter=" val => val+ ' Km'" :step="1" lazy rounded tooltip-always @change="filters"></b-slider>
-                </b-field>
-                <b-field>
-                  <b-numberinput v-model="commonTags" :max="5" :min="0" @input="filters"></b-numberinput>
-                </b-field>
+                <div style="width:250px">
+                  <b-field class="filters">
+                    <b-slider v-model="ageGap" type="is-success" :min="18" :max="50" :custom-formatter=" val => (val===50)?val.toString()+'+':val.toString()" :step="1" rounded tooltip-always @change="filters"/>
+                  </b-field>
+                  <b-field class="filters">
+                    <b-slider v-model="rateGap" type="is-success" :min="0" :max="5" :custom-formatter=" val => val+ '☆'" :step="1" rounded tooltip-always @change="filters"/>
+                  </b-field>
+                  <b-field class="filters">
+                    <b-slider type="is-success" v-model="distance" :min="5" :max="50" :custom-formatter=" val => val+ ' Km'" :step="1" lazy rounded tooltip-always @change="filters"></b-slider>
+                  </b-field>
+                  <b-field class="filters">
+                    <b-numberinput v-model="commonTags" :max="5" :min="0" @input="filters"></b-numberinput>
+                  </b-field>
+                </div>
             </template>
             <b-button label="Action" type="is-light" />
         </b-tooltip>
@@ -138,6 +140,11 @@ export default {
     },
     next() {
       return this.users[this.index + 1];
+    },
+    commonTag(){
+      if(this.commonTags === -1)
+        return null
+      return this.commonTags
     }
   },
   methods: {
@@ -342,6 +349,10 @@ section{
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.filters{
+  margin-bottom: 50px;
 }
 
 @keyframes appear {
