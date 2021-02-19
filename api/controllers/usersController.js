@@ -8,6 +8,7 @@ const axios = require('axios')
 let token = null
 const User = require('../models/User')
 const Tag = require('../models/Tag')
+const History = require('../models/History')
 const Position = require('../models/Position')
 const Image = require('../models/Image')
 const helpers = require('../tools/helpers')
@@ -22,7 +23,7 @@ const storage = multer.diskStorage({
         cb(null, helpers.hashHmacSha256(new Date().getTime().toString()).key+".png")
     }
 })
-// ***********Authorization************ 
+// ***********Authorization************  
 
 exports.authorize = (req, res, next) => auth.authorize(req, res, next)
 
@@ -616,4 +617,53 @@ exports.setPosition = (req, res) => {
     Position.update(lat,lng, req.id_user)
         .then(() => res.status(200).send({ message: 'success' }))
         .catch((err) => console.log(err.message))
+}
+
+exports.getProfileInfo = (req, res) => {
+    
+    let usr = req.body.username
+    let isme = 0;
+    if(!usr)
+    {
+        usr = req.id_user;
+        isme = 1;
+    } 
+User.getUserProfile(usr , isme)
+    .then(([[user]]) => { 
+        // console.log(user)
+        if(!user)
+            throw Error("notFound");
+         return User.checkIfBlocked(req.id_user, user.id_user)
+        .then(([[ret]]) => {
+            if(!ret)
+                return user
+            else
+                return null
+        }) 
+        .catch(e => res.status(200).send({error: e.message}))   
+    })
+    .then((user) => {
+        if(user)
+        {
+            if(user.id_user == req.id_user)
+                res.status(200).send({error: false, user, block: false, is_me: true})
+            else
+            {
+                return History.insertHistory(req.id_user, user.id_user)
+                .then(_=> { 
+                    res.status(200).send({error: false, user, block: false,  is_me: false})
+                })
+                .catch(e => res.status(200).send({error: "Adding Visit to History Error!"}))
+            }
+        }
+        else
+            res.status(200).send({error: false, block: true})  
+    })
+    .catch(e => {
+        console.log(e.message) 
+        if(e.message == 'notFound')
+            res.status(200).send({error: false,user: null})
+        else
+            res.status(200).send({error: e.message})
+    })
 }

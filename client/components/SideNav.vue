@@ -13,13 +13,13 @@
       </nuxt-link>
 
     <div v-if="loggedUser.status > 1">
-      <nuxt-link to="#messages">
+      <nuxt-link to="#Messages">
         <li>
           <i class="fas fa-envelope"></i>
           <span class="pg-title">Messages</span>
         </li>
       </nuxt-link>
-      <nuxt-link to="#notification">
+      <nuxt-link to="#Notifications">
         <li>
           <i class="fas fa-bell"></i>
           <span class="pg-title">Notifications</span>
@@ -37,7 +37,7 @@
           <span class="pg-title">Settings</span>
         </li>
       </nuxt-link>
-      <nuxt-link to="/history">
+       <nuxt-link to="/history">
         <li>
           <i class="fas fa-history"></i>
           <span class="pg-title">History</span>
