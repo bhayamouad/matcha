@@ -190,4 +190,12 @@ module.exports = class User {
   {
     return db.execute(`SELECT * FROM blocks WHERE blocker_id = ? AND blocked_id = ? OR blocker_id = ? AND blocked_id = ?;`, [visitor, visisted, visisted, visitor])
   }
+  static reportUser(reporter, reported)
+  {
+    return db.execute(`INSERT INTO reports (reporter_id, reported_id) VALUES ( ? , ? )`,[reporter, reported])
+  }
+  static blockUser(blocker, blocked)
+  {
+    return db.execute(`INSERT INTO blocks (blocker_id, blocked_id) VALUES ( ? , ? )`,[blocker, blocked])
+  }
 }

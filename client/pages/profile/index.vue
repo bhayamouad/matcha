@@ -22,7 +22,7 @@
         <i v-if="data.user.gender == 'F'" class="fas fa-venus usr-gender"></i>
         <i v-if="data.user.gender == 'M'" class="fas fa-mars usr-gender"></i>
         <i v-if="data.user.gender == 'O'" class="fas fa-neuter usr-gender"></i>
-         <div v-if="data.user.rating" id="rating">
+         <div v-if="data.user" id="rating">
              <b-rate
             v-model="rate"
             icon-pack="fas"
@@ -46,7 +46,7 @@
         </div>
         <div v-if="data.user.tags" id="tags">
             <b-taglist>
-                <b-tag v-for="(item, i) in data.user.tags.split(',')" :key="i" id="single-tag">{{item}}</b-tag>
+                <b-tag v-for="(item, i) in data.user.tags.split(',')" :key="i" id="single-tag">#{{item}}</b-tag>
             </b-taglist>
         </div>
         <div  id="prf-bio">{{data.user.biography}}</div>

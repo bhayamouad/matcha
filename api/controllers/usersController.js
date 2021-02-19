@@ -628,7 +628,7 @@ exports.getProfileInfo = (req, res) => {
         usr = req.id_user;
         isme = 1;
     } 
-User.getUserProfile(usr , isme)
+    User.getUserProfile(usr , isme)
     .then(([[user]]) => { 
         // console.log(user)
         if(!user)
@@ -666,4 +666,37 @@ User.getUserProfile(usr , isme)
         else
             res.status(200).send({error: e.message})
     })
+}
+
+exports.reportUser = (req, res) =>{   
+    if(req.body.usr != req.id_user)
+    {
+        User.reportUser(req.id_user, req.body.usr)
+        .then(([ret]) => {
+            if(ret.affectedRows == 1)
+                res.status(200).send({error: false})
+        }) 
+        .catch(e=>{
+            if(e.message.split(' ')[0] === "Duplicate")
+                res.status(200).send({error: "Already reported"})
+        })     
+    }
+    else
+        res.status(200).send({error: "cant report yourself"})
+}
+exports.blockUser = (req, res) =>{   
+    if(req.body.usr != req.id_user)
+    {
+        User.blockUser(req.id_user, req.body.usr)
+        .then(([ret]) => {   
+            if(ret.affectedRows == 1) 
+                res.status(200).send({error: false})
+        }) 
+        .catch(e=>{
+            if(e.message.split(' ')[0] === "Duplicate")
+                res.status(200).send({error: "Already Blocked"})
+        })     
+    }
+    else
+        res.status(200).send({error: "cant report yourself"})
 }

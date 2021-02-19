@@ -6,7 +6,7 @@
       <div id="page-cnt">
       <ul v-if="history">
         <li v-for="item in history" :key="item.id_history">
-        You Visited <a href="https://test.com">{{item.login}}</a> Profile {{moment(item.created_at).fromNow()}}.
+        You Visited <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Profile {{moment(item.created_at).fromNow()}}.
         </li>
         <div id="loader-cnt" v-if="showmore"><div class="loader"></div></div>
       </ul>

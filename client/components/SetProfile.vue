@@ -115,7 +115,7 @@ const validateFname = (fname) => {
 const validateLogin = (login) => {
     if (!login) return { valid: false, error: "The login is required" };
     if (login.length > 14)
-      return { valid: false, error: "Login must have maximum 8 characteres" };
+      return { valid: false, error: "Login must have maximum 14 characteres" };
     return { valid: true, error: null };
   };
 

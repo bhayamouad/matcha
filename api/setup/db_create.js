@@ -158,7 +158,7 @@ connection.connect(function(err) {
                                     blocked_id int(11) NOT NULL,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                                     );`);
-                  connection.query(`ALTER TABLE reports ADD PRIMARY KEY (blocker_id, blocked_id);`);
+                  connection.query(`ALTER TABLE blocks ADD PRIMARY KEY (blocker_id, blocked_id);`);
                   connection.query(`ALTER TABLE blocks ADD FOREIGN KEY (blocker_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   connection.query(`ALTER TABLE blocks ADD FOREIGN KEY (blocked_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
                   console.log("Database created.");

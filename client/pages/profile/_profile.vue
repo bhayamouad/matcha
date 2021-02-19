@@ -24,7 +24,7 @@
         <i v-if="data.user.gender == 'F'" class="fas fa-venus usr-gender"></i>
         <i v-if="data.user.gender == 'M'" class="fas fa-mars usr-gender"></i>
         <i v-if="data.user.gender == 'O'" class="fas fa-neuter usr-gender"></i>
-         <div v-if="data.user.rating" id="rating">
+         <div v-if="data.user" id="rating">
              <b-rate
             v-model="rate"
             icon-pack="fas"
@@ -49,7 +49,7 @@
         </div>
         <div v-if="data.user.tags" id="tags">
             <b-taglist>
-                <b-tag v-for="(item, i) in data.user.tags.split(',')" :key="i" id="single-tag">{{item}}</b-tag>
+                <b-tag v-for="(item, i) in data.user.tags.split(',')" :key="i" id="single-tag">#{{item}}</b-tag>
             </b-taglist>
         </div>
         <div  id="prf-bio">{{data.user.biography}}</div>
@@ -75,7 +75,7 @@ export default {
         // console.log(data)
         if(!this.data.block && data.user)
             this.rate= this.data.user.rating * 5 / 100
-        // console.log(data)
+        console.log(data)
     },
     data()
     {
@@ -92,6 +92,22 @@ export default {
         }
     },
     methods: {
+        async reportUseract(){
+            const ret = await this.$axios.$post('/account/reportuser', {usr: this.data.user.id_user});
+            if(ret.error)
+                 this.$snoast.toast(this.$buefy, "You Already Reported This Account", 'is-danger')
+            else
+                this.$snoast.toast(this.$buefy, "This Account Is Reported", 'is-success')
+            return 1;
+        },
+        async blockUseract(){
+            const ret = await this.$axios.$post('/account/blockuser', {usr: this.data.user.id_user});
+            if(ret.error)
+                 this.$snoast.toast(this.$buefy, "Something went wrong Please try later!", 'is-danger')
+            else
+                this.data.block = true;
+            return 1;
+        },
         blockUser() {
             this.$buefy.dialog.confirm({
                 title: `Block ${this.data.user.login}`,
@@ -99,7 +115,7 @@ export default {
                 confirmText: 'Block User',
                 type: 'is-danger',
                 hasIcon: true,
-                onConfirm: () => alert("send request to Api")
+                onConfirm:  async () => this.blockUseract()
             })
         },
         reportUser() {
@@ -109,7 +125,7 @@ export default {
                 confirmText: 'Report User',
                 type: 'is-danger',
                 hasIcon: true,
-                onConfirm: () => alert("send request to Api")
+                onConfirm: async () => this.reportUseract()
             })
         },
     },

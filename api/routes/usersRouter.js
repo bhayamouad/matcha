@@ -37,6 +37,8 @@ router.get('/getPosition', usersController.authorize, usersController.getPositon
 router.put('/setPosition', usersController.authorize, usersController.setPosition)
 
 router.post('/getprofile', usersController.authorize, usersController.getProfileInfo)
+router.post('/reportuser', usersController.authorize, usersController.reportUser)
+router.post('/blockuser', usersController.authorize, usersController.blockUser)
 
 
 
