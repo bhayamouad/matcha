@@ -153,6 +153,7 @@
     <div id="empty-msg" v-if="!loading && !current">There is no Profile Available right now Please Search More</div>
     <div v-if="next && !loading" class="rounded-borders card fixed fixed--center" style="z-index: 2">
       <b-carousel
+        :has-drag="false"
         :autoplay="false"
         :indicator="(next.images.split(',').length > 1) ? true: false"
         indicator-position="is-top"
@@ -241,7 +242,7 @@ export default {
               setTimeout(r, 2000)
             });
     data = await this.$axios.$get("/account/getSuggestedUser");
-    this.users = data.users;
+    this.users = Array.from(data.users);
     if(this.users)
       this.loading = false
     
@@ -303,38 +304,48 @@ export default {
     openMap() {
       this.isMapModalActive = true;
     },
-    filters() {
-
-      this.users = data.users.filter( async (user) => {
-        this.loading = true
-        await new Promise(r => {
-                setTimeout(r, 500)
-            });
-        this.loading = false
+    async filters() {
+      this.loading = true
+      await new Promise(r => {
+              setTimeout(r, 500)
+          });
+      this.loading = false
+      this.users = data.users.filter((user) => {
         if ( (user.age >= this.ageGap[0] && user.age <= this.ageGap[1]) 
           && ((user.rating * 5) / 100 >= this.rateGap[0] && (user.rating * 5) / 100 <= this.rateGap[1]) 
           && (user.distance <= this.distance)
-          && (user.common_tags >= this.commonTag))
+          && (user.common_tags >= this.commonTags))
           return true;
         return false;
       });
     },
-    sort(){
-      this.sortGroup.forEach( async (by) => {
-        this.loading = true
-        await new Promise(r => {
-                setTimeout(r, 500)
-            });
-        this.loading = false
-        if(by === "1")
-          this.users = this.users.sort( (user1, user2) => user1.age - user2.age)
-        if(by === "2")
-          this.users = this.users.sort( (user1, user2) => user1.distance - user2.distance )
-        if(by === "3")
-          this.users = this.users.sort( (user1, user2) => user2.rating - user1.rating)
-        if(by === "4")
-          this.users = this.users.sort( (user1, user2) => user2.common_tags - user1.common_tags)
-      })
+    async sort(){
+      this.loading = true
+      await new Promise(r => {
+              setTimeout(r, 500)
+          });
+      this.loading = false
+      console.log(this.sortGroup.length);
+      if(this.sortGroup.length){
+        this.sortGroup.forEach((by) => {
+          switch(by) {
+            case "1":
+              this.users.sort( (user1, user2) => user1.age - user2.age)
+              break;
+            case "2":
+              this.users.sort( (user1, user2) => user1.distance - user2.distance )
+              break;
+            case "3":
+              this.users.sort( (user1, user2) => user2.rating - user1.rating)
+              break;
+            case "4":
+              this.users.sort( (user1, user2) => user2.common_tags - user1.common_tags)
+              break;
+          }  
+        })
+      }
+      else
+        this.users = Array.from(data.users)
     },
     async moreUsers(newUsers){
       this.open = false

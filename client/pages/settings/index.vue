@@ -17,13 +17,20 @@
       </b-tab-item>
       <b-tab-item>
         <template #header>
+          <b-icon icon="lock"></b-icon>
+          <span>Change Password</span>
+        </template>
+        <change-password :isPass="isPass"></change-password>
+      </b-tab-item>
+      <b-tab-item>
+        <template #header>
           <b-icon icon="map-marker"></b-icon>
           <span>Location</span>
         </template>
         <position-maps ref="location"/>
       </b-tab-item>
     </b-tabs>
-    <div class="field is-grouped is-grouped-centered">
+    <div v-if="active!=2" class="field is-grouped is-grouped-centered">
       <p class="control">
         <a class="button is-primary" @click="save">Save</a>
       </p>
@@ -46,8 +53,13 @@ export default {
   data() {
     return {
       error: null,
-      active: 0
+      active: 0,
+      isPass: null
     };
+  },
+  async fetch(){
+        const res = await this.$axios.$get("/account/isOauth")
+        this.isPass = res.pass
   },
   methods: {
     async save() {
