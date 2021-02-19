@@ -136,14 +136,21 @@ module.exports = class User {
           
   }
 
-  static getUserByUsername(username){
+  static getUserProfile(usr, isme){
+    let searchBy;
+    if(isme)
+      searchBy = 'id_user';
+    else
+      searchBy = 'login';
+
     return db.execute(`SELECT DISTINCT(id_user), fname, lname, login, gender,interest, birthdate, rating, biography, rating ,(SELECT GROUP_CONCAT(path ORDER BY is_profile ASC SEPARATOR ',') FROM images where user_id = id_user) AS images, 
     (SELECT GROUP_CONCAT(tag ORDER BY tag ASC SEPARATOR ',') FROM tags JOIN users_tags ON tags.id_tag = users_tags.tag_id WHERE users_tags.user_id = id_user) AS tags
       FROM users 
       LEFT JOIN users_tags ON users.id_user = users_tags.user_id
             JOIN tags ON users_tags.tag_id = tags.id_tag
             LEFT JOIN images ON users.id_user = images.user_id 
-            WHERE login = ?`, [username])
+            WHERE ${searchBy} = ?`, [usr]);
+
   }
 
   static checkIfBlocked(visitor, visisted)

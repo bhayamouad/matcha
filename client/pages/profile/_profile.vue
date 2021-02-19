@@ -13,9 +13,9 @@
         </b-carousel-item>
     </b-carousel>
         <div id="user-action">
-        <i v-if="!data.is_me" class="fas fa-user-times act-icons"></i>
-        <i v-if="!data.is_me" class="fas fa-flag act-icons"></i>
-        <i v-if="data.is_me" class="fas fa-user-edit act-icons"></i>
+        <i @click="blockUser" v-if="!data.is_me" class="fas fa-ban act-icons"></i>
+        <i @click="reportUser" v-if="!data.is_me" class="fas fa-flag act-icons"></i>
+        <nuxt-link v-if="data.is_me" to="/settings"><i  class="fas fa-user-edit act-icons"></i></nuxt-link>
         </div>
         </div>
         <div id="card-info">
@@ -55,6 +55,12 @@
         <div  id="prf-bio">{{data.user.biography}}</div>
         </div>
     </div>
+    <div v-else id="profile-card">
+        <div id="nf-info">
+        <img id="nf-img" src="@/assets/profile.png">
+        <div id="nf-msg"> User Not Found!</div>
+        </div>
+    </div>
   </section>
 </template>
 
@@ -69,7 +75,7 @@ export default {
         // console.log(data)
         if(!this.data.block && data.user)
             this.rate= this.data.user.rating * 5 / 100
-        console.log(data)
+        // console.log(data)
     },
     data()
     {
@@ -84,7 +90,29 @@ export default {
             isSpaced: true,
             moment: moment,
         }
-    }
+    },
+    methods: {
+        blockUser() {
+            this.$buefy.dialog.confirm({
+                title: `Block ${this.data.user.login}`,
+                message: 'Are you sure you want to <b>Block</b> This User? This action cannot be undone.',
+                confirmText: 'Block User',
+                type: 'is-danger',
+                hasIcon: true,
+                onConfirm: () => alert("send request to Api")
+            })
+        },
+        reportUser() {
+            this.$buefy.dialog.confirm({
+                title: `Report ${this.data.user.login}`,
+                message: 'Are you sure you want to <b>Report</b> This User as a <b>Fake Account</b>?',
+                confirmText: 'Report User',
+                type: 'is-danger',
+                hasIcon: true,
+                onConfirm: () => alert("send request to Api")
+            })
+        },
+    },
 }
 
 </script>

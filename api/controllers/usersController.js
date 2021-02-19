@@ -8,6 +8,7 @@ const axios = require('axios')
 let token = null
 const User = require('../models/User')
 const Tag = require('../models/Tag')
+const History = require('../models/History')
 const Position = require('../models/Position')
 const Image = require('../models/Image')
 const helpers = require('../tools/helpers')
@@ -22,7 +23,7 @@ const storage = multer.diskStorage({
         cb(null, helpers.hashHmacSha256(new Date().getTime().toString()).key+".png")
     }
 })
-// ***********Authorization************ 
+// ***********Authorization************  
 
 exports.authorize = (req, res, next) => auth.authorize(req, res, next)
 
@@ -588,9 +589,14 @@ exports.setPosition = (req, res) => {
 
 exports.getProfileInfo = (req, res) => {
     
-    const username = req.body.username
-    
-    User.getUserByUsername(username)
+    let usr = req.body.username
+    let isme = 0;
+    if(!usr)
+    {
+        usr = req.id_user;
+        isme = 1;
+    } 
+User.getUserProfile(usr , isme)
     .then(([[user]]) => { 
         // console.log(user)
         if(!user)
@@ -610,12 +616,19 @@ exports.getProfileInfo = (req, res) => {
             if(user.id_user == req.id_user)
                 res.status(200).send({error: false, user, block: false, is_me: true})
             else
-                res.status(200).send({error: false, user, block: false,  is_me: false})
+            {
+                return History.insertHistory(req.id_user, user.id_user)
+                .then(_=> { 
+                    res.status(200).send({error: false, user, block: false,  is_me: false})
+                })
+                .catch(e => res.status(200).send({error: "Adding Visit to History Error!"}))
+            }
         }
         else
             res.status(200).send({error: false, block: true})  
     })
     .catch(e => {
+        console.log(e.message) 
         if(e.message == 'notFound')
             res.status(200).send({error: false,user: null})
         else

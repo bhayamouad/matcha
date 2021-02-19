@@ -9,6 +9,7 @@
     background-color: #F5F5F5;
     margin: auto;
     border-radius: 10px;
+    margin-bottom: 60px;
 }
 #card-info{
     padding: 20px 30px;
@@ -20,9 +21,15 @@
     /* color: var(--main-color); */
 }
 .act-icons{
+    color: black;
     margin-right: 10px;
     margin-top: 10px;
-    font-size: 26px;
+    font-size: 20px;
+    opacity: 1;
+}
+.act-icons:hover{
+    opacity: .7;
+    cursor: pointer;
 }
 #rating{
     padding-top: 20px;
@@ -119,4 +126,20 @@
 #prf-images{
     /* background-color: red; */
     padding: 0;
+}
+#nf-info{
+    text-align: center;
+}
+#nf-img{
+    width: 70%;
+    max-width: 200px;
+    /* height: 200px; */
+    border-radius: 50%;
+    margin-top: 20px;
+}
+#nf-msg{
+    font-size: 30px;
+    font-weight: 600;
+    color: #6f6969;
+    padding-bottom: 20px;
 }
