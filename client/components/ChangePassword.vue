@@ -84,11 +84,13 @@ export default {
         token: this.$route.params.token
       },
       valid: true,
-      errors: {},
+      errors: {}
     };
   },
   methods: {
     async change() {
+      this.valid = true
+      this.errors= {}
       const validOpassword = validateOpassword(this.passwords.opassword, this.status, this.isPass);
       this.errors.opassword = validOpassword.error;
       if (this.valid) this.valid = validOpassword.valid;

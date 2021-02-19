@@ -219,8 +219,8 @@ exports.registerAccount = (req, res) => {
         .then((salt) => { return bcrypt.hash(req.body.password, salt) })
         .then(hashPassword => {
             const user = new User({
-                fname: req.body.fname,
-                lname: req.body.lname,
+                fname: helpers.capitalize(req.body.fname),
+                lname: helpers.capitalize(req.body.lname),
                 email: req.body.email,
                 login: req.body.login,
                 password: hashPassword,
@@ -398,14 +398,13 @@ exports.changePassword = (req, res) => {
 exports.setProfile = async (req, res) => {
     const { fname, lname, email, login, gender, birthdate, interest, bio, tags, lat, lng } = req.body
     const data = {
-        fname,
-        lname,
+        fname: helpers.capitalize(fname),
+        lname: helpers.capitalize(lname),
         email,
         login,
         gender,
         birthdate: new Date(birthdate.toString()),
         interest,
-        tags: tags.toString(),
         bio
     }
     let position = null
@@ -417,25 +416,25 @@ exports.setProfile = async (req, res) => {
             lng,
             user_id: req.id_user,
         })
-        await position.save()
     }
-    // else {
-    //         const ip = await helpers.getPublicIp().catch(error => console.log("catch public ip "+error.message))
-    //         const res = await helpers.ipLocationFinderAPI(ip).catch(error => console.log("catch finder "+error.message)) // to solve later !!!!!!!
-    //         position = new Position({
-    //             city: `${res.data.geo.city},${res.data.geo.country_name}`,
-    //             lat: res.data.geo.latitude,
-    //             lng: res.data.geo.longitude,
-    //             user_id: req.id_user,
-    //         })
-    //     }
+    else {
+        const ip = await helpers.getPublicIp().catch(error => console.log("catch public ip "+error.message))
+        const res = await helpers.ipLocationFinderAPI(ip).catch(error => console.log("catch finder "+error.message)) // to solve later !!!!!!!
+        position = new Position({
+            city: `${res.data.city},${res.data.country}`,
+            lat: res.data.lat,
+            lng: res.data.lon,
+            user_id: req.id_user,
+        })
+    }
+    await position.save()
 
 
     const uid = req.id_user;
     let tagsToDelete = [];
     let tagsToAdd = []
     Tag.getUserTags(uid) 
-    .then(([ret])=>{
+    .then(([ret])=>{ 
 
         ret.forEach((elm)=> {
             if(!tags.includes(elm.tag))
@@ -457,7 +456,6 @@ exports.setProfile = async (req, res) => {
             if(!flag)  
                 tagsToAdd.push(elm) 
         })
-        // const tagsIdsToAdd = [];
 
         tagsToAdd.forEach((tag) => {
             Tag.getByTag(tag) 

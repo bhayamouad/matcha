@@ -189,7 +189,7 @@ exports.DBSeeds = (connection) => {
                                 (5,43),(7,43),(14,43),(24,43)
                                 ;`)
         console.log("database seeding success");
-        connection.end();
+        connection.end() ;
     })
 }
 

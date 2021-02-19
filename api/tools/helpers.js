@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer')
 const crypto = require("crypto-js")
 const NodeGeocoder = require('node-geocoder')
 const publicIp = require('public-ip')
-const request = require('request')
+const axios = require('axios')
 
 exports.hashHmacSha256 = (string) => crypto.AES.encrypt(string, process.env.SECRET_KEY);
 
@@ -60,19 +60,8 @@ exports.sendEmail = async (to, subject, html) => {
 exports.getPublicIp = async () => {
 	return await publicIp.v4()
 }
-exports.ipLocationFinderAPI = (ip) => { //to solve later !!!!!!!!!!!!
-    return new Promise((resolve, reject) => {
-        options = {
-            url: `https://tools.keycdn.com/geo.json?host=${ip}`,
-            headers: {
-              'User-Agent': 'request'
-            }
-          };
-        request(options, { json: true }, (err, res, body) => {
-          if (err) reject(err)
-          resolve(body)
-        });
-    })
+exports.ipLocationFinderAPI = async (ip) => {
+    return await axios.get(`http://ip-api.com/json/${ip}`) 
 }
 exports.capitalize = (string) => {
     return string.replace(/^\w/, (c) => c.toUpperCase());
