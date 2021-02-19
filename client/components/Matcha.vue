@@ -1,7 +1,6 @@
 <template>
   <section id="section">
     <div class="header">
-      <!-- <i class="material-icons" @click="index = 0">refresh</i> -->
       <button class="btn" @click="openMap">maps</button>
 
       <b-tooltip
@@ -91,13 +90,13 @@
       :right="true"
       v-model="open"
       >
-      <search @trr="moreUsers"/>
+      <search @clicked="moreUsers"/>
     </b-sidebar>
     <b-button @click="open = true">Find More Match</b-button>
     </div>
-
+    <div class="fixed fixed--center loader-cnt" v-if="loading"><div class="loaders"></div></div>
     <div
-      v-if="current"
+      v-if="current && !loading"
       class="fixed fixed--center"
       style="z-index: 3"
       :class="{ 'transition': isVisible }"
@@ -151,7 +150,8 @@
         </div>
       </Vue2InteractDraggable>
     </div>
-    <div v-if="next" class="rounded-borders card fixed fixed--center" style="z-index: 2">
+    <div id="empty-msg" v-if="!loading && !current">There is no Profile Available right now Please Search More</div>
+    <div v-if="next && !loading" class="rounded-borders card fixed fixed--center" style="z-index: 2">
       <b-carousel
         :autoplay="false"
         :indicator="(next.images.split(',').length > 1) ? true: false"
@@ -187,13 +187,6 @@
         </p>
       </div>
     </div>
-    <div
-      v-if="index + 2 < users.length"
-      class="rounded-borders card fixed fixed--center"
-      style="z-index: 1"
-    >
-      <div style="height: 100%"></div>
-    </div>
     <div class="foot">
       <div class="btn btn--decline" @click="reject">
         <i class="material-icons">close</i>
@@ -214,7 +207,7 @@
 <script>
 import { Vue2InteractDraggable, InteractEventBus } from "vue2-interact";
 import PositionMaps from "@/components/PositionMaps.vue";
-import Search from "@/Components/Search.vue"
+import Search from "@/Components/SearchMore.vue"
 let data = [];
 export default {
   props: ["status"],
@@ -239,13 +232,18 @@ export default {
       distance: 50,
       commonTags: 0,
       sortGroup:[],
-      open: false
+      open: false,
+      loading: true
     };
   },
   async fetch() {
+    await new Promise(r => {
+              setTimeout(r, 2000)
+            });
     data = await this.$axios.$get("/account/getSuggestedUser");
     this.users = data.users;
-    console.log(this.users);
+    if(this.users)
+      this.loading = false
     
   },
   computed: {
@@ -306,7 +304,13 @@ export default {
       this.isMapModalActive = true;
     },
     filters() {
-      this.users = data.users.filter(user => {
+
+      this.users = data.users.filter( async (user) => {
+        this.loading = true
+        await new Promise(r => {
+                setTimeout(r, 500)
+            });
+        this.loading = false
         if ( (user.age >= this.ageGap[0] && user.age <= this.ageGap[1]) 
           && ((user.rating * 5) / 100 >= this.rateGap[0] && (user.rating * 5) / 100 <= this.rateGap[1]) 
           && (user.distance <= this.distance)
@@ -316,7 +320,12 @@ export default {
       });
     },
     sort(){
-      this.sortGroup.forEach(by => {
+      this.sortGroup.forEach( async (by) => {
+        this.loading = true
+        await new Promise(r => {
+                setTimeout(r, 500)
+            });
+        this.loading = false
         if(by === "1")
           this.users = this.users.sort( (user1, user2) => user1.age - user2.age)
         if(by === "2")
@@ -327,9 +336,16 @@ export default {
           this.users = this.users.sort( (user1, user2) => user2.common_tags - user1.common_tags)
       })
     },
-    moreUsers(data){
+    async moreUsers(newUsers){
       this.open = false
-      this.users = data
+      this.loading = true
+      await new Promise(r => {
+                setTimeout(r, 2000)
+            });
+      this.loading = false
+      
+      this.index = 0
+      this.users = newUsers
     }
   }
 };
@@ -458,6 +474,25 @@ section {
       font-weight: normal;
     }
   }
+}
+
+.loaders {
+    margin: auto;
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid gray;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 0.5s linear infinite; /* Safari */
+    animation: spin 0.5s linear infinite;
+}
+
+#empty-msg{
+    /* color: black; */
+    width: 100%;
+    text-align: center;
+    padding-top: 20px;
+    font-size: 1.3rem;
 }
 
 .transition {

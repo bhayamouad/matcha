@@ -602,7 +602,7 @@ exports.getSuggestedUser = (req, res) => {
         .then( ([users]) => {
             res.status(200).send({users})
         }) 
-        .catch(err => console.log(err.message)) 
+        .catch(err => console.log(err.message))
 }
 
 exports.getPositon = (req, res) => {

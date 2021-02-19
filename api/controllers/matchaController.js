@@ -25,6 +25,12 @@ exports.reject = (req, res) => {
 
 exports.getMore = async (req, res) => {
     const {ageGap, rateGap, distance, tags} = req.body
-    const search = {ageGap, rateGap, distance, tags}
-    await User.getUserPosImgSearch(req.id_user, search)   
+    const search = {ageGap, rateGap, distance, tags} 
+    try {
+        const [moreUsers] = await User.getUserPosImgSearch(req.id_user, search)
+        res.send({users:moreUsers}) 
+    } catch (error) {
+        console.log(error.message);
+    }
+
 }
