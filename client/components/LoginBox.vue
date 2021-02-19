@@ -1,6 +1,5 @@
 <template>
-  <div class="the-box">
-    <div id="blogo-container"><a :href=link><img id="blogo" src="~/assets/blogo.png" /></a></div>
+  <div>
     <div id="login-form" @keyup.enter="login">
       <b-field
         label="Username or Email"
@@ -31,7 +30,6 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
 import authbtn from '@/components/AuthBtns.vue';
 
 const validateLogin = login => {
@@ -48,7 +46,6 @@ export default {
   },
   data({$config}) {
     return {
-      link: $config.clientURL,
       user: {
         login: "",
         password: ""
@@ -59,11 +56,6 @@ export default {
   },
   components: {authbtn},
   methods: {
-    ...mapMutations({
-      logInAuth: 'auth/logIn',
-      logOut: 'auth/logOut',
-      setStatus: 'auth/setStatus'
-    }),
     async login() {
       this.errors = {};
       this.valid = true;
@@ -80,12 +72,7 @@ export default {
         const res = await this.$axios.$post("/account/login", this.user);
         if (res.special) this.$snoast.snackbar(this.$buefy,res.message,'is-danger','Verify Now','/verify')
         if (res.error && !res.special) this.$snoast.toast(this.$buefy, res.message, 'is-danger')
-        if (!res.error) {
-          const status = res.userStatus
-          this.logInAuth()
-          this.setStatus(status)
-          this.$router.go()
-        }
+        if (!res.error) this.$router.go()
       }
     }
   }

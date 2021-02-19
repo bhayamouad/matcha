@@ -1,6 +1,5 @@
 <template>
-  <div class="the-box">
-    <div id="blogo-container"><a :href=link><img id="blogo" src="~/assets/blogo.png" /></a></div>
+  <div>
     <div id="login-form" @keyup.enter="register">
       <div id="fname">
       <b-field label="" id="fname1"

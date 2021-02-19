@@ -22,7 +22,10 @@
             </div>
         </div>
         <div class="action-box">
-            <nuxt />
+            <div class="the-box">
+                <div id="blogo-container"><img id="blogo" src="~/assets/blogo.png" /></div>
+                <nuxt />
+            </div>
         </div>
 </div>
 </template>
@@ -35,12 +38,7 @@ head() {
     return {
       title: "Matcha - Welcome",
     };
-  },
-data(){
-    return{
-        status: this.$store.state.auth.loggedIn
-    }
-},
+  }
 }
 </script>
 <style src="@/style/auth.css">

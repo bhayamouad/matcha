@@ -67,10 +67,12 @@
         :data="filteredTags"
         icon="label"
         allow-new
-        :confirm-keys = "['Enter']"
+        :confirm-keys = "['Enter', ',']"
         placeholder="ex: #vegan, #geek, #piercing etc..."
         :before-adding="tagValidate"
         :remove-on-keys="[]"
+        :maxlength="25"
+        :maxtags="5"
         @typing="getFilteredTags"
       ></b-taginput>
     </b-field>
@@ -191,7 +193,7 @@ export default {
   },
   methods: {
     tagValidate (tag) {
-        return tag.match(/^#([A-Za-z0-9_]){3,25}$/);
+        return tag.match(/^([A-Za-z0-9_]){3,25}$/);
     },
     getFilteredTags(text) {
       this.filteredTags = tagsList.filter(option => {

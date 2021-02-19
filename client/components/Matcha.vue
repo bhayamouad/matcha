@@ -1,7 +1,102 @@
 <template>
-  <section>
+  <section id="section">
+    <div class="header">
+      <button class="btn" @click="openMap">maps</button>
+
+      <b-tooltip
+        type="is-light"
+        :triggers="['click']"
+        :auto-close="['outside', 'escape']"
+        position="is-bottom"
+      >
+        <template v-slot:content>
+          <div style="width:250px">
+            <b-field class="filters">
+              <b-slider
+                v-model="ageGap"
+                type="is-success"
+                :min="18"
+                :max="50"
+                :custom-formatter=" val => (val===50)?val.toString()+'+':val.toString()"
+                :step="1"
+                rounded
+                tooltip-always
+                @change="filters"
+              />
+            </b-field>
+            <b-field class="filters">
+              <b-slider
+                v-model="rateGap"
+                type="is-success"
+                :min="0"
+                :max="5"
+                :custom-formatter=" val => val+ '☆'"
+                :step="1"
+                rounded
+                tooltip-always
+                @change="filters"
+              />
+            </b-field>
+            <b-field class="filters">
+              <b-slider
+                type="is-success"
+                v-model="distance"
+                :min="5"
+                :max="50"
+                :custom-formatter=" val => val+ ' Km'"
+                :step="1"
+                lazy
+                rounded
+                tooltip-always
+                @change="filters"
+              ></b-slider>
+            </b-field>
+            <b-field class="filters">
+              <b-numberinput v-model="commonTags" :max="5" :min="0" @input="filters"></b-numberinput>
+            </b-field>
+          </div>
+        </template>
+        <b-button label="Filters" type="is-light" />
+      </b-tooltip>
+      <b-tooltip
+        type="is-light"
+        :triggers="['click']"
+        :auto-close="['outside', 'escape']"
+        position="is-bottom"
+      >
+        <template v-slot:content>
+          <div style="width:450px">
+            <b-checkbox v-model="sortGroup" native-value="1" @input="sort">
+                Age
+            </b-checkbox>
+            <b-checkbox v-model="sortGroup" native-value="2" @input="sort">
+                Location
+            </b-checkbox>
+            <b-checkbox v-model="sortGroup" native-value="3" @input="sort">
+                Fame Rating
+            </b-checkbox>
+            <b-checkbox v-model="sortGroup" native-value="4" @input="sort">
+                Common Tags
+            </b-checkbox>
+          </div>
+        </template>
+        <b-button label="Sort" type="is-light" />
+      </b-tooltip>
+      <b-sidebar
+      type="is-light"
+      :fullheight="true"
+      :fullwidth="false"
+      :overlay="true"
+      :right="true"
+      v-model="open"
+      >
+      <search @clicked="moreUsers"/>
+    </b-sidebar>
+    <b-button @click="open = true">Find More Match</b-button>
+    </div>
+    <div class="fixed fixed--center loader-cnt" v-if="loading"><div class="loaders"></div></div>
     <div
-      v-if="current"
+      v-if="current && !loading"
       class="fixed fixed--center"
       style="z-index: 3"
       :class="{ 'transition': isVisible }"
@@ -19,46 +114,78 @@
         @draggedUp="emitAndNext('skip', status)"
         class="rounded-borders card card--one"
       >
-        <b-carousel  :autoplay="false" :indicator="(current.images.split(',').length > 1) ? true: false" indicator-position="is-top" indicator-style="is-lines" :repeat="false" animated="fade">
-          <b-carousel-item style="transition: none !important;" v-for="(image, i) in current.images.split(',')" :key="i">
+        <b-carousel
+          :autoplay="false"
+          :indicator="(current.images.split(',').length > 1) ? true: false"
+          indicator-position="is-top"
+          indicator-style="is-lines"
+          :repeat="false"
+          animated="fade"
+        >
+          <b-carousel-item
+            style="transition: none !important;"
+            v-for="(image, i) in current.images.split(',')"
+            :key="i"
+          >
             <div class="card">
-              <img :src="$config.baseURL+'/'+current.images.split(',')[i]" />
+              <img :src="$config.baseURL+'/'+image" />
             </div>
           </b-carousel-item>
         </b-carousel>
         <div id="info-content">
           <p class="is-6">
-            <span class="overflow">
-              {{ current.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{current.lname.replace(/^\w/, (c) => c.toUpperCase())}}
-            </span>, {{current.age}}</p>
-          <p class="overflow is-7"><i class="fas fa-home"></i> Lives in {{current.city}}</p>
-          <p class="is-7"><i style="margin-left: 3px;" class="fas fa-map-marker-alt"></i> {{Math.ceil(current.distance)}} Km away</p>
+            <span
+              class="overflow"
+            >{{ current.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{current.lname.replace(/^\w/, (c) => c.toUpperCase())}}</span>
+            , {{current.age}}
+          </p>
+          <p class="overflow is-7">
+            <i class="fas fa-home"></i>
+            Lives in {{current.city}}
+          </p>
+          <p class="is-7">
+            <i style="margin-left: 3px;" class="fas fa-map-marker-alt"></i>
+            {{Math.ceil(current.distance)}} Km away
+          </p>
         </div>
       </Vue2InteractDraggable>
     </div>
-    <div v-if="next" class="rounded-borders card fixed fixed--center" style="z-index: 2">
-      <b-carousel  :autoplay="false" :indicator="(next.images.split(',').length > 1) ? true: false" indicator-position="is-top" indicator-style="is-lines" :repeat="false" animated="fade">
-          <b-carousel-item style="transition: none !important;" v-for="(image, i) in next.images.split(',')" :key="i">
-            <div class="card">
-              <img :src="$config.baseURL+'/'+next.images.split(',')[i]" />
-            </div>
-          </b-carousel-item>
-        </b-carousel>
-        <div id="info-content">
-          <p class="is-6">
-            <span class="overflow">
-              {{ next.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{next.lname.replace(/^\w/, (c) => c.toUpperCase())}}
-            </span>, {{next.age}}</p>
-          <p class="overflow is-7"><i class="fas fa-home"></i> Lives in {{next.city}}</p>
-          <p class="is-7"> <i class="fas fa-map-marker-alt"></i> {{Math.ceil(next.distance)}} Km away</p>
-        </div>
-    </div>
-    <div
-      v-if="index + 2 < users.length"
-      class="rounded-borders card fixed fixed--center"
-      style="z-index: 1"
-    >
-      <div style="height: 100%"></div>
+    <div id="empty-msg" v-if="!loading && !current">There is no Profile Available right now Please Search More</div>
+    <div v-if="next && !loading" class="rounded-borders card fixed fixed--center" style="z-index: 2">
+      <b-carousel
+        :autoplay="false"
+        :indicator="(next.images.split(',').length > 1) ? true: false"
+        indicator-position="is-top"
+        indicator-style="is-lines"
+        :repeat="false"
+        animated="fade"
+      >
+        <b-carousel-item
+          style="transition: none !important;"
+          v-for="(image, i) in next.images.split(',')"
+          :key="i"
+        >
+          <div class="card">
+            <img :src="$config.baseURL+'/'+image" />
+          </div>
+        </b-carousel-item>
+      </b-carousel>
+      <div id="info-content">
+        <p class="is-6">
+          <span
+            class="overflow"
+          >{{ next.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{next.lname.replace(/^\w/, (c) => c.toUpperCase())}}</span>
+          , {{next.age}}
+        </p>
+        <p class="overflow is-7">
+          <i class="fas fa-home"></i>
+          Lives in {{next.city}}
+        </p>
+        <p class="is-7">
+          <i class="fas fa-map-marker-alt"></i>
+          {{Math.ceil(next.distance)}} Km away
+        </p>
+      </div>
     </div>
     <div class="foot">
       <div class="btn btn--decline" @click="reject">
@@ -71,15 +198,24 @@
         <i class="material-icons">favorite</i>
       </div>
     </div>
+    <b-modal v-model="isMapModalActive" :can-cancel="['x', 'escape']">
+      <position-maps ref="posMap" :users="users" :distance="distance" />
+    </b-modal>
   </section>
 </template>
 
 <script>
 import { Vue2InteractDraggable, InteractEventBus } from "vue2-interact";
-
+import PositionMaps from "@/components/PositionMaps.vue";
+import Search from "@/Components/SearchMore.vue"
+let data = [];
 export default {
   props: ["status"],
-  components: { Vue2InteractDraggable },
+  components: {
+    Vue2InteractDraggable,
+    PositionMaps,
+    Search
+  },
   data() {
     return {
       isVisible: true,
@@ -89,13 +225,26 @@ export default {
         draggedLeft: "reject",
         draggedUp: "skip"
       },
-      users: []
+      users: [],
+      isMapModalActive: false,
+      ageGap: [18, 50],
+      rateGap: [0, 5],
+      distance: 50,
+      commonTags: 0,
+      sortGroup:[],
+      open: false,
+      loading: true
     };
   },
   async fetch() {
-    const data = await this.$axios.$get("/account/getSuggestedUser");
+    await new Promise(r => {
+              setTimeout(r, 2000)
+            });
+    data = await this.$axios.$get("/account/getSuggestedUser");
     this.users = data.users;
-    console.log(this.users);
+    if(this.users)
+      this.loading = false
+    
   },
   computed: {
     current() {
@@ -103,6 +252,10 @@ export default {
     },
     next() {
       return this.users[this.index + 1];
+    },
+    commonTag() {
+      if (this.commonTags === -1) return null;
+      return this.commonTags;
     }
   },
   methods: {
@@ -142,10 +295,57 @@ export default {
         }, 200);
         this.$snoast.toast(
           this.$buefy,
-          "You must add at least one image to your profile",
+          "You must add at least one Picture to complete this Action",
           "is-danger"
         );
       }
+    },
+    openMap() {
+      this.isMapModalActive = true;
+    },
+    filters() {
+
+      this.users = data.users.filter( async (user) => {
+        this.loading = true
+        await new Promise(r => {
+                setTimeout(r, 500)
+            });
+        this.loading = false
+        if ( (user.age >= this.ageGap[0] && user.age <= this.ageGap[1]) 
+          && ((user.rating * 5) / 100 >= this.rateGap[0] && (user.rating * 5) / 100 <= this.rateGap[1]) 
+          && (user.distance <= this.distance)
+          && (user.common_tags >= this.commonTag))
+          return true;
+        return false;
+      });
+    },
+    sort(){
+      this.sortGroup.forEach( async (by) => {
+        this.loading = true
+        await new Promise(r => {
+                setTimeout(r, 500)
+            });
+        this.loading = false
+        if(by === "1")
+          this.users = this.users.sort( (user1, user2) => user1.age - user2.age)
+        if(by === "2")
+          this.users = this.users.sort( (user1, user2) => user1.distance - user2.distance )
+        if(by === "3")
+          this.users = this.users.sort( (user1, user2) => user2.rating - user1.rating)
+        if(by === "4")
+          this.users = this.users.sort( (user1, user2) => user2.common_tags - user1.common_tags)
+      })
+    },
+    async moreUsers(newUsers){
+      this.open = false
+      this.loading = true
+      await new Promise(r => {
+                setTimeout(r, 2000)
+            });
+      this.loading = false
+      
+      this.index = 0
+      this.users = newUsers
     }
   }
 };
@@ -156,26 +356,20 @@ export default {
   background: #eceff1;
   width: 100%;
   height: 100vh;
+  // position: relative;
+}
+section {
+  position: relative;
+  height: 100vh;
 }
 .header {
   color: white;
-  font-style: italic;
-  font-family: "Engagement", cursive;
   background: #950740;
-  display: flex;
-  justify-content: space-between;
-  span {
-    display: block;
-    font-size: 4rem;
-    padding-top: 2rem;
-    text-shadow: 1px 1px 1px red;
-  }
-  i {
-    padding: 24px;
-  }
+  height: 150px;
 }
 .foot {
-  width: 50%;
+  width: 100%;
+  display: flex;
   position: absolute;
   bottom: 0;
   display: flex;
@@ -282,22 +476,45 @@ export default {
   }
 }
 
+.loaders {
+    margin: auto;
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid gray;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 0.5s linear infinite; /* Safari */
+    animation: spin 0.5s linear infinite;
+}
+
+#empty-msg{
+    /* color: black; */
+    width: 100%;
+    text-align: center;
+    padding-top: 20px;
+    font-size: 1.3rem;
+}
+
 .transition {
   animation: appear 200ms ease-in;
 }
 
-#info-content{
+#info-content {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   padding: 10px;
-  background-color: rgb(0,0,0,0.5);
+  background-color: rgb(0, 0, 0, 0.5);
 }
-.overflow{
+.overflow {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.filters {
+  margin-bottom: 50px;
 }
 
 @keyframes appear {

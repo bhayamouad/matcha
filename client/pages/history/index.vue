@@ -143,16 +143,16 @@ export default {
     padding-top: 20px;
     font-size: 1.3rem;
 }
-.loader {
-    margin: auto;
-    border: 4px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 4px solid gray;
-    width: 40px;
-    height: 40px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
-}
+    .loader {
+        margin: auto;
+        border: 4px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 4px solid gray;
+        width: 40px;
+        height: 40px;
+        -webkit-animation: spin 2s linear infinite; /* Safari */
+        animation: spin 2s linear infinite;
+    }
 #loader-cnt{
     margin-top: 20px;
 }

@@ -9,18 +9,11 @@ import loginbox from "~/components/LoginBox";
 import home from "~/components/Home";
 
 export default {
-layout: 'home',
-  data(){
-    return{
-    loggedIn: this.$store.state.auth.loggedIn
-    }
-  },
+  layout: 'home',
   components: {home}
 }
 </script>
 
 <style>
-#thehome-content{
-    /* padding-top: 30px; */
-}
+
 </style>
