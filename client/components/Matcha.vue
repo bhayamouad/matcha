@@ -136,7 +136,7 @@
           <p class="is-6">
             <span
               class="overflow"
-            >{{ current.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{current.lname.replace(/^\w/, (c) => c.toUpperCase())}}</span>
+            >{{ current.fname}} {{current.lname}}</span>
             , {{current.age}}
           </p>
           <p class="overflow is-7">
@@ -175,7 +175,7 @@
         <p class="is-6">
           <span
             class="overflow"
-          >{{ next.fname.replace(/^\w/, (c) => c.toUpperCase())}} {{next.lname.replace(/^\w/, (c) => c.toUpperCase())}}</span>
+          >{{ next.fname}} {{next.lname}}</span>
           , {{next.age}}
         </p>
         <p class="overflow is-7">
@@ -241,7 +241,7 @@ export default {
     await new Promise(r => {
               setTimeout(r, 1000)
             });
-    data = await this.$axios.$get("/account/getSuggestedUser");
+    data = await this.$axios.$get("/matcha/getSuggestedUser");
     this.users = Array.from(data.users);
     if(this.users)
       this.loading = false

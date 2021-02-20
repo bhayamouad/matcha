@@ -58,6 +58,7 @@
 <script>
 import moment from 'moment'
 export default {
+    middleware: 'redirect',
     layout: 'home',
     async fetch()
     {

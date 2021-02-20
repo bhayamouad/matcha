@@ -24,8 +24,9 @@ let from = 0;
 // const num = hpr;
 export default {
     mounted () {
-  this.scroll()
-},
+        this.scroll()
+    },
+    middleware: 'redirect',
     layout: 'home',
     data(){
         return{

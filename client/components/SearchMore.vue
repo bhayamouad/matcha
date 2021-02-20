@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     async search(){
-      const data = await this.$axios.$post("/matcha/getMore",{ageGap:this.ageGap,rateGap: this.rateGap, distance: this.distance, tags:this.tags})
+      const data = await this.$axios.$post("/matcha/search",{ageGap:this.ageGap,rateGap: this.rateGap, distance: this.distance, tags:this.tags})
       this.$emit('clicked', data.users)
     }
   },

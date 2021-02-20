@@ -13,8 +13,8 @@ module.exports = class Position {
                       ON DUPLICATE KEY UPDATE 
                       city = ?, lat = ?, lng = ?, user_id = ?`, [this,this.city,this.lat,this.lng,this.user_id])  
   }
-  static update(lat,lng, id) {
-    return db.execute("UPDATE positions SET lat = ?, lng = ? WHERE user_id = ?", [lat, lng, id])
+  static update(position) {
+    return db.execute("UPDATE positions SET city = ?, lat = ?, lng = ? WHERE user_id = ?", [position.city, position.lat, position.lng, position.user_id])
   }
 
   static getByIdUser(id){

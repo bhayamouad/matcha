@@ -12,7 +12,7 @@
         </li>
       </nuxt-link>
 
-    <div v-if="loggedUser.status > 1">
+    <div :class="{'nolink':nolink}">
       <nuxt-link to="#Messages">
         <li>
           <i class="fas fa-envelope"></i>
@@ -44,32 +44,6 @@
         </li>
       </nuxt-link>
       </div>
-
-
-      <div class="nolink" v-else>
-        <li>
-          <i class="fas fa-envelope"></i>
-          <span class="pg-title">Messages</span>
-        </li>
-        <li>
-          <i class="fas fa-bell"></i>
-          <span class="pg-title">Notifications</span>
-        </li>
-        <li>
-          <i class="fas fa-user"></i>
-          <span class="pg-title">Profile</span>
-        </li>
-        <li>
-          <i class="fas fa-cog"></i>
-          <span class="pg-title">Settings</span>
-        </li>
-        <li>
-          <i class="fas fa-history"></i>
-          <span class="pg-title">History</span>
-        </li>
-      </div>
-
-      
     </ul>
     <div v-on:click="logout" id="logout-btn">
       <span id="lgo-img" :class="{'lgo-img-icon': !loggedUser.profile}">
@@ -92,13 +66,15 @@ export default {
         name: null,
         username: null,
         profile: null,
+        status: null
       },
-      
+    nolink: true     
     }
   },
   async fetch() {
     const res = await this.$axios.$get('/account/loggedUser')
     this.loggedUser = res.loggedUser
+    this.nolink = (this.loggedUser.status>1) ? false : true
   },
   methods: {
       async logout()

@@ -200,4 +200,8 @@ module.exports = class User {
   {
     return db.execute(`INSERT INTO blocks (blocker_id, blocked_id) VALUES ( ? , ? )`,[blocker, blocked])
   }
+
+  static setFameRating(newFame, id){
+    return db.execute(`UPDATE users set rating = ? where id_user = ?`,[newFame, id])
+  }
 }
