@@ -57,9 +57,12 @@
     background-color: rgb(195, 7, 63, 0.2);
 }
 
-.nolink:hover{
-   cursor: no-drop;     
+#thenav .nolink a li:hover{
+    background-color: initial;
+    color: initial;
+    cursor: no-drop;     
 }
+
 
 #logout-btn{
     display: grid;

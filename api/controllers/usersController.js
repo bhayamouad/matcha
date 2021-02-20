@@ -13,7 +13,7 @@ const History = require('../models/History')
 const Position = require('../models/Position')
 const Image = require('../models/Image')
 const helpers = require('../tools/helpers')
-const auth = require('../tools/authentication.js')
+const auth = require('../tools/authentication.js') 
 
 
 const storage = multer.diskStorage({
@@ -24,94 +24,10 @@ const storage = multer.diskStorage({
         cb(null, helpers.hashHmacSha256(new Date().getTime().toString()).key+".png")
     }
 })
+
 // ***********Authorization************  
 
-exports.authorize = (req, res, next) => auth.authorize(req, res, next)
-
 exports.authorized = (req, res) => { res.status(200).send({ state: 'AUTHORIZED', error: false }) }
-
-
-
-// ************************************ 
-
-// ************Oauth**************** 
-
-exports.e42Oauth = (req, res, next) => {
-    const code = req.body.code
-    axios({
-        url: `https://api.intra.42.fr/oauth/token`,
-        method: 'post',
-        params: {
-            grant_type: 'authorization_code',
-            code,
-            client_id: process.env.CLIENT_42_ID,
-            client_secret: process.env.CLIENT_42_KEY,
-            redirect_uri: `${process.env.CLIENT_URL}/oauth/42`,
-            headers: {'content-type': 'application/x-www-form-urlencoded'}  
-        }, 
-      }).then(({data})=>{ 
-          return axios({
-            url: 'https://api.intra.42.fr/v2/me',
-            method: 'get',
-            headers: {
-                Authorization: `Bearer ${data.access_token}`,  
-            },
-          })      
-      }).then(({data})=>{ 
-        const {id , email, first_name:fname, last_name:lname} = data
-        const userdata = {
-          oauth_id: `e42${id}`,
-          fname,
-          lname,
-          email,
-          status: 1
-        } 
-        return userdata; 
-    }).then((ret)=>{
-      req.userdata = ret
-      next() 
-  }).catch((e)=> console.log(e.message))
-}
-
-exports.fbOauth = (req, res, next) => {
-    const code = req.body.code
-    axios({
-        url: 'https://graph.facebook.com/v4.0/oauth/access_token',
-        method: 'get',
-        params: {
-          client_id: process.env.CLIENT_FB_ID,
-          client_secret: process.env.CLIENT_FB_KEY,
-          redirect_uri: `${process.env.CLIENT_URL}/oauth/facebook`,
-          code,
-        },
-      }).then(({data})=>{
-          return axios({
-            url: 'https://graph.facebook.com/me',
-            method: 'get',
-            params: {
-                fields: ['id', 'email', 'first_name', 'last_name', 'birthday', 'gender'].join(','),
-                access_token: data.access_token,
-                }
-          })        
-      }).then(({data})=>{ 
-          const {id , email, first_name:fname, last_name:lname, birthday, gender} = data 
-          const userdata = {
-            oauth_id: `fb${id}`,
-            fname,
-            lname,
-            email,
-            gender: (gender === 'male')? 'M':(x ==='female'? 'F':'O'),
-            birthdate: new Date(birthday.toString()),
-            status: 1
-          } 
-          return userdata; 
-      }).then((ret)=>{
-        req.userdata = ret
-        next() 
-    }).catch((e)=>{ 
-        res.status(200).send({error: 'fb oauth Error'})
-      })
-} 
 
 exports.connectOrRegister = (req, res)=>{
     const userdata = req.userdata
@@ -159,61 +75,6 @@ exports.isOauth = (req, res) => {
         .catch( err => console.log(err.mesage))
 }
 
-exports.registerValidation = (req, res, next) => { 
-    if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation 
-    const { email, login } = req.body;
-    User.ifUnique(email, login) 
-        .then((ret) => {
-            if (ret[0][0][0] || ret[1][0][0]) {
-                let emailerr = false
-                let loginerr = false
-                if (ret[0][0][0])
-                    emailerr = true;
-                if (ret[1][0][0])
-                    loginerr = true;
-                res.status(200).send({ emailerr, loginerr })
-                return
-            }
-            else
-                next()
-        })
-        .catch(err => res.status(500).send({ message: err.message, error: true }))
-}
-
-exports.checkIfExist = (req, res, next) => { 
-    const { email, login } = req.body;
-    User.checkIfExist(req.id_user, email, login) 
-        .then((ret) => {
-            if (ret[0][0][0] || ret[1][0][0]) {
-                let emailerr = false
-                let loginerr = false
-                if (ret[0][0][0])
-                    emailerr = true;
-                if (ret[1][0][0])
-                    loginerr = true;
-                res.status(200).send({ emailerr, loginerr })
-                return
-            }
-            else
-                next()
-        })
-        .catch(err => res.status(500).send({ message: err.message, error: true }))
-}
-
-exports.checkIfValidPass = (req, res, next) => {
-    const { opassword } = req.body; 
-    if(!opassword) next()
-    else {
-        User.getById(req.id_user) 
-            .then( async ([[user]]) => {
-                const passCompare = await bcrypt.compare(opassword, user.password)
-                if (!passCompare) res.status(200).send({passError: true})
-                else next()
-            })
-            .catch(err => res.status(500).send({ message: err.message, error: true }))
-    }
-}
-
 exports.registerAccount = (req, res) => {
     token = helpers.hashHmacSha256(Date.now().toString())
     bcrypt.genSalt(10)
@@ -232,7 +93,7 @@ exports.registerAccount = (req, res) => {
                     const subject = 'Email Confirmation'
                     const html = `<p>Hello ${user.login} Your account was created successfuly you need to verify your account to login please <a href="${process.env.CLIENT_URL}/verify/${token.key}/">click here</a>`
                     helpers.sendEmail(user.email, subject, html)
-                    res.status(201).send({ message: 'Your Account was created. Please go check your Inbox to verify your Account', error: false })
+                    res.status(201).send({ message: 'Your Account was created. Please go check your Inbox to verify your Account'})
                 })
                 .catch(err => res.status(500).send({ message: err.message, error: true }))
         })
@@ -249,7 +110,7 @@ exports.verifyAccount = (req, res) => {
                 const diff = Math.floor((now - update) / 60000)
                 if (diff <= 60 * 24) {
                     User.updateStatus(user.id_user)
-                        .then(() => res.send({ message: 'Account is activated you can login now', error: false }))
+                        .then(() => res.send({ message: 'Account is activated you can login now'}))
                         .catch((err) => res.status('500').send({ message: err.message, error: true }))
                 }
                 else res.status('200').send({ message: 'This verification link is expired! Request a new one', error: true })
@@ -261,25 +122,28 @@ exports.verifyAccount = (req, res) => {
 
 exports.login = (req, res) => {
     const { login, password } = req.body
+    console.log(password);
+    try {
     User.getByLogin(login)
         .then(async ([[user]]) => {
-            const passCompare = await bcrypt.compare(password, user.password)
-
-            if (passCompare) {
-                if (user.status != 0) {
-
-                    const accTok = auth.createAccToken(user)
-                    const refTok = auth.createRefToken(user)
-
-                    res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15 })
-                    res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
-                    res.status(200).send({ userStatus: user.status, error: false })
+                const passCompare = await bcrypt.compare(password, user.password)
+                if (passCompare) {
+                    if (user.status != 0) {
+                        const accTok = auth.createAccToken(user)
+                        const refTok = auth.createRefToken(user)
+    
+                        res.cookie('accTok', accTok, { httpOnly: true, maxAge: 1000 * 60 * 15 })
+                        res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
+                        res.status(200).send({ userStatus: user.status})
+                    }
+                    else res.status(205).send({ message: 'You need to verify your account first', error: true, special: true })
                 }
-                else res.status(200).send({ message: 'You need to verify your account first', error: true, special: true })
-            }
-            else res.status(200).send({ message: 'The username or password is incorrect', error: true })
-        })
+                else res.status(205).send({ message: 'The username or password is incorrect', error: true })
+            })
         .catch((e) => res.status(200).send({ message: 'The username or password  is incorrect', error: true }))
+    } catch (error) {
+        res.status('500').send({ message: error.message, error: true })
+    }
 }
 
 exports.logOut = (req, res) => {
@@ -409,27 +273,31 @@ exports.setProfile = async (req, res) => {
         bio
     }
     let position = null
-    if (lat && lng) {
-        const [location] = await helpers.getLocation(lat, lng)
-        position = new Position({
-            city: `${location.city},${location.country}`,
-            lat,
-            lng,
-            user_id: req.id_user,
-        })
+    try {
+        if (lat && lng) {
+            const [location] = await helpers.getLocation(lat, lng)
+            position = new Position({
+                city: `${location.city},${location.country}`,
+                lat,
+                lng,
+                user_id: req.id_user,
+            })
+        }
+        else {
+            const ip = await helpers.getPublicIp().catch(error => console.log("catch public ip "+error.message))
+            const res = await helpers.ipLocationFinderAPI(ip).catch(error => console.log("catch finder "+error.message))
+            position = new Position({
+                city: `${res.data.city},${res.data.country}`,
+                lat: res.data.lat,
+                lng: res.data.lon,
+                user_id: req.id_user,
+            })
+        }
+        await position.save()
+        
+    } catch (error) {
+        return res.status('500').send({ message: 'Something went Wrong! Please try Later', error: true })
     }
-    else {
-        const ip = await helpers.getPublicIp().catch(error => console.log("catch public ip "+error.message))
-        const res = await helpers.ipLocationFinderAPI(ip).catch(error => console.log("catch finder "+error.message)) // to solve later !!!!!!!
-        position = new Position({
-            city: `${res.data.city},${res.data.country}`,
-            lat: res.data.lat,
-            lng: res.data.lon,
-            user_id: req.id_user,
-        })
-    }
-    await position.save()
-
 
     const uid = req.id_user;
     let tagsToDelete = [];
@@ -480,10 +348,10 @@ exports.setProfile = async (req, res) => {
     .catch((e)=> {console.log(e.message)})
     User.setProfile(data, req.id_user) 
         .then(() => res.status(200).send({ message: `success` }))
-        .catch(err => res.send({ message: err.message }))
+        .catch(err => { return res.status('500').send({ message: 'Something went Wrong! Please try Later', error: true }) })
 }
 
-exports.getData = (req, res) => {
+exports.getDataUser = (req, res) => {
     let data = {
         user: {},
         tagsList: [],
@@ -494,52 +362,59 @@ exports.getData = (req, res) => {
         tags.forEach(tag => {
             data.tagsList.push(tag.tag) 
         });
-        const [[user]] = await User.getById(req.id_user) 
-        data.user = user
-        const [userTags] = await Tag.getByUser(req.id_user)
-        userTags.forEach(tag => {
-            data.userTags.push(tag.tag) 
-        });
-        return res.send({ data })
+        try {
+            const [[user]] = await User.getById(req.id_user)
+            data.user = user
+            const [userTags] = await Tag.getByUser(req.id_user)
+            userTags.forEach(tag => {
+                data.userTags.push(tag.tag) 
+            });
+            res.status(200).send({ data })
+        } catch (error) {
+            res.status('500').send({ message: 'Something went Wrong! Please try Later', error: true })
+        }
         })
-        .catch(err => { return res.send({ message: err.message}) })
+    .catch(err => res.status('500').send({ message: 'Something went Wrong! Please try Later', error: true }) )
 }
 
 exports.getStatus = (req, res) => { 
     User.getStatusById(req.id_user)
-        .then(([[user]]) => res.status(200).send({status: user.status, error: false}))
-        .catch(err => res.send({ message:err.message, error: true}))
+        .then(([[user]]) => res.status(200).send({status: user.status}))
+        .catch(err => res.status('500').send({ message: 'Something went Wrong! Please try Later', error: true}))
 }
  
 exports.saveImages = (req, res) => {
-    Image.getUserImages(req.id_user)
-        .then(async ([userImages]) => {
-            let upload = multer({storage}).array('images',5)
-            upload(req, res, async (err) => {
-                let imagesFiles = req.files
-                if(imagesFiles.length === 0){
-                    await User.setStatusById(2, req.id_user)
-                }
-                else
-                    await User.setStatusById(3, req.id_user)
+
+    try {
+        Image.getUserImages(req.id_user)
+            .then(async ([userImages]) => {
+                let upload = multer({storage}).array('images',5)
+                upload(req, res, async (err) => {
+                    let imagesFiles = req.files
+                    if(imagesFiles.length === 0){
+                        await User.setStatusById(2, req.id_user)
+                    }
+                    else
+                        await User.setStatusById(3, req.id_user)
+    
                     if(userImages.length === 0){
-                        imagesFiles.forEach(async (imageFile, index) => {
+                        imagesFiles.forEach( async (imageFile, index) => {
                             const image = new Image({
                                 path: imageFile.path.split('/')[1],
                                 user_id: req.id_user,
                                 is_profile: index
                             })
-                            await image.save() 
+                            await image.save()
                         })
                     }
                     else {
                         let limit = userImages.length - imagesFiles.length
                         if (limit > 0){
-                          await Image.deleteUserImages(req.id_user, limit)
-                          let i = userImages.length - 1
-                          while(limit--){
-                            fs.unlinkSync(`uploads/${userImages[i--].path}`) 
-                          }
+                            await Image.deleteUserImages(req.id_user, limit)
+                            let i = userImages.length - 1
+                            while(limit--){
+                                fs.unlinkSync(`uploads/${userImages[i--].path}`) 
+                            }
                         }
                         userImages.forEach( (image,index) => {
                             Image.updateImage(req.id_user ,image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
@@ -557,52 +432,56 @@ exports.saveImages = (req, res) => {
                                     })
                                 }
                             }) 
-                            .catch(err => console.log(err.message))    
+                            .catch(err => { return res.status('500').send({ message: 'Something went Wrong! Please try Later', error: true }) })    
                         })
                     }
+                    res.send({error: false})
+                })
             })
-        res.send({error: false}) 
-    })
+            .catch(err => res.send({ message: 'Something went Wrong! Please try Later', error: true }))
+    }
+    catch (error) {
+        return res.send({ message: 'Something went Wrong! Please try Later', error: true })
+    }
 }
 
 exports.getLoggedUser = async (req, res) => {
     let loggedUser = {
         name: null,
         username: null,
-        profile: null
+        profile: null,
+        status: null
     }
-    const [[user]] = await User.getById(req.id_user).catch(err => console.log(err.message))
-    const [[profile]] = await Image.getUserProfile(req.id_user).catch(err => console.log(err.message))
-    if(user){
-        loggedUser.name = `${helpers.capitalize(user.fname)} ${helpers.capitalize(user.lname)}`
-        loggedUser.username = (user.login) ? user.login : 'user'+user.id_user
-        loggedUser.status = user.status
-    }
-    if(profile)
-        loggedUser.profile = `${process.env.API_URL}/${profile.path}`
-    if(user || profile)
+    try {
+        const [[user]] = await User.getById(req.id_user).catch(err => console.log(err.message))
+        const [[profile]] = await Image.getUserProfile(req.id_user).catch(err => console.log(err.message))
+        if(user){
+            loggedUser.name = `${helpers.capitalize(user.fname)} ${helpers.capitalize(user.lname)}`
+            loggedUser.username = (user.login) ? user.login : 'user'+user.id_user
+            loggedUser.status = user.status
+        }
+        if(profile)
+            loggedUser.profile = `${process.env.API_URL}/${profile.path}`
         res.status(200).send({loggedUser})
-    else
-        res.status(204).send({message:'error loggeduser'})
+    } catch (error) {
+        return res.status('500').send({ message: 'Something went Wrong! Please try Later', error: true })
+    }
+    
 }
 
 exports.getUserImages = async (req, res) => {
     let images = [null, null, null, null, null]
-    const [userImages] = await Image.getUserImages(req.id_user).catch(err => console.log(err.message))
-    if(userImages){
-        userImages.forEach( (image, index) => {
-            images[index] = "data:image/png;base64,"+fs.readFileSync('uploads/'+image.path, 'base64') 
-        })
+    try {
+        const [userImages] = await Image.getUserImages(req.id_user).catch(err => console.log(err.message))
+        if(userImages){
+            userImages.forEach( (image, index) => {
+                images[index] = "data:image/png;base64,"+fs.readFileSync('uploads/'+image.path, 'base64') 
+            })
+        }
+        res.status(200).send({images})
+    } catch (error) {
+        return res.status('201').send({ message: 'Something went Wrong! Please try Later', error: true })
     }
-    res.status(200).send({images})
-}
-
-exports.getSuggestedUser = (req, res) => {
-    User.getUsersPosImg(req.id_user)
-        .then( ([users]) => {
-            res.status(200).send({users})
-        }) 
-        .catch(err => console.log(err.message))
 }
 
 exports.getPositon = (req, res) => {
@@ -611,11 +490,26 @@ exports.getPositon = (req, res) => {
         .catch(err => console.log(err.message))
 }
 
-exports.setPosition = (req, res) => {
+exports.setPosition = async (req, res) => {
     const {lat, lng} = req.body
-    Position.update(lat,lng, req.id_user)
-        .then(() => res.status(200).send({ message: 'success' }))
-        .catch((err) => console.log(err.message))
+    try {
+        const [location] = await helpers.getLocation(lat, lng)
+        let position = {
+            city: `${location.city},${location.country}`,
+            lat,
+            lng,
+            user_id: req.id_user,
+        }
+        if(position.city === "undefined,undefined")
+            res.status('201').send({ message: 'Please choose a valid position', error: true } )
+        else{
+            Position.update(position)
+                .then(() => res.status(200).send({ message: 'success' }))
+                .catch((err) => res.status('201').send({ message: 'Something went Wrong! Please try Later', error: true }) )
+        }
+    } catch (error) {
+        res.status('201').send({ message: 'Something went Wrong! Please try Later', error: true } )
+    }
 }
 
 exports.getProfileInfo = (req, res) => {
@@ -629,7 +523,6 @@ exports.getProfileInfo = (req, res) => {
     } 
     User.getUserProfile(usr , isme)
     .then(([[user]]) => { 
-        // console.log(user)
         if(!user)
             throw Error("notFound");
          return User.checkIfBlocked(req.id_user, user.id_user)

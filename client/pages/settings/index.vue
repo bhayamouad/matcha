@@ -49,6 +49,7 @@ export default {
     ImageUpload,
     PositionMaps
   },
+  middleware: 'redirect',
   layout: "home",
   data() {
     return {
@@ -73,12 +74,18 @@ export default {
             "is-success"
           );
       }
-      else if(this.active === 2){
+      if(this.active === 3){
         const res = await this.$refs.location.savePosition()
         if(res === 'success')
           this.$snoast.toast(this.$buefy, `your position was changed`, "is-success")
+        else
+          this.$snoast.toast(
+                this.$buefy,
+                res,
+                "is-danger"
+              );
       }
-      else {
+      if(this.active === 0) {
         check = await this.$refs.images.saveImages();
         if (check)
           this.$snoast.toast(
