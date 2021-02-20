@@ -20,6 +20,28 @@
     /* color: black; */
     /* color: var(--main-color); */
 }
+#like-bg{
+    position: absolute;
+    bottom: -46px;
+    left: 28px;
+    font-size: 60px;
+    color: #f5f5f5;
+}
+#like-act{
+    position: absolute;
+    bottom: -39px;
+    left: 33px;
+    font-size: 50px;
+    color: #00000061;
+}
+
+#like-act:hover{
+    cursor: pointer;
+}
+
+.liked{
+  color: var(--second-color)!important;  
+}
 .act-icons{
     color: black;
     margin-right: 10px;
@@ -126,6 +148,7 @@
 #prf-images{
     /* background-color: red; */
     padding: 0;
+    position: relative;
 }
 #nf-info{
     text-align: center;

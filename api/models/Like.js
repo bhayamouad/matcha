@@ -14,4 +14,8 @@ module.exports = class Like {
   static getLikesByLikedId(idLiked, idLiker){
     return db.execute("SELECT * FROM likes WHERE liker_id = ? AND liked_id = ?",[idLiked,idLiker])
   }
+  static isLiked(liker, liked)
+  {
+    return db.execute("SELECT * FROM likes WHERE liker_id = ? AND liked_id = ?",[liker, liked])
+  }
 }

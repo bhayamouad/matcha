@@ -8,6 +8,7 @@ const axios = require('axios')
 let token = null
 const User = require('../models/User')
 const Tag = require('../models/Tag')
+const Like = require('../models/Like')
 const History = require('../models/History')
 const Position = require('../models/Position')
 const Image = require('../models/Image')
@@ -647,11 +648,19 @@ exports.getProfileInfo = (req, res) => {
                 res.status(200).send({error: false, user, block: false, is_me: true})
             else
             {
-                return History.insertHistory(req.id_user, user.id_user)
-                .then(_=> { 
-                    res.status(200).send({error: false, user, block: false,  is_me: false})
-                })
-                .catch(e => res.status(200).send({error: "Adding Visit to History Error!"}))
+                return Like.isLiked(req.id_user, user.id_user)
+                .then(([[ret]]) =>{
+                    let liked
+                    if(ret)
+                        liked = true
+                    else
+                        liked = false  
+                    return History.insertHistory(req.id_user, user.id_user)
+                    .then(_=> { 
+                        res.status(200).send({error: false, user, liked, block: false,  is_me: false})
+                    })
+                    .catch(e => res.status(200).send({error: "Adding Visit to History Error!"}))
+                }).catch(e => res.status(200).send({error: "Get Like Error"}))
             }
         }
         else

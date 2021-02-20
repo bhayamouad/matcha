@@ -489,9 +489,9 @@ section {
 
 .loaders {
     margin: auto;
-    border: 4px solid #f3f3f3;
+    border: 4px solid rgb(195, 7, 63, 0.2);
     border-radius: 50%;
-    border-top: 4px solid gray;
+    border-top: 4px solid #950740;
     width: 40px;
     height: 40px;
     -webkit-animation: spin 0.5s linear infinite; /* Safari */

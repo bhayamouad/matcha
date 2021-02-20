@@ -19,7 +19,7 @@
 import moment from 'moment'
 
 let hpr = 5;
-let num = 15;
+let num = 25;
 let from = 0;
 // const num = hpr;
 export default {
@@ -131,7 +131,7 @@ export default {
     border-bottom: solid 1px #ebeef0;
 }
 #page-cnt ul{
-    margin-bottom: 50vh;
+    margin-bottom: 40vh;
 }
 #page-cnt li:hover{
     background-color: #f0f3f5;
@@ -143,16 +143,16 @@ export default {
     padding-top: 20px;
     font-size: 1.3rem;
 }
-    .loader {
-        margin: auto;
-        border: 4px solid #f3f3f3;
-        border-radius: 50%;
-        border-top: 4px solid gray;
-        width: 40px;
-        height: 40px;
-        -webkit-animation: spin 2s linear infinite; /* Safari */
-        animation: spin 2s linear infinite;
-    }
+.loader {
+    margin: auto;
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid gray;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+}
 #loader-cnt{
     margin-top: 20px;
 }
