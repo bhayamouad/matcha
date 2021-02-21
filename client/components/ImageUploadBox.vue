@@ -42,8 +42,8 @@
       </transition-group>
     </draggable>
     <b-modal v-model="isImageModalActive" :can-cancel="['x', 'escape']" :on-cancel="cancel">
-      <div>
-        <cropper
+      <div id="thecroper">
+        <cropper id="croper-cnt"
           ref="cropper"
           v-if="uploadImages[openModal]"
           :src="uploadImages[openModal].url"
@@ -199,5 +199,26 @@ export default {
   display: flex;
   justify-content: center;
   margin-top: 17px;
+}
+.content{
+  margin-top: -10px;
+}
+.card-content{
+  min-height: 427px!important;
+}
+// .animation-content .modal-content{
+//   max-height: 60vh!important;
+// }
+#thecroper{
+  height: 70vh;
+}
+#croper-cnt{
+  height: 60vh;
+}
+@media (max-width: 800px)
+{
+  .card-content{
+  min-height: 100px!important;
+}
 }
 </style>
