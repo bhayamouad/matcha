@@ -572,34 +572,50 @@ exports.getProfileInfo = (req, res) => {
 }
 
 exports.reportUser = (req, res) =>{   
-    if(req.body.usr != req.id_user)
-    {
-        User.reportUser(req.id_user, req.body.usr)
-        .then(([ret]) => {
-            if(ret.affectedRows == 1)
-                res.status(200).send({error: false})
-        }) 
-        .catch(e=>{
-            if(e.message.split(' ')[0] === "Duplicate")
-                res.status(200).send({error: "Already reported"})
-        })     
+    try {
+        if(req.body.usr != req.id_user)
+        {
+            User.reportUser(req.id_user, req.body.usr)
+            .then( async ([ret]) => {
+                if(ret.affectedRows == 1){
+                    const [[reported]] = await User.getById(req.body.usr)
+                    if ((parseInt(reported.rating) - 5 ) >= 0)
+                        await User.setFameRating((parseInt(reported.rating) - 5), reported.id_user)
+                    res.status(200).send({error: false})
+                }
+            }) 
+            .catch(e=>{
+                if(e.message.split(' ')[0] === "Duplicate")
+                    res.status(200).send({error: "Already reported"})
+            })     
+        }
+        else
+            res.status(200).send({error: "cant report yourself"})    
+    } catch (error) {
+        res.status(200).send({message: "Something went Wrong! Please try Later"}) 
     }
-    else
-        res.status(200).send({error: "cant report yourself"})
 }
 exports.blockUser = (req, res) =>{   
-    if(req.body.usr != req.id_user)
-    {
-        User.blockUser(req.id_user, req.body.usr)
-        .then(([ret]) => {   
-            if(ret.affectedRows == 1) 
-                res.status(200).send({error: false})
-        }) 
-        .catch(e=>{
-            if(e.message.split(' ')[0] === "Duplicate")
-                res.status(200).send({error: "Already Blocked"})
-        })     
+    try {
+        if(req.body.usr != req.id_user)
+        {
+            User.blockUser(req.id_user, req.body.usr)
+            .then(async ([ret]) => {   
+                if(ret.affectedRows == 1){
+                    const [[blocked]] = await User.getById(req.body.usr)
+                        if ((parseInt(blocked.rating) - 5 ) >= 0)
+                            await User.setFameRating((parseInt(blocked.rating) - 5), blocked.id_user)
+                    res.status(200).send({error: false})
+                }
+            }) 
+            .catch(e=>{
+                if(e.message.split(' ')[0] === "Duplicate")
+                    res.status(200).send({error: "Already Blocked"})
+            })     
+        }
+        else
+            res.status(200).send({error: "cant report yourself"})       
+    } catch (error) {
+        res.status(200).send({message: "Something went Wrong! Please try Later"}) 
     }
-    else
-        res.status(200).send({error: "cant report yourself"})
 }
