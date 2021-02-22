@@ -1,8 +1,8 @@
 <template>
   <section id="profile-sec">
     <div v-if="!data.block && data.user" id="profile-card">
-      <div v-if="data.user.images" id="prf-images">
-        <b-carousel :has-drag="false" :autoplay="false" :repeat="false" animated="fade">
+      <div v-if="data.user" id="prf-images">
+        <b-carousel v-if="data.user.images" :has-drag="false" :autoplay="false" :repeat="false" animated="fade">
           <b-carousel-item v-for="(image, i) in data.user.images.split(',')" :key="i">
             <section>
               <div class="hero-body has-text-centered">
@@ -11,6 +11,7 @@
             </section>
           </b-carousel-item>
         </b-carousel>
+          <img v-else class="crsl-img" src="@/assets/profile.png" />
         <div id="user-action">
           <i @click="blockUser" v-if="!data.is_me" class="fas fa-ban act-icons"></i>
           <i @click="reportUser" v-if="!data.is_me" class="fas fa-flag act-icons"></i>
@@ -18,8 +19,8 @@
             <i class="fas fa-user-edit act-icons"></i>
           </nuxt-link>
         </div>
-        <div v-if="!data.is_me" id="like-bg"><i class="fas fa-heart"></i></div>
-        <div v-if="!data.is_me" id="like-act" :class="{'liked':data.liked}" @click="likeButton"><i class="fas fa-heart"></i></div>
+        <div v-if="!data.is_me && data.user.images" id="like-bg"><i class="fas fa-heart"></i></div>
+        <div v-if="!data.is_me && data.user.images" id="like-act" :class="{'liked':data.liked}" @click="likeButton"><i class="fas fa-heart"></i></div>
       </div>
       <div id="card-info">
         <div class="prf-txts" id="prf-name-cnt">
