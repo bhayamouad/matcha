@@ -56,7 +56,7 @@
         </div>
         <div v-if="data.user.tags" id="tags">
           <b-taglist>
-            <b-tag v-for="(item, i) in data.user.tags.split(',')" :key="i" id="single-tag">{{item}}</b-tag>
+            <b-tag v-for="(item, i) in data.user.tags.split(',')" :key="i" id="single-tag">#{{item}}</b-tag>
           </b-taglist>
         </div>
         <div id="prf-bio">{{data.user.biography}}</div>
@@ -74,70 +74,89 @@
 <script>
 import moment from "moment";
 export default {
-    async fetch()
+  async fetch()
+  {
+      const data = await this.$axios.$post('/account/getprofile', {username: this.$route.params.profile});
+      this.data = data;
+      if(!this.data.block && data.user)
+          this.rate= this.data.user.rating * 5 / 100
+  },
+  data()
+  {
+      return{
+          data:{
+              user: {images: null},
+              liked: null
+          },
+          rate: null,
+          maxs: 5,
+          sizes: '',
+          icons: 'star',
+          isSpaced: true,
+          moment: moment,
+      }
+  },
+  beforeDestroy() {
+    this.$snoast.close()
+  },
+  methods: {
+    async likeButton()
     {
-        const data = await this.$axios.$post('/account/getprofile', {username: this.$route.params.profile});
-        this.data = data;
-        console.log(data)
-        if(!this.data.block && data.user)
-            this.rate= this.data.user.rating * 5 / 100
-    },
-    data()
-    {
-        return{
-            data:{
-                user: {images: null}
-                },
-            rate: null,
-            maxs: 5,
-            sizes: '',
-            icons: 'star',
-            isSpaced: true,
-            moment: moment,
+      if(this.data.status > 2){
+        if(!(this.data.liked)){
+          await this.$axios.$post("/matcha/like", {idLiked: this.data.user.id_user});
+          this.data.liked =  this.data.liked ? false : true
         }
+        else{
+          this.$buefy.dialog.confirm({
+                title: 'Confirmation',
+                message: `Are you Sure you want to Unlike <b>${this.data.user.login}</b>`,
+                onConfirm:  async () => {
+                    await this.$axios.$post("/matcha/unlike", {idLiked: this.data.user.id_user})
+                    this.data.liked =  this.data.liked ? false : true
+                  }
+              })
+        }
+      }
+      else this.$snoast.toast(this.$buefy, "You must add at least one Picture to complete this Action", 'is-danger')
     },
-    methods: {
-        likeButton()
-        {
-          this.data.liked =  this.data.liked?false:true
-        },
-        async reportUseract(){
-            const ret = await this.$axios.$post('/account/reportuser', {usr: this.data.user.id_user});
-            if(ret.error)
-                 this.$snoast.toast(this.$buefy, "You Already Reported This Account", 'is-danger')
-            else
-                this.$snoast.toast(this.$buefy, "This Account Is Reported", 'is-success')
-            return 1;
-        },
-        async blockUseract(){
-            const ret = await this.$axios.$post('/account/blockuser', {usr: this.data.user.id_user});
-            if(ret.error)
-                 this.$snoast.toast(this.$buefy, "Something went wrong Please try later!", 'is-danger')
-            else
-                this.data.block = true;
-            return 1;
-        },
-        blockUser() {
-            this.$buefy.dialog.confirm({
-                title: `Block ${this.data.user.login}`,
-                message: 'Are you sure you want to <b>Block</b> This User? This action cannot be undone.',
-                confirmText: 'Block User',
-                type: 'is-danger',
-                hasIcon: true,
-                onConfirm:  async () => this.blockUseract()
-            })
-        },
-        reportUser() {
-            this.$buefy.dialog.confirm({
-                title: `Report ${this.data.user.login}`,
-                message: 'Are you sure you want to <b>Report</b> This User as a <b>Fake Account</b>?',
-                confirmText: 'Report User',
-                type: 'is-danger',
-                hasIcon: true,
-                onConfirm: async () => this.reportUseract()
-            })
-        },
+    async reportUseract(){
+        const ret = await this.$axios.$post('/account/reportuser', {usr: this.data.user.id_user});
+        if(ret.error)
+              this.$snoast.toast(this.$buefy, "You Already Reported This Account", 'is-danger')
+        else
+            this.$snoast.toast(this.$buefy, "This Account Is Reported", 'is-success')
+        return 1;
     },
+    async blockUseract(){
+        const ret = await this.$axios.$post('/account/blockuser', {usr: this.data.user.id_user});
+        if(ret.error)
+              this.$snoast.toast(this.$buefy, "Something went wrong Please try later!", 'is-danger')
+        else
+            this.data.block = true;
+        return 1;
+    },
+    blockUser() {
+        this.$buefy.dialog.confirm({
+            title: `Block ${this.data.user.login}`,
+            message: 'Are you sure you want to <b>Block</b> This User? This action cannot be undone.',
+            confirmText: 'Block User',
+            type: 'is-danger',
+            hasIcon: true,
+            onConfirm:  async () => this.blockUseract()
+        })
+    },
+    reportUser() {
+        this.$buefy.dialog.confirm({
+            title: `Report ${this.data.user.login}`,
+            message: 'Are you sure you want to <b>Report</b> This User as a <b>Fake Account</b>?',
+            confirmText: 'Report User',
+            type: 'is-danger',
+            hasIcon: true,
+            onConfirm: async () => this.reportUseract()
+        })
+    }
+  }
 }
 
 </script>

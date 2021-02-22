@@ -80,8 +80,7 @@
 </template>
 <script>
 let tagsList = null
-let lat=null, lng=null
-let dataUser = {}
+let lat= null, lng= null
 
 const validateFname = (fname) => {
     if (!fname) return { valid: false, error: "The First name is required" };
@@ -173,23 +172,32 @@ export default {
     };
   },
   async fetch() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      lat = position.coords.latitude
-      lng = position.coords.longitude
-    })
+    if(this.parent){
+      navigator.geolocation.getCurrentPosition((position) => {
+        lat = position.coords.latitude
+        lng = position.coords.longitude
+      })  
+    }
+    else
+    {
+      lat = false
+      lng = false
+    }
     const result = await this.$axios.$get('/account/getDataUser')
     tagsList = result.data.tagsList
-    dataUser = result.data.user
-    this.user.fname = dataUser.fname
-    this.user.lname = dataUser.lname
-    this.user.email = dataUser.email
-    this.user.login = dataUser.login
-    this.user.gender = (dataUser.gender === '0') ? null : dataUser.gender
-    this.user.interest = dataUser.interest
-    this.user.birthdate = (dataUser.birthdate) ? new Date(dataUser.birthdate) : null
-    this.user.bio = dataUser.biography
+    this.user.fname = result.data.user.fname
+    this.user.lname = result.data.user.lname
+    this.user.email = result.data.user.email
+    this.user.login = result.data.user.login
+    this.user.gender = (result.data.user.gender === '0') ? null : result.data.user.gender
+    this.user.interest = result.data.user.interest
+    this.user.birthdate = (result.data.user.birthdate) ? new Date(result.data.user.birthdate) : null
+    this.user.bio = result.data.user.biography
     this.user.tags = result.data.userTags,
-    this.isLogin = !!dataUser.oauth_id
+    this.isLogin = !!result.data.user.oauth_id
+  },
+  beforeDestroy() {
+    this.$snoast.close()
   },
   methods: {
     tagValidate (tag) {

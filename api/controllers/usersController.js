@@ -264,7 +264,7 @@ exports.setProfile = async (req, res) => {
     const { fname, lname, email, login, gender, birthdate, interest, bio, tags, lat, lng } = req.body
     const data = {
         fname: helpers.capitalize(fname),
-        lname: helpers.capitalize(lname),
+        lname: helpers.capitalize(lname), 
         email,
         login,
         gender,
@@ -274,26 +274,28 @@ exports.setProfile = async (req, res) => {
     }
     let position = null
     try {
-        if (lat && lng) {
-            const [location] = await helpers.getLocation(lat, lng)
-            position = new Position({
-                city: `${location.city},${location.country}`,
-                lat,
-                lng,
-                user_id: req.id_user,
-            })
+        if(lat !== false && lng !== false){
+            if (lat && lng) {
+                const [location] = await helpers.getLocation(lat, lng)
+                position = new Position({
+                    city: `${location.city},${location.country}`,
+                    lat,
+                    lng,
+                    user_id: req.id_user,
+                })
+            }
+            else {
+                const ip = await helpers.getPublicIp().catch(error => console.log("catch public ip "+error.message))
+                const res = await helpers.ipLocationFinderAPI(ip).catch(error => console.log("catch finder "+error.message))
+                position = new Position({
+                    city: `${res.data.city},${res.data.country}`,
+                    lat: res.data.lat,
+                    lng: res.data.lon,
+                    user_id: req.id_user,
+                })
+            }
+            await position.save()
         }
-        else {
-            const ip = await helpers.getPublicIp().catch(error => console.log("catch public ip "+error.message))
-            const res = await helpers.ipLocationFinderAPI(ip).catch(error => console.log("catch finder "+error.message))
-            position = new Position({
-                city: `${res.data.city},${res.data.country}`,
-                lat: res.data.lat,
-                lng: res.data.lon,
-                user_id: req.id_user,
-            })
-        }
-        await position.save()
         
     } catch (error) {
         return res.status('500').send({ message: 'Something went Wrong! Please try Later', error: true })
@@ -547,10 +549,11 @@ exports.getProfileInfo = (req, res) => {
                     if(ret)
                         liked = true
                     else
-                        liked = false  
+                        liked = false
                     return History.insertHistory(req.id_user, user.id_user)
-                    .then(_=> { 
-                        res.status(200).send({error: false, user, liked, block: false,  is_me: false})
+                    .then( async () => {
+                        const [[u]] = await User.getStatusById(req.id_user)
+                        res.status(200).send({error: false, user, liked, block: false,  is_me: false, status: u.status})
                     })
                     .catch(e => res.status(200).send({error: "Adding Visit to History Error!"}))
                 }).catch(e => res.status(200).send({error: "Get Like Error"}))

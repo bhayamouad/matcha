@@ -140,6 +140,8 @@ module.exports = class User {
           whereAge = `TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) >= ${search.ageGap[0]}`
         else
           whereAge = `TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) BETWEEN ${search.ageGap[0]} AND ${search.ageGap[1]}`
+
+        
         return db.execute(`SELECT DISTINCT(u.id_user), u.fname, u.lname, u.login, u.rating, p.city, p.lat, p.lng, TIMESTAMPDIFF(YEAR, u.birthdate, CURDATE()) AS age,
                             (SELECT GROUP_CONCAT(path ORDER BY is_profile ASC SEPARATOR ',') FROM images where user_id = u.id_user) as images, 
                             (SELECT GROUP_CONCAT(tag ORDER BY tag ASC SEPARATOR ',') FROM tags JOIN users_tags ON tags.id_tag = users_tags.tag_id WHERE users_tags.user_id = u.id_user AND ${whereTags}) AS tags,

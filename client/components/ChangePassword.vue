@@ -87,6 +87,10 @@ export default {
       errors: {}
     };
   },
+  beforeDestroy() {
+    if(this.status)
+      this.$snoast.close()
+  },
   methods: {
     async change() {
       this.valid = true
@@ -94,7 +98,6 @@ export default {
       const validOpassword = validateOpassword(this.passwords.opassword, this.status, this.isPass);
       this.errors.opassword = validOpassword.error;
       if (this.valid) this.valid = validOpassword.valid;
-      console.log("old "+this.valid);
       
       const validNpassword = validateNpassword(this.passwords.npassword);
       this.errors.npassword = validNpassword.error;
@@ -106,11 +109,8 @@ export default {
       );
       this.errors.cpassword = validCpassword.error;
       if (this.valid) this.valid = validCpassword.valid;
-      console.log(this.valid);
       
       if (this.valid) {
-        console.log("trr");
-        
         let res = null
         if (this.passwords.token)
           res = await this.$axios.$post("/account/change-password", this.passwords);

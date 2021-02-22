@@ -8,7 +8,7 @@ module.exports = class Like {
   static delete(idLiker, idLiked){
       return db.execute("DELETE FROM likes WHERE liker_id = ? AND liked_id = ?",[idLiker,idLiked])
   }
-  static dislike(idDisliker, idDisliked) {
+  static reject(idDisliker, idDisliked) {
     return db.execute("INSERT INTO dislikes (disliker_id, disliked_id) VALUES (?,?)", [idDisliker, idDisliked])
   }
   static getLikesByLikedId(idLiked, idLiker){

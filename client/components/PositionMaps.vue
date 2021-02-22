@@ -28,7 +28,7 @@
         :options="infoOptions"
         :position="infoWindowPos"
         :opened="infoWinOpen"
-        @closeclick="infoWinOpen=false"
+        @closeclick="close"
       >
         <div v-html="infoContent"></div>
       </gmap-info-window>
@@ -40,9 +40,11 @@
         <div v-html="'<p>I am Here</p>'"></div>
       </gmap-info-window>
     </GmapMap>
-    <div v-if="!users" id="geolocation" @click="geolocation">
+    <div v-if="!users" class="geolocation" @click="geolocation">
       <img src="../assets/gps.svg" />
     </div>
+    <div class="loader-cnt geolocation" v-if="loading"><div class="loaders"></div></div>
+
   </div>
 </template>
 
@@ -59,6 +61,7 @@ export default {
         panControlOptions: false,
         gestureHandling: "greedy"
       },
+      loading: false,
       radius: this.distance*1000,
       draggable: this.users ? false : true,
       map: null,
@@ -82,7 +85,9 @@ export default {
     if(this.users)
       this.getCircle()
   },
-  
+  beforeDestroy() {
+    this.$snoast.close()
+  },
   methods: {
     updateCoordinates(location) {
       this.newPosition = {
@@ -99,6 +104,7 @@ export default {
       return res.message;
     },
     geolocation() {
+      this.loading= true
       navigator.geolocation.getCurrentPosition(
         position => {
           this.newPosition = {
@@ -106,6 +112,7 @@ export default {
             lng: position.coords.longitude
           };
           this.position = this.newPosition;
+          this.loading = false
         },
         error => {
           switch (error.code) {
@@ -158,6 +165,7 @@ export default {
     },
 
     toggleInfoWindow(user, index) {
+        this.meOpen = false
         this.infoWindowPos = { lat: user.lat, lng: user.lng };
         this.infoContent = this.getInfoWindowContent(user);
         
@@ -169,28 +177,22 @@ export default {
           this.currentUserindex = index;
         }
       },
-      getInfoWindowContent: function (user) {
+      getInfoWindowContent(user) {
         return (`
-        <div class="card">
-          <div class="card-image">
-            <figure class="image is-4by3">
-              <img src="${this.$config.baseURL}/${user.images.split(',')[0]}" alt="Placeholder image">
-            </figure>
+        <div class="card" style="width: 140px;height: 210px;">
+          <div class="profile" style="height: 100%;position:relative">
+            <img src="${this.$config.baseURL}/${user.images.split(',')[0]}" style="width: 100%;height: 100%;object-fit: cover;">
           </div>
-          <div class="card-content">
-            <div class="media">
-              <div class="media-content">
-                <p class="title is-4">${user.fname} ${user.lname}</p>
-              </div>
-            </div>
-            <div class="content">
-              ${user.rating}
-              <br>
-              <time datetime="2016-1-1">${user.age}</time>
-            </div>
+          <div style="position:absolute; bottom:0px; width:100%; background-color:rgb(0, 0, 0, 0.5); height:60px; padding: 10px 0; font-size: 16px">
+              <a href="/profile/${user.login}" style="color:white"><h2><span style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">${user.fname} ${user.lname}</span>, ${user.age}</h2></a>
           </div>
         </div>`)
+      },
+      close(){
+        this.infoWinOpen=false
+        this.meOpen=true
       }
+      
   }
 };
 </script>
@@ -199,23 +201,31 @@ export default {
 #id {
   position: relative;
 }
-#geolocation {
+
+.geolocation {
   position: absolute;
   bottom: 125px;
   right: 25px;
   background-color: #fff;
   height: 40px;
 }
-#geolocation:hover {
+.geolocation:hover {
   cursor: pointer;
 }
-#geolocation img:hover {
+.geolocation img:hover {
   content: url("../assets/gpsHover.svg");
 }
-#geolocation img {
+.geolocation img {
   padding: 5px;
 }
+.loaders {
+    margin: 5px;
+    border: 2px solid rgba(195, 7, 63, 0.2);
+    border-radius: 50%;
+    border-top: 20px solid #950740;
+    width: 30px;
+    height: 30px;
+    -webkit-animation: spin 0.5s linear infinite;
+    animation: spin 0.5s linear infinite;
+}
 </style>
-
-50000 9
-100000 18

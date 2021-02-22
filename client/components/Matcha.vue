@@ -94,7 +94,7 @@
     </b-sidebar>
     <b-button @click="open = true">Find More Match</b-button>
     </div>
-    <div class="fixed fixed--center loader-cnt" v-if="loading"><div class="loaders"></div></div>
+    <div class="fixed fixed--center" v-if="loading"><div class="loaders"></div></div>
     <div
       v-if="current && !loading"
       class="fixed fixed--center"
@@ -132,22 +132,24 @@
             </div>
           </b-carousel-item>
         </b-carousel>
-        <div id="info-content">
-          <p class="is-6">
-            <span
-              class="overflow"
-            >{{ current.fname}} {{current.lname}}</span>
-            , {{current.age}}
-          </p>
-          <p class="overflow is-7">
-            <i class="fas fa-home"></i>
-            Lives in {{current.city}}
-          </p>
-          <p class="is-7">
-            <i style="margin-left: 3px;" class="fas fa-map-marker-alt"></i>
-            {{Math.ceil(current.distance)}} Km away
-          </p>
-        </div>
+        <nuxt-link class="info-content" :to="`/profile/${current.login}`">
+          <div>
+            <p class="is-6">
+              <span
+                class="overflow"
+              >{{ current.fname}} {{current.lname}}</span>
+              , {{current.age}}
+            </p>
+            <p class="overflow is-7">
+              <i class="fas fa-home"></i>
+              Lives in {{current.city}}
+            </p>
+            <p class="is-7">
+              <i style="margin-left: 3px;" class="fas fa-map-marker-alt"></i>
+              {{Math.ceil(current.distance)}} Km away
+            </p>
+          </div>
+        </nuxt-link>
       </Vue2InteractDraggable>
     </div>
     <div id="empty-msg" v-if="!loading && !current">There is no Profile Available right now Please Search More</div>
@@ -171,7 +173,7 @@
           </div>
         </b-carousel-item>
       </b-carousel>
-      <div id="info-content">
+      <div class="info-content">
         <p class="is-6">
           <span
             class="overflow"
@@ -510,13 +512,14 @@ section {
   animation: appear 200ms ease-in;
 }
 
-#info-content {
+.info-content {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   padding: 10px;
   background-color: rgb(0, 0, 0, 0.5);
+  color: white;
 }
 .overflow {
   overflow: hidden;

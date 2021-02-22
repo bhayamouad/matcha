@@ -23,9 +23,20 @@ exports.like = (req, res) => {
     }).catch(err => console.log(err.message)) 
 }
 
+exports.unLike = (req, res) => {
+    Like.delete(req.id_user, req.body.idLiked)
+        .then( async () => {
+            const [[checkMatch]] = await Match.getMatchesByUsers(req.id_user,req.body.idLiked)
+            if(checkMatch)
+                await Match.delete(req.id_user, req.body.idLiked)
+            res.send({message:"unLike"})
+        })
+        .catch(err => console.log(err.message))
+}
+
 exports.reject = (req, res) => {
-    Like.dislike(req.id_user, req.body.idDisliked).then(() => {
-        res.send({message:"disliked success"})
+    Like.reject(req.id_user, req.body.idDisliked).then(() => {
+        res.send({message:"reject success"})
     }).catch(err => console.log(err.message))
 }
 
