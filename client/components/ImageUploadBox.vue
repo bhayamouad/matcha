@@ -206,9 +206,6 @@ export default {
 .card-content{
   min-height: 427px!important;
 }
-// .animation-content .modal-content{
-//   max-height: 60vh!important;
-// }
 #thecroper{
   height: 70vh;
 }
