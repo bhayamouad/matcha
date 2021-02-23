@@ -20,7 +20,7 @@ exports.like = (req, res) => {
         }
         else
             res.send({message:"like"})
-    }).catch(err => console.log(err.message)) 
+    }).catch(err => console.log(err.message))
 }
 
 exports.unLike = (req, res) => {

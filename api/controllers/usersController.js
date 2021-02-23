@@ -543,7 +543,7 @@ exports.getProfileInfo = (req, res) => {
                 res.status(200).send({error: false, user, block: false, is_me: true})
             else
             {
-                return Like.isLiked(req.id_user, user.id_user)
+                return Like.getLikesByLikedId(req.id_user, user.id_user)
                 .then(([[ret]]) =>{
                     let liked
                     if(ret)
