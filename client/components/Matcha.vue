@@ -278,13 +278,16 @@ export default {
           await this.$axios.$post("/matcha/like", {
             idLiked: this.users[this.index].id_user
           });
+
         }
         if (event === "reject") {
           await this.$axios.$post("/matcha/reject", {
             idDisliked: this.users[this.index].id_user
           });
         }
-        setTimeout(() => (this.isVisible = false), 200);
+        setTimeout(() => {
+          this.isVisible = false        
+        }, 200);
         setTimeout(() => {
           this.index++;
           this.isVisible = true;
@@ -380,6 +383,7 @@ section {
   background: #950740;
   height: 150px;
 }
+
 .foot {
   width: 100%;
   display: flex;
