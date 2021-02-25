@@ -123,14 +123,16 @@ connection.connect(function(err) {
 
                   connection.query(`CREATE TABLE notifications(
                         id_notification int(11) NOT NULL,
-                        notification varchar(255) NOT NULL,
-                        user_id int(11) NOT NULL,
+                        type ENUM('like', 'dislike', 'visit', 'match', 'message') NOT NULL,
+                        \`from\` int(11) NOT NULL,
+                        \`to\` int (11) NOT NULL,
                         created_at TIMESTAMP NOT NULL DEFAULT NOW()
                   );`);
 
                   connection.query(`ALTER TABLE notifications ADD PRIMARY KEY (id_notification);`)
                   connection.query(`ALTER TABLE notifications MODIFY id_notification int(11) NOT NULL AUTO_INCREMENT;`);
-                  connection.query(`ALTER TABLE notifications ADD FOREIGN KEY (user_id) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
+                  connection.query(`ALTER TABLE notifications ADD FOREIGN KEY (\`from\`) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
+                  connection.query(`ALTER TABLE notifications ADD FOREIGN KEY (\`to\`) REFERENCES users (id_user) ON DELETE CASCADE ON UPDATE CASCADE;`);
 
                   connection.query(`CREATE TABLE messages (
                                     id_message int(11) NOT NULL,
@@ -141,6 +143,7 @@ connection.connect(function(err) {
                                     );`);
 
                   connection.query(`ALTER TABLE messages ADD PRIMARY KEY (id_message);`);
+                  connection.query(`ALTER TABLE messages MODIFY id_message int(11) NOT NULL AUTO_INCREMENT;`);
                   connection.query(`ALTER TABLE messages ADD FOREIGN KEY (sender_id) REFERENCES users (id_user) ON DELETE SET NULL;`);
                   connection.query(`ALTER TABLE messages ADD FOREIGN KEY (receiver_id) REFERENCES users (id_user) ON DELETE SET NULL;`);
 
