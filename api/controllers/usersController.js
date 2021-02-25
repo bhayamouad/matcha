@@ -12,6 +12,7 @@ const Like = require('../models/Like')
 const History = require('../models/History')
 const Position = require('../models/Position')
 const Image = require('../models/Image')
+const Notification =require('../models/Notification')
 const helpers = require('../tools/helpers')
 const auth = require('../tools/authentication.js') 
 
@@ -543,7 +544,7 @@ exports.getProfileInfo = (req, res) => {
                 res.status(200).send({error: false, user, block: false, is_me: true})
             else
             {
-                return Like.getLikesByLikedId(req.id_user, user.id_user)
+                return Like.isLiked(req.id_user, user.id_user)
                 .then(([[ret]]) =>{
                     let liked
                     if(ret)
@@ -552,6 +553,7 @@ exports.getProfileInfo = (req, res) => {
                         liked = false
                     return History.insertHistory(req.id_user, user.id_user)
                     .then( async () => {
+                        await Notification.push('visit', req.id_user, user.id_user)
                         const [[u]] = await User.getStatusById(req.id_user)
                         res.status(200).send({error: false, user, liked, block: false,  is_me: false, status: u.status})
                     })

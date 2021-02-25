@@ -15,4 +15,6 @@ module.exports = class Match {
   static getMatchesByUsers(first, second){
     return db.execute(`SELECT * FROM matches WHERE (first_profile = ${first} AND second_profile = ${second}) OR (first_profile = ${second} AND second_profile = ${first})`)
   }
+
+  
 }

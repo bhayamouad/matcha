@@ -10,9 +10,7 @@ module.exports = class History{
     {
         return db.execute(`SELECT TIMESTAMPDIFF(MINUTE,created_at, CURRENT_TIME()) AS diff FROM histories WHERE visitor_id = ? AND visited_id = ? ORDER BY created_at DESC LIMIT 1`,[visitor, visisted])
         .then(([[ret]]) =>{
-            if(!ret)
-                return db.execute(`INSERT INTO histories (visitor_id, visited_id) VALUES ( ? , ? )`,[visitor, visisted])
-            if (ret.diff >= 1)
+            if(!ret || ret.diff >= 1)
                 return db.execute(`INSERT INTO histories (visitor_id, visited_id) VALUES ( ? , ? )`,[visitor, visisted])
         })
     }

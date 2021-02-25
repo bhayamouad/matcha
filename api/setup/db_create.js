@@ -126,6 +126,7 @@ connection.connect(function(err) {
                         type ENUM('like', 'dislike', 'visit', 'match', 'message') NOT NULL,
                         \`from\` int(11) NOT NULL,
                         \`to\` int (11) NOT NULL,
+                        status int(1) NOT NULL DEFAULT 0,
                         created_at TIMESTAMP NOT NULL DEFAULT NOW()
                   );`);
 

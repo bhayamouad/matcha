@@ -11,8 +11,7 @@ module.exports = class Like {
   static reject(idDisliker, idDisliked) {
     return db.execute("INSERT INTO dislikes (disliker_id, disliked_id) VALUES (?,?) ON DUPLICATE KEY UPDATE created_at = NOW()", [idDisliker, idDisliked])
   }
-  static getLikesByLikedId(idLiked, idLiker){
-    return db.execute("SELECT * FROM likes WHERE liker_id = ? AND liked_id = ?",[idLiked,idLiker])
+  static isLiked(idLiker, idLiked){
+    return db.execute("SELECT * FROM likes WHERE liker_id = ? AND liked_id = ?",[idLiker,idLiked])
   }
-  
 }
