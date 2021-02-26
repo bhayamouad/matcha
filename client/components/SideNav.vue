@@ -58,7 +58,7 @@
 </template>
 
 <script>
-
+import socket from "../socket";
 export default {
   data() {
     return {
@@ -75,8 +75,9 @@ export default {
     const res = await this.$axios.$get('/account/loggedUser')
     this.loggedUser = res.loggedUser
     this.nolink = (this.loggedUser.status>1) ? false : true
-  },
-  methods: {
+    socket.emit("connectUser", this.loggedUser.username)
+    // console.log("connection")
+  },methods: {
       async logout()
       {
           const res = await this.$axios.get('/account/logout')

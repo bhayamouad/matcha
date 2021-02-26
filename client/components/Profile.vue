@@ -74,6 +74,7 @@
 
 <script>
 import moment from "moment";
+import socket from "../socket";
 export default {
   async fetch()
   {
@@ -81,6 +82,9 @@ export default {
       this.data = data;
       if(!this.data.block && data.user)
           this.rate= this.data.user.rating * 5 / 100
+  },
+  mounted() {
+    socket.emit("isConnected",'snsjsj')
   },
   data()
   {
