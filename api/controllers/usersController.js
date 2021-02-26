@@ -114,16 +114,15 @@ exports.verifyAccount = (req, res) => {
                         .then(() => res.send({ message: 'Account is activated you can login now'}))
                         .catch((err) => res.status('500').send({ message: err.message, error: true }))
                 }
-                else res.status('200').send({ message: 'This verification link is expired! Request a new one', error: true })
+                else res.status(200).send({ message: 'This verification link is expired! Request a new one', error: true })
             }
-            else res.status('200').send({ message: 'This account is already verified, you can login', error: true })
+            else res.status(200).send({ message: 'This account is already verified, you can login', error: true })
         })
-        .catch(() => res.status('200').send({ message: 'Something went Wrong! Request a new verification link', error: true, special: true }))
+        .catch(() => res.status(200).send({ message: 'Something went Wrong! Request a new verification link', error: true, special: true }))
 }
 
 exports.login = (req, res) => {
     const { login, password } = req.body
-    console.log(password);
     try {
     User.getByLogin(login)
         .then(async ([[user]]) => {
@@ -137,13 +136,13 @@ exports.login = (req, res) => {
                         res.cookie('refTok', refTok, { httpOnly: true, maxAge: 1000 * 3600 * 24 * 3 })
                         res.status(200).send({ userStatus: user.status})
                     }
-                    else res.status(205).send({ message: 'You need to verify your account first', error: true, special: true })
+                    else res.status(200).send({ message: 'You need to verify your account first', error: true, special: true })
                 }
-                else res.status(205).send({ message: 'The username or password is incorrect', error: true })
+                else res.status(200).send({ message: 'The username or password is incorrect', error: true })
             })
         .catch((e) => res.status(200).send({ message: 'The username or password  is incorrect', error: true }))
     } catch (error) {
-        res.status('500').send({ message: error.message, error: true })
+        res.status(200).send({ message: error.message, error: true })
     }
 }
 
@@ -172,7 +171,7 @@ exports.updateToken = (req, res) => {
                         })
                         .catch(err => res.status(500).send({ message: err.message, error: true }))
                 }
-                else res.status('200').send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit - diff - 1 ? 's' : ''}.`, error: true })
+                else res.status(200).send({ message: `A verification mail already sent please retry after ${limit - diff} minute${limit - diff - 1 ? 's' : ''}.`, error: true })
             }
             else res.status(200).send({ message: 'This account is already verified. You can login now', error: true, redirect: true })
         })

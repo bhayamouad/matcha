@@ -14,15 +14,15 @@ exports.getHistory = (req, res) =>{
 
 exports.getNotifications = async (req, res) => {
     try {
-        const [[notifications]] = await Notification.getAllByUser(req.id_user)
-        res.send({notifications})
+        const [notifications] = await Notification.getAllByUser(req.id_user, req.body.from, req.body.num)
+        res.status(200).send({notifications}) 
     } catch (error) {
-        res.status(200).send({message: "Something went Wrong! Please try Later"})
+        res.status(200).send({message: error.message})
     }
 }
 exports.getNewNotifications = async (req, res) => {
     try {
-        const [[count]] = await Notification.getCountNewNotification(req.id_user)
+        const [[count]] = await Notification.getCountNewNotification(req.id_user)    
         console.log(count.number)
         res.send({new:count.number})
     } catch (error) {

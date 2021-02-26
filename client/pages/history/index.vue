@@ -18,14 +18,8 @@
 <script>
 import moment from 'moment'
 
-let hpr = 5;
-let num = 25;
-let from = 0;
-// const num = hpr;
+let hpr, num, from;
 export default {
-    mounted () {
-        this.scroll()
-    },
     middleware: 'redirect',
     layout: 'home',
     data(){
@@ -82,6 +76,9 @@ export default {
     },
     async fetch()
     {
+        hpr = 5;
+        num = 25;
+        from = 0;
         const ret = await this.$axios.$post('/matcha/gethistory', {from: 0, num: num + 1});
         if(!ret.error)
         {

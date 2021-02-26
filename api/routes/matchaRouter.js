@@ -10,7 +10,7 @@ router.post('/reject', usersMiddleware.authorize, matchaController.reject)
 router.post('/gethistory', usersMiddleware.authorize, logsController.getHistory)
 router.get('/getSuggestedUser', usersMiddleware.authorize, matchaController.getSuggestedUser)
 router.post('/search', usersMiddleware.authorize, matchaController.getSearchedUser)
-router.post('/getnotifications', usersMiddleware.authorize, logsController.getNotifications)
+router.post('/getNotifications', usersMiddleware.authorize, logsController.getNotifications)
 router.get('/getNewNotification', usersMiddleware.authorize, logsController.getNewNotifications)
 
 module.exports = router

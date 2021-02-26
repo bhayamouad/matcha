@@ -19,7 +19,7 @@
           <span class="pg-title">Messages</span>
         </li>
       </nuxt-link>
-      <nuxt-link to="#Notifications">
+      <nuxt-link to="/notifications">
         <li>
           <i class="fas fa-bell"></i>
           <span class="pg-title">Notifications</span>

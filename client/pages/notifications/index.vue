@@ -4,13 +4,17 @@
           <h1>Notifications</h1>
       </div>
       <div id="page-cnt">
-      <ul v-if="history">
+      <ul v-if="notifications">
         <li v-for="item in notifications" :key="item.id_notification">
-            You Visited <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Profile {{moment(item.created_at).fromNow()}}.
+            <p v-if="item.type === 'like'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Liked you {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'dislike'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Unliked you {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'visit'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Visited your Profile {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'match'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Liked you Back You are Connected  {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'message'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> send you a message  {{moment(item.created_at).fromNow()}}.</p>
         </li>
         <div id="loader-cnt" v-if="showmore"><div class="loader"></div></div>
       </ul>
-        <div id="empty-msg" v-else>We Found Nothing!</div>
+        <div id="empty-msg" v-else>You don't have any Notification Right Now!</div>
       </div>
   </section>
 </template>
@@ -18,14 +22,9 @@
 <script>
 import moment from 'moment'
 
-let hpr = 5;
-let num = 25;
-let from = 0;
+let hpr, num, from
 
 export default {
-    mounted () {
-        this.scroll()
-    },
     middleware: 'redirect',
     layout: 'home',
     data(){
@@ -65,39 +64,42 @@ export default {
                 }, 10 * 1000)
             },
     async fetchNew(){
-        const ret = await this.$axios.$post('/matcha/gethistory', {from: from, num: num + 1});
+        const ret = await this.$axios.$post('/matcha/getNotifications', {from: from, num: num + 1});
     from += num;
-    if(!ret.error)
+    if(ret.notifications)
         {
-            if(ret.data[num])
+            if(ret.notifications[num])
             {
                 this.more = true;
-                ret.data.pop()
+                ret.notifications.pop()
             }
             else
                 this.more = false;
-            this.history = this.history.concat(ret.data);
+            this.notifications = this.notifications.concat(ret.notifications);
         }
         }
     },
     async fetch()
     {
-        const ret = await this.$axios.$post('/matcha/getNotififcations', {from: 0, num: num + 1});
-        if(!ret.error)
+        hpr = 5;
+        num = 25;
+        from = 0;
+        const ret = await this.$axios.$post('/matcha/getNotifications', {from: 0, num: num + 1});
+        if(ret.notifications)
         {
-            if(ret.data.length)
+            if(ret.notifications.length)
             {
-                if(ret.data[num])
+                if(ret.notifications[num])
                 {
                     this.more = true;
-                    ret.data.pop()
+                    ret.notifications.pop()
                 }
                 else
                     this.more = false;
-                this.history = ret.data;
+                this.notifications = ret.notifications;
             }
             else
-                this.history = null;
+                this.notifications = null;
         }
         from = num;
         num = hpr;

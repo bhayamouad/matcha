@@ -8,8 +8,8 @@ module.exports = class Notification {
           return db.execute("INSERT INTO notifications (type, `from`, `to`) VALUES (?,?,?)", [type, from, to])
     })
   }
-  static getAllByUser(id){
-    return db.execute("SELECT n.type, `n.from`, `n.to`, u.login FROM notifications n INNER JOIN Users u ON n.from = u.id_user WHERE `to` = ? ORDER BY created_at DESC",[id])
+  static getAllByUser(id,start,limit){
+    return db.execute(`SELECT id_notification, type, \`from\`, \`to\`, n.created_at ,u.login FROM notifications n INNER JOIN users u ON n.from = u.id_user WHERE \`to\` = ? ORDER BY n.created_at DESC LIMIT  ${start},${limit}`,[id])
   }
 
   static getCountNewNotification(id){
