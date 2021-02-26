@@ -22,8 +22,8 @@
 <script>
 import moment from 'moment'
 
-let hpr, num, from
-
+let hpr = 5, num, from
+let newNotif
 export default {
     middleware: 'redirect',
     layout: 'home',
@@ -40,52 +40,64 @@ export default {
         setTimeout(r, 400)
     });
     const listElm = document.querySelector('#page-cnt');
+    newNotif = document.querySelector('#new-notif')
+    newNotif.innerHTML = (newNotif.innerHTML !== "") ? parseInt(newNotif.textContent) - num : ""
     listElm.addEventListener('scroll', async e => {
         if(listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight)
         {
             await new Promise(r => {
                 setTimeout(r, 300)
             });
-            if(this.more)
+            if(this.more){
                 this.showmore = true;
-            await new Promise(r => {
-                setTimeout(r, 600)
-            });
-            await this.fetchNew();
-            this.showmore = false;
+                await new Promise(r => {
+                    setTimeout(r, 600)
+                });
+                await this.fetchNew();
+                this.showmore = false;
+            }
         }
     });
   },
     methods: {
-    openLoading() {
-                this.isLoading = true
-                setTimeout(() => {
-                    this.isLoading = false
-                }, 10 * 1000)
-            },
-    async fetchNew(){
-        const ret = await this.$axios.$post('/matcha/getNotifications', {from: from, num: num + 1});
-    from += num;
-    if(ret.notifications)
-        {
-            if(ret.notifications[num])
+        openLoading() {
+            this.isLoading = true
+            setTimeout(() => {
+                this.isLoading = false
+            }, 10 * 1000)
+        },
+        async fetchNew(){
+            from = num;
+            num = hpr;
+            const ret = await this.$axios.$post('/matcha/getNotifications', {from: from, num: num + 1});
+            if(!ret.error)
             {
-                this.more = true;
-                ret.notifications.pop()
+                console.log(num);
+                console.log(ret.notifications);
+                
+                if(ret.notifications[num])
+                {
+                    this.more = true;
+                    ret.notifications.pop()
+                }
+                else
+                    this.more = false;
+                this.notifications = this.notifications.concat(ret.notifications);
+                await this.$axios.$put('/matcha/setNotifStatus', {from: from, num: num})
             }
+            if(parseInt(newNotif.textContent) - ret.notifications.length > 0)
+                newNotif.innerHTML = parseInt(newNotif.textContent) - ret.notifications.length
             else
-                this.more = false;
-            this.notifications = this.notifications.concat(ret.notifications);
-        }
+                newNotif.innerHTML = ""
+            from += num;
         }
     },
     async fetch()
     {
-        hpr = 5;
         num = 25;
         from = 0;
         const ret = await this.$axios.$post('/matcha/getNotifications', {from: 0, num: num + 1});
-        if(ret.notifications)
+        if(!ret.error)
         {
             if(ret.notifications.length)
             {
@@ -97,12 +109,11 @@ export default {
                 else
                     this.more = false;
                 this.notifications = ret.notifications;
+                await this.$axios.$put('/matcha/setNotifStatus', {from: 0, num: num})
             }
             else
                 this.notifications = null;
         }
-        from = num;
-        num = hpr;
     }
 }
 </script>

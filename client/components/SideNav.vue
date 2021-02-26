@@ -21,7 +21,9 @@
       </nuxt-link>
       <nuxt-link to="/notifications">
         <li>
-          <i class="fas fa-bell"></i>
+          <i class="fas fa-bell notif">
+            <span id="new-notif">{{newNotif}}</span>
+          </i>
           <span class="pg-title">Notifications</span>
         </li>
       </nuxt-link>
@@ -68,11 +70,15 @@ export default {
         profile: null,
         status: null
       },
+    newNotif: "",
     nolink: true     
     }
   },
   async fetch() {
     const res = await this.$axios.$get('/account/loggedUser')
+    const notif = await this.$axios.get('/matcha/getNewNotification')
+    if(notif.data.number !== '0')
+      this.newNotif = (parseInt(notif.data.number) > 0) ? notif.data.number : ""
     this.loggedUser = res.loggedUser
     this.nolink = (this.loggedUser.status>1) ? false : true
   },

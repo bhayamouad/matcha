@@ -15,4 +15,7 @@ module.exports = class Notification {
   static getCountNewNotification(id){
     return db.execute("SELECT COUNT(id_notification) as number FROM notifications WHERE `to` = ? AND status = 0",[id])
   }
+  static setStatus(id, start, limit){
+    return db.execute(`UPDATE notifications n1 INNER JOIN (SELECT id_notification FROM notifications WHERE \`to\` = ? ORDER BY created_at DESC LIMIT  ${start},${limit} ) AS n2 ON n1.id_notification = n2.id_notification SET status = 1`,[id])
+  }
 }
