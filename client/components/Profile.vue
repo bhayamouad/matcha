@@ -52,8 +52,12 @@
         </div>
         <div v-if="data.user" id="sta-cnt">
           <span class="prf-txts" id="prf-username" v-if="data.user.login">@{{data.user.login}}</span>
-          <i id="usr-state" style="color:green;" class="fas fa-circle"></i>
-          <span>online</span>
+          <span v-if="data.is_me"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
+          <span>online</span></span>
+          <span v-if="connected"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
+          <span>{{connected}}</span></span>
+          <span v-else><i id="usr-state" style="color:gray;" class="fas fa-circle"></i>
+          <span>{{connected}}</span></span>
         </div>
         <div v-if="data.user.tags" id="tags">
           <b-taglist>
@@ -74,6 +78,7 @@
 
 <script>
 import moment from "moment";
+import socket from "../socket";
 export default {
   async fetch()
   {
@@ -81,7 +86,19 @@ export default {
       this.data = data;
       if(!this.data.block && data.user)
           this.rate= this.data.user.rating * 5 / 100
+      const that = this
+      socket.emit("isConnected", this.$route.params.profile)
+      socket.on('returnStatus', (message) => {
+        that.connected = message
+      });
   },
+  // mounted() {
+  //   socket.emit("isConnected", this.$route.params.profile)
+  //     socket.on('returnStatus', function(message) {
+  //     this.status = message
+  //     console.log(this.status)
+  // });
+  // },
   data()
   {
       return{
@@ -95,6 +112,7 @@ export default {
           icons: 'star',
           isSpaced: true,
           moment: moment,
+          connected: false
       }
   },
   beforeDestroy() {

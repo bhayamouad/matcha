@@ -8,7 +8,8 @@ export default {
     e42Client: process.env.E42_CLIENT
   },
   env:{
-    apiKey: process.env.GMAPIKEY
+    apiKey: process.env.GMAPIKEY,
+    apiUrl: process.env.BASE_URL
   },
 
   server: {
