@@ -15,7 +15,8 @@ exports.like = (req, res) => {
                     await User.setFameRating((parseInt(liked.rating) + 5), liked.id_user)
                 const [check] = await Like.isLiked(req.body.idLiked, req.id_user)
                 if(check.length){
-                    await Notification.push('match', liker.id_user, liked.id_user)
+                    await Notification.push('match1', liker.id_user, liked.id_user)
+                    await Notification.push('match2', liked.id_user, liker.id_user)
                     Match.add(req.body.idLiked, req.id_user)
                         .then(()=>{
                             res.send({message:"its a match"})

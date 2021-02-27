@@ -29,6 +29,7 @@ connection.connect(function(err) {
                         status int(1) NOT NULL DEFAULT 0,
                         token varchar(255),
                         expire_token TIMESTAMP DEFAULT NOW(),
+                        last_connection TIMESTAMP DEFAULT NULL,
                         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
                         updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
                   );`);
@@ -123,7 +124,7 @@ connection.connect(function(err) {
 
                   connection.query(`CREATE TABLE notifications(
                         id_notification int(11) NOT NULL,
-                        type ENUM('like', 'dislike', 'visit', 'match', 'message') NOT NULL,
+                        type ENUM('like', 'dislike', 'visit', 'match1', 'match2', 'message') NOT NULL,
                         \`from\` int(11) NOT NULL,
                         \`to\` int (11) NOT NULL,
                         status int(1) NOT NULL DEFAULT 0,

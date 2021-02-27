@@ -15,7 +15,8 @@ exports.getHistory = (req, res) =>{
 exports.getNotifications = async (req, res) => {
     try {
         const [notifications] = await Notification.getAllByUser(req.id_user, req.body.from, req.body.num)
-        res.status(200).send({notifications, error: false}) 
+        const [[count]] = await Notification.getCountNewNotification(req.id_user)
+        res.status(200).send({notifications, new: count.number, error: false})
     } catch (error) {
         res.status(200).send({message: "Something went Wrong! Please try Later"})
     }

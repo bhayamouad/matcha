@@ -9,7 +9,8 @@
             <p v-if="item.type === 'like'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Liked you {{moment(item.created_at).fromNow()}}.</p>
             <p v-if="item.type === 'dislike'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Unliked you {{moment(item.created_at).fromNow()}}.</p>
             <p v-if="item.type === 'visit'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Visited your Profile {{moment(item.created_at).fromNow()}}.</p>
-            <p v-if="item.type === 'match'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Liked you Back You are Connected  {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'match1'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Liked you Back You are Connected  {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'match2'">You and <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> are Connected  {{moment(item.created_at).fromNow()}}.</p>
             <p v-if="item.type === 'message'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> send you a message  {{moment(item.created_at).fromNow()}}.</p>
         </li>
         <div id="loader-cnt" v-if="showmore"><div class="loader"></div></div>
@@ -32,7 +33,8 @@ export default {
             notifications: [],
             moment: moment,
             more: false,
-            showmore: false
+            showmore: false,
+            notifCounter: null
         }
     },
     async mounted () {
@@ -41,7 +43,7 @@ export default {
     });
     const listElm = document.querySelector('#page-cnt');
     newNotif = document.querySelector('#new-notif')
-    newNotif.innerHTML = (newNotif.innerHTML !== "") ? parseInt(newNotif.textContent) - num : ""
+    newNotif.innerHTML = (newNotif.innerHTML !== "" && (parseInt(newNotif.textContent) -  this.notifCounter > 0)) ? parseInt(newNotif.textContent) -  this.notifCounter : ""
     listElm.addEventListener('scroll', async e => {
         if(listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight)
         {
@@ -72,9 +74,6 @@ export default {
             const ret = await this.$axios.$post('/matcha/getNotifications', {from: from, num: num + 1});
             if(!ret.error)
             {
-                console.log(num);
-                console.log(ret.notifications);
-                
                 if(ret.notifications[num])
                 {
                     this.more = true;
@@ -113,6 +112,7 @@ export default {
             }
             else
                 this.notifications = null;
+            this.notifCounter = ret.new
         }
     }
 }
