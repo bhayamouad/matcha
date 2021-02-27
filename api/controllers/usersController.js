@@ -408,16 +408,20 @@ exports.saveImages = (req, res) => {
                             })
                             await image.save()
                         })
+                        return res.send({error: false})
                     }
                     else {
                         let limit = userImages.length - imagesFiles.length
                         if (limit > 0){
+                            console.log(userImages);
                             await Image.deleteUserImages(req.id_user, limit)
                             let i = userImages.length - 1
                             while(limit--){
-                                fs.unlinkSync(`uploads/${userImages[i--].path}`) 
+                                fs.unlinkSync(`uploads/${userImages[i--].path}`)
                             }
+                            userImages.splice(-limit)
                         }
+                        console.log(userImages);
                         userImages.forEach( (image,index) => {
                             Image.updateImage(req.id_user ,image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
                             .then(()=>{
@@ -433,17 +437,17 @@ exports.saveImages = (req, res) => {
                                         await image.save()
                                     })
                                 }
+                                return res.send({error: false})
                             }) 
-                            .catch(err => { return res.status('500').send({ message: 'Something went Wrong! Please try Later', error: true }) })    
+                            .catch(err => { return res.status(500).send({ message: err.message, error: true }) })    
                         })
                     }
-                    res.send({error: false})
                 })
             })
-            .catch(err => res.send({ message: 'Something went Wrong! Please try Later', error: true }))
+            .catch(err => { return res.send({ message: 'Something went Wrong! Please try Later2', error: true }) })
     }
     catch (error) {
-        return res.send({ message: 'Something went Wrong! Please try Later', error: true })
+        return res.send({ message: 'Something went Wrong! Please try Later3', error: true })
     }
 }
 

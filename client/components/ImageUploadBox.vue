@@ -27,7 +27,7 @@
                 <span
                   v-if="image.url"
                   class="material-icons del-icons"
-                  @click="deleteImage(index)"
+                  @click="deleteImage($event,index)"
                 >clear</span>
                 <span
                   v-else
@@ -124,7 +124,8 @@ export default {
         return;
       }
     },
-    deleteImage(index) {
+    deleteImage(event,index) {
+      this.$refs.upload[index].value = null
       this.$delete(this.uploadImages, index);
       this.uploadImages.forEach((image, i) => {
         image.position = i;
@@ -175,10 +176,6 @@ export default {
         this.uploadImages[index].file.name,
         ext
       ).then( (file) => this.uploadImages[index].file = file)
-      // if(index == 0)
-      // {
-      //   document.querySelector('#lgo-img').innerHTML = `<img id="primg" v-if="loggedUser.profile" class="profile-img" :src="${"/>`
-      // }
     },
     cancel(){
       this.uploadImages[this.openModal].url = null;
