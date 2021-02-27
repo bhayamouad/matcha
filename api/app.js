@@ -51,28 +51,31 @@ const io = require('socket.io')(server, {
 
 
 io.on('connection', function(socket){
-  // console.log(`${socket.id} connected`);                
+  // console.log(`${socket.id} connected`);                  
 
   let usr;
   socket.on("connectUser", (user) =>{
     usr = user
     redis.set(user, socket.id)
     // console.log(`${socket.id} connected`) 
-    // add this user to redis   
   })
 
   socket.on("isConnected", (user) =>{ 
 
-    // console.log(`${socket.id} emmeted`)               
-    redis.get('wddwdw', (err, data) =>{
-      console.log(data)
+    // console.log(`${socket.id} emmeted`)                  
+    redis.get(user, (err, data) =>{
+      // console.log(data)
+      if(data)
+        socket.emit('returnStatus', true)
+      else
+        socket.emit('returnStatus', false)
     })
-    // return if this user is conected or not           
+    // return if this user is conected or not            
   })
   
   socket.on('disconnect', function () {     
 
-    // redis.del(usr)
+    redis.del(usr)
     // console.log(usr)     
     // console.log(`disconnected`);     
   }); 
