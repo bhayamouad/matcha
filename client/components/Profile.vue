@@ -55,9 +55,9 @@
           <span v-if="data.is_me"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
           <span>online</span></span>
           <span v-if="connected"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
-          <span>{{connected}}</span></span>
+          <span>online</span></span>
           <span v-else><i id="usr-state" style="color:gray;" class="fas fa-circle"></i>
-          <span>{{connected}}</span></span>
+          <span>offline</span></span>
         </div>
         <div v-if="data.user.tags" id="tags">
           <b-taglist>
@@ -88,7 +88,7 @@ export default {
           this.rate= this.data.user.rating * 5 / 100
       const that = this
       socket.emit("isConnected", this.$route.params.profile)
-      socket.on('returnStatus', (message) => {
+      socket.on(this.$route.params.profile, (message) => {
         that.connected = message
       });
   },

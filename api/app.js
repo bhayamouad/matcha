@@ -51,26 +51,27 @@ const io = require('socket.io')(server, {
 
 
 io.on('connection', function(socket){
-
   let usr;
   socket.on("connectUser", (user) =>{
     usr = user
     redis.set(user, socket.id)
+    socket.broadcast.emit(usr, true);
   })
-
   socket.on("isConnected", (user) =>{ 
 
     redis.get(user, (err, data) =>{
       if(data)
-        socket.emit('returnStatus', true)
+        socket.emit(user, true)
       else
-        socket.emit('returnStatus', false)
+        socket.emit(user, false)
     })
   })
-  
   socket.on('disconnect', function () {     
     if(usr)
-      redis.del(usr)    
+    {
+      socket.broadcast.emit(usr, false);
+      redis.del(usr)
+    }
   }); 
 });
 

@@ -115,6 +115,7 @@ module.exports = class User {
                                     AND u.id_user NOT IN (SELECT liked_id FROM likes where liker_id = ${user.id_user} AND liked_id = u.id_user)
                                     AND u.id_user NOT IN (SELECT disliked_id FROM dislikes WHERE disliker_id = ${user.id_user} AND TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIME()) < 5)
                                     AND u.id_user NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ${id} AND blocked_id = u.id_user)
+                                    AND u.id_user NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = u.id_user AND blocked_id = ${id})
                                   ORDER BY common_tags DESC, u.rating DESC`,[user.id_user])
           })
         }
@@ -165,6 +166,7 @@ module.exports = class User {
                                 AND u.id_user NOT IN (SELECT liked_id FROM likes where liker_id = ${id} AND liked_id = u.id_user)
                                 AND u.id_user NOT IN (SELECT disliked_id FROM dislikes WHERE disliker_id = ${user.id_user} AND TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIME()) < 5)
                                 AND u.id_user NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ${id} AND blocked_id = u.id_user)
+                                AND u.id_user NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = u.id_user AND blocked_id = ${id})
                                 AND ${whereAge}
                                 AND rating BETWEEN ${search.rateGap[0]/5*100} AND ${search.rateGap[1]/5*100} 
                                 AND (SELECT GROUP_CONCAT(tag ORDER BY tag ASC SEPARATOR ',') FROM tags JOIN users_tags ON tags.id_tag = users_tags.tag_id WHERE users_tags.user_id = u.id_user AND ${whereTags}) IS NOT NULL
