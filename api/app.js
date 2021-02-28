@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors =require('cors')
 const red = require("redis")
-const redis = red.createClient()
+const redis = red.createClient(6379, process.env.HOST)
 
 
 redis.on("error", function(error) {
@@ -51,33 +51,26 @@ const io = require('socket.io')(server, {
 
 
 io.on('connection', function(socket){
-  // console.log(`${socket.id} connected`);                  
 
   let usr;
   socket.on("connectUser", (user) =>{
     usr = user
     redis.set(user, socket.id)
-    // console.log(`${socket.id} connected`) 
   })
 
   socket.on("isConnected", (user) =>{ 
 
-    // console.log(`${socket.id} emmeted`)                  
     redis.get(user, (err, data) =>{
-      // console.log(data)
       if(data)
         socket.emit('returnStatus', true)
       else
         socket.emit('returnStatus', false)
     })
-    // return if this user is conected or not            
   })
   
   socket.on('disconnect', function () {     
-
-    redis.del(usr)
-    // console.log(usr)     
-    // console.log(`disconnected`);     
+    if(usr)
+      redis.del(usr)    
   }); 
 });
 
