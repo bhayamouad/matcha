@@ -81,15 +81,20 @@ export default {
       this.newNotif = (parseInt(notif.data.number) > 0) ? notif.data.number : ""
     this.loggedUser = res.loggedUser
     this.nolink = (this.loggedUser.status>1) ? false : true
+    const that = this
     socket.emit("connectUser", this.loggedUser.username)
-    // console.log("connection")
-  },methods: {
-      async logout()
-      {
-          const res = await this.$axios.get('/account/logout')
-          this.$store.commit('auth/logOut')
-          this.$router.go()
-      }
+    socket.on("notif"+this.loggedUser.username, (message) => {
+        console.log("trr")
+        that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
+      });
+  },
+  methods: {
+    async logout()
+    {
+        const res = await this.$axios.get('/account/logout')
+        this.$store.commit('auth/logOut')
+        this.$router.go()
+    }
   },
 
 }

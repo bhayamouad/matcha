@@ -209,6 +209,7 @@
 
 <script>
 import { Vue2InteractDraggable, InteractEventBus } from "vue2-interact";
+import socket from "../socket";
 import PositionMaps from "@/components/PositionMaps.vue";
 import Search from "@/Components/SearchMore.vue"
 let data = [];
@@ -275,10 +276,16 @@ export default {
       if (status === 3) {
         this.$emit(event, this.index);
         if (event === "like") {
-          await this.$axios.$post("/matcha/like", {
+          const res = await this.$axios.$post("/matcha/like", {
             idLiked: this.users[this.index].id_user
           });
-
+          if(res.like === 'like')
+            socket.emit("sendNotif", res.liked.login)
+          if(res.like === 'match')
+          {
+            socket.emit("sendNotif", res.liked.login)
+            socket.emit("sendNotif", res.liker.login) 
+          }
         }
         if (event === "reject") {
           await this.$axios.$post("/matcha/reject", {

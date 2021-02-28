@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors =require('cors')
 const red = require("redis")
-const redis = red.createClient(6379, process.env.HOST)
+const redis = red.createClient(6379, process.env.HOST) 
 
 
 redis.on("error", function(error) {
@@ -41,7 +41,7 @@ const server = https.createServer({
   cert: fs.readFileSync('/etc/ssl/certs/matchasigned.crt')
 }, app)
   
-const io = require('socket.io')(server, {
+const io = require('socket.io')(server, { 
   cors: {
     origin: process.env.CLIENT_URL,
   },
@@ -64,6 +64,19 @@ io.on('connection', function(socket){
         socket.emit(user, true)
       else
         socket.emit(user, false)
+    })
+  })
+  socket.on("sendNotif", (liked) => {
+    console.log(liked);
+    redis.get(liked, (err, data) =>{
+      if(data){
+        console.log(data);
+        socket.broadcast.emit("notif"+liked, true)
+      }
+      else{
+        console.log(data);
+        socket.emit("notif"+liked, false)
+      }
     })
   })
   socket.on('disconnect', function () {     

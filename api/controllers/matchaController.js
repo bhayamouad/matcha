@@ -12,20 +12,21 @@ exports.like = (req, res) => {
                 if ((parseInt(liker.rating) + 1) <= 100)
                     await User.setFameRating((parseInt(liker.rating) + 1), liker.id_user)
                 if ((parseInt(liked.rating) + 5) <= 100)
-                    await User.setFameRating((parseInt(liked.rating) + 5), liked.id_user)
+                    await User.setFameRating((parseInt(liked.rating) + 5), liked.id_user) 
                 const [check] = await Like.isLiked(req.body.idLiked, req.id_user)
                 if(check.length){
                     await Notification.push('match1', liker.id_user, liked.id_user)
                     await Notification.push('match2', liked.id_user, liker.id_user)
                     Match.add(req.body.idLiked, req.id_user)
                         .then(()=>{
-                            res.send({message:"its a match"})
+                            console.log("trr match");
+                            res.send({like:'match', liker, liked})
                         })
                         .catch(err => console.log(err.message)) 
                 }
                 else{
                     await Notification.push('like', liker.id_user, liked.id_user)
-                    res.send({message:"like"})
+                    res.send({like:'like', liker, liked})
                 }
             }).catch(err => console.log(err.message))
     } catch (error) {
