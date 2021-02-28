@@ -90,7 +90,7 @@ const validateFname = (fname) => {
         error: "The First name must have more than 2 characters",
       };
     return { valid: true, error: null };
-  };
+  }
   const validateLname = (lname) => {
     if (!lname) return { valid: false, error: "The Last name is required" };
     if (lname.length < 3)
@@ -168,7 +168,6 @@ export default {
       filteredTags: tagsList,
       max: maxYear,
       valid: true,
-      btnActive: false,
       errors: {}
     };
   },
