@@ -134,16 +134,25 @@ export default {
     },
     onFilePicked(event, index) {
       const files = event.target.files;
-      if (files.length) {
+      console.log(files);
+      if (files.length && files[0].type.match('image.*')) {
         const fileReader = new FileReader();
         fileReader.addEventListener("load", e => {
-          this.uploadImages[index].url = e.target.result;
-          this.uploadImages[index].file = event.target.files[0];
-          this.isImageModalActive = true;
-          this.openModal = index;
+          let image = new Image()          
+          let that = this
+          image.onload = function (){
+            that.uploadImages[index].url = e.target.result;
+            that.uploadImages[index].file = event.target.files[0];
+            that.isImageModalActive = true;
+            that.openModal = index;
+          }
+          image.onerror = () => that.$snoast.toast(this.$buefy, "Please choose a valid image", 'is-danger')
+          image.src = e.target.result
         });
         fileReader.readAsDataURL(event.target.files[0]);
-      } else {
+      } 
+      else {
+        this.$snoast.toast(this.$buefy, "Please choose a valid image", 'is-danger')
         this.uploadImages[index].url = null;
         this.uploadImages[index].file = null;
       }
