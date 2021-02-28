@@ -54,10 +54,12 @@
           <span class="prf-txts" id="prf-username" v-if="data.user.login">@{{data.user.login}}</span>
           <span v-if="data.is_me"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
           <span>online</span></span>
-          <span v-if="connected"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
+          <span v-if="connected && !data.is_me"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
           <span>online</span></span>
-          <span v-else><i id="usr-state" style="color:gray;" class="fas fa-circle"></i>
-          <span>offline</span></span>
+          <span v-if="!connected && !data.is_me"><i id="usr-state" style="color:gray;" class="fas fa-circle"></i>
+          <span v-if="lastTime">Active {{moment(lastTime).fromNow()}}</span>
+          <span v-else>Active {{moment(data.user.last_connection).fromNow()}}</span>
+          </span>
         </div>
         <div v-if="data.user.tags" id="tags">
           <b-taglist>
@@ -87,10 +89,17 @@ export default {
       if(!this.data.block && data.user)
           this.rate= this.data.user.rating * 5 / 100
       const that = this
-      socket.emit("isConnected", this.$route.params.profile)
-      socket.on(this.$route.params.profile, (message) => {
-        that.connected = message
-      });
+      let flag = 0
+      if(!data.is_me)
+      {
+        socket.emit("isConnected", this.$route.params.profile)
+        socket.on(this.$route.params.profile, (message) => {
+          that.connected = message
+          if(!message && flag)
+            that.lastTime = moment()
+          flag = 1
+        });
+      }
   },
   // mounted() {
   //   socket.emit("isConnected", this.$route.params.profile)
@@ -112,7 +121,8 @@ export default {
           icons: 'star',
           isSpaced: true,
           moment: moment,
-          connected: false
+          connected: false,
+          lastTime : null
       }
   },
   beforeDestroy() {

@@ -182,7 +182,7 @@ module.exports = class User {
     else
       searchBy = 'login';
 
-    return db.execute(`SELECT DISTINCT(id_user), fname, lname, login, gender,interest, birthdate, rating, biography, rating ,(SELECT GROUP_CONCAT(path ORDER BY is_profile ASC SEPARATOR ',') FROM images where user_id = id_user) AS images, 
+    return db.execute(`SELECT DISTINCT(id_user), fname, lname, login, gender,interest, birthdate, rating, biography, rating, last_connection,(SELECT GROUP_CONCAT(path ORDER BY is_profile ASC SEPARATOR ',') FROM images where user_id = id_user) AS images, 
     (SELECT GROUP_CONCAT(tag ORDER BY tag ASC SEPARATOR ',') FROM tags JOIN users_tags ON tags.id_tag = users_tags.tag_id WHERE users_tags.user_id = id_user) AS tags
       FROM users 
       LEFT JOIN users_tags ON users.id_user = users_tags.user_id
@@ -207,5 +207,10 @@ module.exports = class User {
 
   static setFameRating(newFame, id){
     return db.execute(`UPDATE users set rating = ? where id_user = ?`,[newFame, id])
+  }
+
+  static UpdateLastConnection(user)
+  {
+    return db.execute(`UPDATE users SET last_connection = CURRENT_TIME() WHERE login = ?`,[user])
   }
 }
