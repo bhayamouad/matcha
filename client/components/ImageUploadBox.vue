@@ -1,6 +1,6 @@
 <template>
   <div>
-    <draggable v-model="uploadImages" v-bind="dragOptions" @start="drag = true" @end="drag = false">
+    <draggable v-model="uploadImages" v-bind="dragOptions" @start="drag = true, isdragged = true" @end="drag = false">
       <transition-group
         type="transition"
         class="columns is-multiline"
@@ -84,8 +84,10 @@ export default {
     return {
       uploadImages: [],
       drag: false,
+      isdragged: false,
       isImageModalActive: false,
-      openModal: null
+      openModal: null,
+      btnActive: false
     };
   },
   async fetch() {
@@ -147,6 +149,8 @@ export default {
         this.uploadImages[index].url = null;
         this.uploadImages[index].file = null;
       }
+      if(!this.btnActive)
+        this.btnActive = true
     },
     async saveImages() {
       this.uploadImages.forEach( (image, index) => formData.append("images", image.file) )

@@ -4,7 +4,7 @@ const Notification = require('../models/Notification')
 exports.getHistory = (req, res) =>{
     History.getHistory(req.id_user, req.body.from, req.body.num)
     .then(([ret])=>{    
-        res.status(200).send({data: ret, error: false}); 
+        res.status(200).send({data: ret, error: false});
     })
     .catch(e => {
         console.log(e.message);

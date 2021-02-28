@@ -32,7 +32,7 @@
     </b-tabs>
     <div v-if="active!=2" class="field is-grouped is-grouped-centered">
       <p class="control">
-        <a class="button is-primary" @click="save">Save</a>
+        <button :disabled="btnActive" class="button is-primary" @click="save">Save </button>
       </p>
     </div>
   </div>
@@ -55,14 +55,27 @@ export default {
     return {
       error: null,
       active: 0,
-      isPass: null
+      isPass: null,
+      btnActive: null
     };
   },
   async fetch(){
         const res = await this.$axios.$get("/account/isOauth")
         this.isPass = res.pass
+        this.btnActive = (this.$refs.images.btnActive || this.$refs.profile.btnActive || this.$refs.location.btnActive) ? false : true 
+        
   },
+  updated(){
+      console.log(this.$refs.images.btnActive,this.$refs.profile.btnActive,this.$refs.location.btnActive);
+  },
+
   methods: {
+    // btnChange(){
+    //     Vue.nextTick()
+    //       .then( () => {
+    //           console.log(this.$refs.images.btnActive,this.$refs.profile.btnActive,this.$refs.location.btnActive);
+    //       })
+    // },
     async save() {
       let check = null;
       if (this.active === 1) {

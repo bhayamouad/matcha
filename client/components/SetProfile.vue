@@ -168,6 +168,7 @@ export default {
       filteredTags: tagsList,
       max: maxYear,
       valid: true,
+      btnActive: false,
       errors: {}
     };
   },

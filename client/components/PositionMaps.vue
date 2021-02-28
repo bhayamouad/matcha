@@ -61,6 +61,7 @@ export default {
         panControlOptions: false,
         gestureHandling: "greedy"
       },
+      btnActive: false,
       loading: false,
       radius: this.distance*1000,
       draggable: this.users ? false : true,

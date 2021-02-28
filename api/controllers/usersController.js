@@ -413,38 +413,41 @@ exports.saveImages = (req, res) => {
                     else {
                         let limit = userImages.length - imagesFiles.length
                         if (limit > 0){
-                            console.log(userImages);
                             await Image.deleteUserImages(req.id_user, limit)
                             let i = userImages.length - 1
-                            while(limit--){
+                            let j = limit
+                            while(j--){
                                 fs.unlinkSync(`uploads/${userImages[i--].path}`)
                             }
                             userImages.splice(-limit)
                         }
-                        console.log(userImages);
-                        userImages.forEach( (image,index) => {
-                            Image.updateImage(req.id_user ,image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
-                            .then(()=>{
-                                imagesFiles.splice(0, 1)
-                                fs.unlinkSync(`uploads/${image.path}`)
-                                if(index+1 === userImages.length){
-                                    imagesFiles.forEach(async (imageFile) => {   
-                                        const image = new Image({
-                                            path: imageFile.path.split('/')[1],
-                                            user_id: req.id_user,
-                                            is_profile: ++index
+                        if(userImages.length){
+                            userImages.forEach( (image,index) => {
+                                Image.updateImage(req.id_user ,image.is_profile, imagesFiles[image.is_profile].path.split('/')[1])
+                                .then(()=>{
+                                    imagesFiles.splice(0, 1)
+                                    fs.unlinkSync(`uploads/${image.path}`)
+                                    if(index+1 === userImages.length){
+                                        imagesFiles.forEach(async (imageFile) => {   
+                                            const image = new Image({
+                                                path: imageFile.path.split('/')[1],
+                                                user_id: req.id_user,
+                                                is_profile: ++index
+                                            })
+                                            await image.save()
                                         })
-                                        await image.save()
-                                    })
-                                }
-                                return res.send({error: false})
-                            }) 
-                            .catch(err => { return res.status(500).send({ message: err.message, error: true }) })    
-                        })
+                                    }
+                                    res.send({error: false})
+                                }) 
+                                .catch(err => { res.status(500).send({ message: err.message, error: true }) })    
+                            })
+                        }
+                        else
+                            res.send({error: false})
                     }
                 })
             })
-            .catch(err => { return res.send({ message: 'Something went Wrong! Please try Later2', error: true }) })
+            .catch(err => { res.send({ message: 'Something went Wrong! Please try Later2', error: true }) })
     }
     catch (error) {
         return res.send({ message: 'Something went Wrong! Please try Later3', error: true })
