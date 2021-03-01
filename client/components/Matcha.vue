@@ -1,7 +1,7 @@
 <template>
   <section id="section">
     <div class="header">
-      <button class="btn" @click="openMap">maps</button>
+      <i @click="openMap" class="fas fa-map-marked-alt clk"></i>
 
       <b-tooltip
         type="is-light"
@@ -14,58 +14,67 @@
             <b-field class="filters">
               <b-slider
                 v-model="ageGap"
-                type="is-success"
+                type="is-primary"
                 :min="18"
                 :max="50"
-                :custom-formatter=" val => (val===50)?val.toString()+'+':val.toString()"
+                :custom-formatter=" val => (val===50)?'+'+val.toString():val.toString()"
                 :step="1"
                 rounded
-                tooltip-always
                 @change="filters"
               />
             </b-field>
+            <div class="sinfo"><span class="rinfo" >{{ageGap[0]}}</span>  <span class="linfo">{{ageGap[1]>=50?'+':''}}{{ageGap[1]}}</span></div>
             <b-field class="filters">
               <b-slider
                 v-model="rateGap"
-                type="is-success"
+                type="is-primary"
                 :min="0"
                 :max="5"
-                :custom-formatter=" val => val+ '☆'"
                 :step="1"
                 rounded
-                tooltip-always
                 @change="filters"
               />
             </b-field>
+            <div class="sinfo"><span class="rinfo" >{{rateGap[0]}} <i class="sstar fas fa-star"></i></span>
+      <span class="linfo" >{{rateGap[1]}} <i class="sstar fas fa-star"></i></span>
+      </div>
             <b-field class="filters">
               <b-slider
-                type="is-success"
+                type="is-primary"
                 v-model="distance"
                 :min="5"
                 :max="50"
-                :custom-formatter=" val => val+ ' Km'"
+                :custom-formatter=" val => (val===200)?'+'+val.toString()+' Km':val.toString()+' Km'"
                 :step="1"
-                lazy
                 rounded
-                tooltip-always
                 @change="filters"
               ></b-slider>
             </b-field>
+            <div class="sinfo"><span class="rinfo" >{{distance>=200?'+':' '}}{{distance}} km</span></div>
             <b-field class="filters">
               <b-numberinput v-model="commonTags" :max="5" :min="0" @input="filters"></b-numberinput>
             </b-field>
           </div>
         </template>
-        <b-button label="Filters" type="is-light" />
+       <i class="clk fas fa-filter"></i>
       </b-tooltip>
-      <b-tooltip
-        type="is-light"
-        :triggers="['click']"
-        :auto-close="['outside', 'escape']"
-        position="is-bottom"
+      
+      
+      
+      <b-sidebar
+      type="is-light"
+      :fullheight="true"
+      :fullwidth="false"
+      :overlay="true"
+      :right="true"
+      v-model="open"
+      
       >
-        <template v-slot:content>
-          <div style="width:450px">
+      <search @clicked="moreUsers"/>
+    </b-sidebar>
+    <i @click="open = true" class="clk fas fa-search"></i>
+    <br>
+    <div style="width:450px">
             <b-checkbox v-model="sortGroup" native-value="1" @input="sort">
                 Age
             </b-checkbox>
@@ -79,21 +88,9 @@
                 Common Tags
             </b-checkbox>
           </div>
-        </template>
-        <b-button label="Sort" type="is-light" />
-      </b-tooltip>
-      <b-sidebar
-      type="is-light"
-      :fullheight="true"
-      :fullwidth="false"
-      :overlay="true"
-      :right="true"
-      v-model="open"
-      >
-      <search @clicked="moreUsers"/>
-    </b-sidebar>
-    <b-button @click="open = true">Find More Match</b-button>
     </div>
+
+
     <div class="fixed fixed--center" v-if="loading"><div class="loaders"></div></div>
     <div
       v-if="current && !loading"
@@ -379,11 +376,14 @@ section {
   height: 100vh;
 }
 .header {
+  padding: 12px 30px;
   color: white;
-  background: #950740;
+  background: rgb(195, 7, 63);
   height: 150px;
 }
-
+.clk:hover{
+  cursor: pointer;
+}
 .foot {
   width: 100%;
   display: flex;
@@ -530,7 +530,9 @@ section {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-
+.btn--like{
+  background-color:rgb(195, 7, 63);
+}
 .filters {
   margin-bottom: 50px;
 }
@@ -542,5 +544,24 @@ section {
   to {
     transform: translate(-50%, -50%);
   }
+}
+.filters{
+  margin-bottom: 0px;
+}
+.linfo{
+  float: right;
+  margin-bottom: 20px;
+  font-weight: 700;
+
+}
+.rinfo{
+  font-weight: 700;
+}
+.sinfo{
+  margin-top: -10px;
+  margin-bottom: 30px;
+}
+.sstar{
+  color: #ffd83d;
 }
 </style>

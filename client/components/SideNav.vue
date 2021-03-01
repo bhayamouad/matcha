@@ -53,7 +53,7 @@
         <b-icon v-else icon="account" class="profile-img"></b-icon>
       </span>
       <span id="lgo-name">{{loggedUser.name}}</span>
-      <span id="lgo-uname">{{loggedUser.username}}</span>
+      <span id="lgo-uname">@{{loggedUser.username}}</span>
       <i id="lgo-btn" class="fas fa-sign-out-alt"></i>
     </div>
   </div>

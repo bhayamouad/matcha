@@ -57,8 +57,8 @@
           <span v-if="connected && !data.is_me"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
           <span>online</span></span>
           <span v-if="!connected && !data.is_me"><i id="usr-state" style="color:gray;" class="fas fa-circle"></i>
-          <span v-if="lastTime">Active {{moment(lastTime).fromNow()}}</span>
-          <span v-else>Active {{moment(data.user.last_connection).fromNow()}}</span>
+          <span>Active {{lastTime}}</span>
+          <!-- <span v-else>Active {{moment(data.user.last_connection).fromNow()}}</span> -->
           </span>
         </div>
         <div v-if="data.user.tags" id="tags">
@@ -88,25 +88,35 @@ export default {
       this.data = data;
       if(!this.data.block && data.user)
           this.rate= this.data.user.rating * 5 / 100
+      
       const that = this
       let flag = 0
       if(!data.is_me)
       {
+        this.lastTime = moment(this.data.user.last_connection).fromNow()
+        setInterval(function(){
+          that.updateTime()
+        },60000);
         socket.emit("isConnected", this.$route.params.profile)
         socket.on(this.$route.params.profile, (message) => {
           that.connected = message
           if(!message && flag)
-            that.lastTime = moment()
+          {
+            that.data.user.last_connection = moment()
+            this.lastTime = moment(that.data.user.last_connection).fromNow()
+          }
           flag = 1
         });
       }
   },
   // mounted() {
-  //   socket.emit("isConnected", this.$route.params.profile)
-  //     socket.on('returnStatus', function(message) {
-  //     this.status = message
-  //     console.log(this.status)
-  // });
+  //   if(!this.connected)
+  //     {
+  //         setInterval(function(){
+  //         this.user.last_connection = moment();
+  //         console.log("done!")
+  //       },60000);
+  //     }
   // },
   data()
   {
@@ -122,13 +132,16 @@ export default {
           isSpaced: true,
           moment: moment,
           connected: false,
-          lastTime : null
+          lastTime: null
       }
   },
   beforeDestroy() {
     this.$snoast.close()
   },
   methods: {
+    updateTime(){
+      this.lastTime = moment(this.data.user.last_connection).fromNow()
+    },
     async likeButton()
     {
       if(this.data.status > 2){
