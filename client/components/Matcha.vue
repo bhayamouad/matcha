@@ -283,6 +283,8 @@ export default {
             socket.emit("sendNotif", res.liked.login)
           if(res.like === 'match')
           {
+            console.log("notif match");
+            
             socket.emit("sendNotif", res.liked.login)
             socket.emit("sendNotif", res.liker.login) 
           }

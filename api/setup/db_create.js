@@ -141,6 +141,7 @@ connection.connect(function(err) {
                                     message varchar(255) NOT NULL,
                                     sender_id int(11),
                                     receiver_id int(11),
+                                    status int(1) NOT NULL DEFAULT 0,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                                     );`);
 

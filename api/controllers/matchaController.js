@@ -2,6 +2,7 @@ const Like = require('../models/Like')
 const Match = require('../models/Match')
 const User = require('../models/User')
 const Notification = require('../models/Notification')
+const Message = require('../models/Message')
 
 exports.like = (req, res) => {
     try {
@@ -19,7 +20,6 @@ exports.like = (req, res) => {
                     await Notification.push('match2', liked.id_user, liker.id_user)
                     Match.add(req.body.idLiked, req.id_user)
                         .then(()=>{
-                            console.log("trr match");
                             res.send({like:'match', liker, liked})
                         })
                         .catch(err => console.log(err.message)) 
@@ -38,12 +38,13 @@ exports.unLike = (req, res) => {
     try {
         Like.delete(req.id_user, req.body.idLiked)
             .then( async () => {
+                const [[unliked]] = await User.getById(req.body.idLiked)
                 const [[checkMatch]] = await Match.getMatchesByUsers(req.id_user,req.body.idLiked)
                 if(checkMatch){
                     await Notification.push('dislike', req.id_user, req.body.idLiked)
                     await Match.delete(req.id_user, req.body.idLiked)
                 }
-                res.send({message:"unLike"})
+                res.send({message:"unLike", unliked})
             })
             .catch(err => console.log(err.message))
     } catch (error) {
@@ -75,4 +76,12 @@ exports.getSearchedUser = async (req, res) => {
         console.log(error.message);
     }
 
+}
+
+exports.getMessages = (req,res) => {
+    Message.getMatchesByIdUser(req.id_user)
+        .then(([matches]) => {
+            res.status(200).send({matches})
+        })
+        .catch(err => console.log(err.message))
 }

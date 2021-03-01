@@ -23,8 +23,7 @@
 <script>
 import moment from 'moment'
 
-let hpr = 5, num, from
-let newNotif
+let hpr = 5, num, from, newNotif
 export default {
     middleware: 'redirect',
     layout: 'home',

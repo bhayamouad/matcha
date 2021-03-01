@@ -103,19 +103,19 @@ export default {
   // },
   data()
   {
-      return{
-          data:{
-              user: {images: null},
-              liked: null
-          },
-          rate: null,
-          maxs: 5,
-          sizes: '',
-          icons: 'star',
-          isSpaced: true,
-          moment: moment,
-          connected: false
-      }
+    return{
+        data:{
+            user: {images: null},
+            liked: null
+        },
+        rate: null,
+        maxs: 5,
+        sizes: '',
+        icons: 'star',
+        isSpaced: true,
+        moment: moment,
+        connected: false
+    }
   },
   beforeDestroy() {
     this.$snoast.close()
@@ -127,7 +127,7 @@ export default {
         if(!(this.data.liked)){
           const res = await this.$axios.$post("/matcha/like", {idLiked: this.data.user.id_user});
           this.data.liked =  this.data.liked ? false : true
-           if(res.like === 'like')
+          if(res.like === 'like')
             socket.emit("sendNotif", res.liked.login)
           if(res.like === 'match')
           {
@@ -140,8 +140,9 @@ export default {
                 title: 'Confirmation',
                 message: `Are you Sure you want to Unlike <b>${this.data.user.login}</b>`,
                 onConfirm:  async () => {
-                    await this.$axios.$post("/matcha/unlike", {idLiked: this.data.user.id_user})
+                    const result = await this.$axios.$post("/matcha/unlike", {idLiked: this.data.user.id_user})
                     this.data.liked =  this.data.liked ? false : true
+                    socket.emit("sendNotif", result.unliked.login)
                   }
               })
         }

@@ -13,9 +13,11 @@
       </nuxt-link>
 
     <div :class="{'nolink':nolink}">
-      <nuxt-link to="#Messages">
+      <nuxt-link to="/messages">
         <li>
-          <i class="fas fa-envelope"></i>
+          <i class="fas fa-envelope">
+            <span id="new-messages">{{newMessages}}</span>
+          </i>
           <span class="pg-title">Messages</span>
         </li>
       </nuxt-link>
@@ -71,6 +73,7 @@ export default {
         status: null
       },
     newNotif: "",
+    newMessages: "",
     nolink: true     
     }
   },

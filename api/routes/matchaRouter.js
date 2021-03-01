@@ -13,5 +13,6 @@ router.post('/search', usersMiddleware.authorize, matchaController.getSearchedUs
 router.post('/getNotifications', usersMiddleware.authorize, logsController.getNotifications)
 router.get('/getNewNotification', usersMiddleware.authorize, logsController.getNewNotifications)
 router.put('/setNotifStatus', usersMiddleware.authorize, logsController.setNotifStatus)
+router.post('/getMessages', usersMiddleware.authorize, matchaController.getMessages)
 
 module.exports = router

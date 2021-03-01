@@ -67,14 +67,12 @@ io.on('connection', function(socket){
     })
   })
   socket.on("sendNotif", (liked) => {
-    console.log(liked);
     redis.get(liked, (err, data) =>{
       if(data){
-        console.log(data);
         socket.broadcast.emit("notif"+liked, true)
+        socket.emit("notif"+liked, true)
       }
       else{
-        console.log(data);
         socket.emit("notif"+liked, false)
       }
     })
