@@ -51,12 +51,25 @@
 #thenav li .notif{
     position: relative;
 }
-#new-notif{
+#thenav li .fa-envelope{
+    position: relative;
+}
+.new-notif{
+    padding-top: 2.5px;
+    padding-right: 1px;
+    text-align: center;
+    vertical-align: text-bottom;
+    width: 20px;
+    height: 20px;
     position: absolute;
-    left: -10px;
-    top: 0;
+    left: -8px;
+    top: -7px;
     font-size: 12px;
-    color: red;
+    color: white;
+    background-color: black;
+    border-radius: 50%;
+    border: solid 2px white;
+    font-family: Sans-serif	;
 }
 
 #thenav ul{
@@ -66,6 +79,12 @@
 #thenav a li:hover{
     color:  rgb(195, 7, 63);
     background-color: rgb(195, 7, 63, 0.2);
+}
+#thenav a li:hover .new-notif{
+    background-color:  rgb(195, 7, 63);
+    border: solid 2px #edd0d9;
+    color: #edd0d9;
+
 }
 
 #thenav .nolink a li:hover{
@@ -179,18 +198,23 @@
     #lgo-btn{
         margin-top: 10px;
         margin-left: 2px;
+        color: black;
     }
     
     #lgo-img{
         display: block;
     }
     .lgo-img-icon{
-        background-color: initial;
-        display: block;
+        /* background-color: initial;
+        display: block; */
+        display: none;
+
     }
     #lgo-img{
-        width: 25px;
-        height: 25px;
+        /* width: 25px;
+        height: 25px; */
+        display: none;
+
     }
 
 }

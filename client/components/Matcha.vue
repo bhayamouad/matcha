@@ -14,8 +14,10 @@
       :overlay="false"
       :right="true"
       v-model="openf"
+      class="side-br"
       
       >
+      <i @click="openf=false" class="close-side fas fa-times"></i>
           <div style="padding:40px">
             <h1 id="filter-ttl">Filter Results</h1>
             <b-field class="filters" label="Age">
@@ -69,8 +71,10 @@
       :overlay="false"
       :right="true"
       v-model="open"
+      class="side-br"
       
       >
+      <i @click="open=false" class="close-side fas fa-times"></i>
       <search @clicked="moreUsers"/>
     </b-sidebar>
     <b-sidebar
@@ -80,8 +84,10 @@
       :overlay="false"
       :right="true"
       v-model="opens"
+      class="side-br"
       
       >
+        <i @click="opens=false" class="close-side fas fa-times"></i>
         <div id="sort-check">
             <div id="filter-ttl">Sort By</div>
             <b-switch class="filter-switch" v-model="sortGroup" native-value="1" @input="sort">
@@ -160,7 +166,10 @@
         </nuxt-link>
       </Vue2InteractDraggable>
     </div>
-    <div id="empty-msg" v-if="!loading && !current">There is no Profile Available right now Please Search More</div>
+    <div id="empty-msg" v-if="!loading && !current">No More Profiles to show you right now <br>
+    <i style="color: #950740;" class="fas fa-lightbulb"></i> &nbsp;You can 
+    <span @click="open=true" style="color: #950740;cursor: pointer;text-decoration:underline;">Search</span>
+     for more!</div>
     <div v-if="next && !loading" class="rounded-borders card fixed fixed--center" style="z-index: 2">
       <b-carousel
         :has-drag="false"
@@ -535,11 +544,12 @@ section {
 }
 
 #empty-msg{
-    /* color: black; */
+    color: black;
     width: 100%;
     text-align: center;
     padding-top: 20px;
-    font-size: 1.3rem;
+    font-size: 1.5rem;
+    margin-top: 50px;
 }
 
 .transition {
@@ -593,6 +603,21 @@ section {
   margin-top: 30px;
 }
 
+.side-br{
+  position: relative;
+}
+.close-side{
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  color: rgb(104, 103, 103);
+  font-size: 1.5rem;
+  display: none;
+}
+.close-side:hover{
+  cursor: pointer;
+}
+
 @keyframes appear {
   from {
     transform: translate(-48%, -48%);
@@ -625,6 +650,9 @@ section {
   #sort-check{
   font-size: .8rem;
   font-weight: 500;
-}
+  }
+  .close-side{
+    display: block;
+  }
 }
 </style>

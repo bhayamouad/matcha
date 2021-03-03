@@ -6,7 +6,8 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors =require('cors')
 const red = require("redis")
-const redis = red.createClient(6379, process.env.HOST) 
+// const redis = red.createClient(6379, process.env.HOST)
+const redis = red.createClient(6379, '172.23.0.2')
 
 
 redis.on("error", function(error) {

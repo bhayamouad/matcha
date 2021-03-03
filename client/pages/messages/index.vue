@@ -28,25 +28,25 @@
 import moment from "moment";
 
 let hpr = 2, num, from, newMessages
-moment.updateLocale('en', {
-    relativeTime : {
-        past: "%s",
-        s: "%d s",
-        ss: "%d s",
-        m: "%d m",
-        mm: "%d m",
-        h: "%d h",
-        hh: "%d h",
-        d: "%d d",
-        dd: "%d d",
-        w: "%d w",
-        ww: "%d w",
-        M: "%d m",
-        MM: "%d m",
-        y: "%d y",
-        yy: "%d y"
-    }
-});
+// moment.updateLocale('en', {
+//     relativeTime : {
+//         past: "%s",
+//         s: "%d s",
+//         ss: "%d s",
+//         m: "%d m",
+//         mm: "%d m",
+//         h: "%d h",
+//         hh: "%d h",
+//         d: "%d d",
+//         dd: "%d d",
+//         w: "%d w",
+//         ww: "%d w",
+//         M: "%d m",
+//         MM: "%d m",
+//         y: "%d y",
+//         yy: "%d y"
+//     }
+// });
 export default {
   middleware: "redirect",
   layout: "home",
