@@ -84,18 +84,19 @@
       >
         <div id="sort-check">
             <div id="filter-ttl">Sort By</div>
-            <b-switch class="filter-switch" v-model="sortGroup" native-value="1" @input="sort">
+            
+            <b-radio class="filter-switch" v-model="sortGroup" native-value="1" @input="sort">
                 Age
-            </b-switch>
-            <b-switch class="filter-switch" v-model="sortGroup" native-value="2" @input="sort">
+            </b-radio>
+            <b-radio class="filter-switch" v-model="sortGroup" native-value="2" @input="sort">
                 Location
-            </b-switch>
-            <b-switch class="filter-switch" v-model="sortGroup" native-value="3" @input="sort">
+            </b-radio>
+            <b-radio class="filter-switch" v-model="sortGroup" native-value="3" @input="sort">
                 Fame Rating
-            </b-switch>
-            <b-switch class="filter-switch" v-model="sortGroup" native-value="4" @input="sort">
+            </b-radio>
+            <b-radio class="filter-switch" v-model="sortGroup" native-value="4" @input="sort">
                 Common Tags
-            </b-switch>
+            </b-radio>
           </div>
         </b-sidebar>
     </div>
@@ -199,13 +200,13 @@
       </div>
     </div>
     <div class="foot">
-      <div class="btn btn--decline" @click="reject">
+      <div :class="{'btn-footer': !current}" class="btn btn--decline" @click="reject">
         <i class="material-icons">close</i>
       </div>
-      <div class="btn btn--skip" @click="skip">
+      <div :class="{'btn-footer': !current}" class="btn btn--skip" @click="skip">
         <i class="material-icons">call_missed</i>
       </div>
-      <div class="btn btn--like" @click="like">
+      <div :class="{'btn-footer': !current}" class="btn btn--like" @click="like">
         <i class="material-icons">favorite</i>
       </div>
     </div>
@@ -243,7 +244,7 @@ export default {
       rateGap: [0, 5],
       distance: 50,
       commonTags: 0,
-      sortGroup:[],
+      sortGroup: null,
       open: false,
       openf: false,
       opens: false,
@@ -290,13 +291,11 @@ export default {
             idLiked: this.users[this.index].id_user
           });
           if(res.like === 'like')
-            socket.emit("sendNotif", res.liked.login)
+            socket.emit("like", {liker: res.liker, liked: res.liked})
           if(res.like === 'match')
           {
-            console.log("notif match");
-            
-            socket.emit("sendNotif", res.liked.login)
-            socket.emit("sendNotif", res.liker.login) 
+            socket.emit("match1", {liker: res.liker, liked: res.liked})
+            socket.emit("match2", {liked: res.liked, liker: res.liker}) 
           }
         }
         if (event === "reject") {
@@ -354,24 +353,21 @@ export default {
               setTimeout(r, 500)
           });
       this.loading = false
-      console.log(this.sortGroup.length);
-      if(this.sortGroup.length){
-        this.sortGroup.forEach((by) => {
-          switch(by) {
-            case "1":
-              this.users.sort( (user1, user2) => user1.age - user2.age)
-              break;
-            case "2":
-              this.users.sort( (user1, user2) => user1.distance - user2.distance )
-              break;
-            case "3":
-              this.users.sort( (user1, user2) => user2.rating - user1.rating)
-              break;
-            case "4":
-              this.users.sort( (user1, user2) => user2.common_tags - user1.common_tags)
-              break;
-          }  
-        })
+      if(this.sortGroup){
+        switch(this.sortGroup) {
+          case "1":
+            this.users.sort( (user1, user2) => user1.age - user2.age)
+            break;
+          case "2":
+            this.users.sort( (user1, user2) => user1.distance - user2.distance )
+            break;
+          case "3":
+            this.users.sort( (user1, user2) => user2.rating - user1.rating)
+            break;
+          case "4":
+            this.users.sort( (user1, user2) => user2.common_tags - user1.common_tags)
+            break;
+        }  
       }
       else
         this.users = Array.from(data.users)
@@ -593,6 +589,9 @@ section {
   margin-top: 30px;
 }
 
+.btn-footer{
+  cursor: no-drop;
+}
 @keyframes appear {
   from {
     transform: translate(-48%, -48%);

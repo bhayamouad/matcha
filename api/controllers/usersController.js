@@ -560,8 +560,8 @@ exports.getProfileInfo = (req, res) => {
                     return History.insertHistory(req.id_user, user.id_user)
                     .then( async () => {
                         await Notification.push('visit', req.id_user, user.id_user)
-                        const [[u]] = await User.getStatusById(req.id_user)
-                        res.status(200).send({error: false, user, liked, block: false,  is_me: false, status: u.status})
+                        const [[loggedUser]] = await User.getById(req.id_user)
+                        res.status(200).send({error: false, user, liked, block: false,  is_me: false, loggedUser:{login: loggedUser.login, status: loggedUser.status}})
                     })
                     .catch(e => res.status(200).send({error: "Adding Visit to History Error!"}))
                 }).catch(e => res.status(200).send({error: "Get Like Error"}))

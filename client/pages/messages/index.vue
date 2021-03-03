@@ -11,7 +11,7 @@
               <img class="profile-img" :src="$config.baseURL+'/'+match.path" />
             </span>
             <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
-            <span class="match-message">{{(match.message)?match.message:`Start chatting with ${match.login}`}}</span>
+            <span :class="{'bold':match.status === 0}" class="match-message">{{(match.sender_id!==match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Start chatting with ${match.login}`}}</span>
             <span id="match-time">{{(match.sent_at)?moment(match.sent_at).fromNow():moment(match.matched_at).fromNow()}}</span>
           </div>
         </li>
@@ -187,5 +187,8 @@ export default {
     height: 40px;
     -webkit-animation: spin 2s linear infinite; /* Safari */
     animation: spin 2s linear infinite;
+}
+.bold{
+  font-weight: bold;
 }
 </style>

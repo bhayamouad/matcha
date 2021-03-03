@@ -20,13 +20,13 @@ exports.like = (req, res) => {
                     await Notification.push('match2', liked.id_user, liker.id_user)
                     Match.add(req.body.idLiked, req.id_user)
                         .then(()=>{
-                            res.send({like:'match', liker, liked})
+                            res.send({like:'match', liker:liker.login, liked: liked.login})
                         })
                         .catch(err => console.log(err.message)) 
                 }
                 else{
                     await Notification.push('like', liker.id_user, liked.id_user)
-                    res.send({like:'like', liker, liked})
+                    res.send({like:'like', liker:liker.login, liked: liked.login})
                 }
             }).catch(err => console.log(err.message))
     } catch (error) {
@@ -39,12 +39,13 @@ exports.unLike = (req, res) => {
         Like.delete(req.id_user, req.body.idLiked)
             .then( async () => {
                 const [[unliked]] = await User.getById(req.body.idLiked)
+                const [[unliker]] = await User.getById(req.id_user)
                 const [[checkMatch]] = await Match.getMatchesByUsers(req.id_user,req.body.idLiked)
                 if(checkMatch){
                     await Notification.push('dislike', req.id_user, req.body.idLiked)
                     await Match.delete(req.id_user, req.body.idLiked)
                 }
-                res.send({message:"unLike", unliked})
+                res.send({message:"unLike", unliker: unliker.login, unliked: unliked.login})
             })
             .catch(err => console.log(err.message))
     } catch (error) {

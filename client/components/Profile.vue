@@ -88,8 +88,9 @@ export default {
   {
       const data = await this.$axios.$post('/account/getprofile', {username: this.$route.params.profile});
       this.data = data;
+      console.log(this.data.user.login, this.data.loggedUser.login);
       if(!this.data.is_me)
-        socket.emit("sendNotif", this.data.user.login)
+        socket.emit("visit", {visited: this.data.user.login, visitor: this.data.loggedUser.login})
       if(!this.data.block && data.user)
           this.rate= this.data.user.rating * 5 / 100
       
@@ -148,16 +149,16 @@ export default {
     },
     async likeButton()
     {
-      if(this.data.status > 2){
+      if(this.data.loggedUser.status > 2){
         if(!(this.data.liked)){
           const res = await this.$axios.$post("/matcha/like", {idLiked: this.data.user.id_user});
           this.data.liked =  this.data.liked ? false : true
           if(res.like === 'like')
-            socket.emit("sendNotif", res.liked.login)
+            socket.emit("like", {liker: res.liker, liked: res.liked})
           if(res.like === 'match')
           {
-            socket.emit("sendNotif", res.liked.login)
-            socket.emit("sendNotif", res.liker.login) 
+            socket.emit("match1", {liker: res.liker, liked: res.liked})
+            socket.emit("match2", {liked: res.liked, liker: res.liker}) 
           }
         }
         else{
@@ -167,7 +168,7 @@ export default {
                 onConfirm:  async () => {
                     const result = await this.$axios.$post("/matcha/unlike", {idLiked: this.data.user.id_user})
                     this.data.liked =  this.data.liked ? false : true
-                    socket.emit("sendNotif", result.unliked.login)
+                    socket.emit("dislike", {unliker: result.unliker, unliked: result.unliked})
                   }
               })
         }

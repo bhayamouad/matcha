@@ -47,8 +47,6 @@ const io = require('socket.io')(server, {
   },
 });
 
-
-
 const User = require('./models/User')
 io.on('connection', function(socket){
   let usr;
@@ -66,17 +64,52 @@ io.on('connection', function(socket){
         socket.emit(user, false)
     })
   })
-  socket.on("sendNotif", (liked) => {
-    redis.get(liked, (err, data) =>{
-      if(data){
-        socket.broadcast.emit("notif"+liked, true)
-        socket.emit("notif"+liked, true)
+  socket.on("like", (data) => {
+    redis.get(data.liked, (err, res) =>{
+      if(res){
+        socket.broadcast.emit("like"+data.liked, {liker:data.liker, status: true})
       }
       else{
-        socket.emit("notif"+liked, false)
+        socket.emit("like"+data.liked, {status: false})
       }
     })
   })
+
+  socket.on("dislike", (data) => {
+    redis.get(data.unliked, (err, res) =>{
+      if(res){
+        socket.broadcast.emit("dislike"+data.unliked, {liker:data.unliker, status: true})
+      }
+      else{
+        socket.emit("dislike"+data.unliked, {status: false})
+      }
+    })
+  })
+
+  socket.on("match1", (data) => {
+    redis.get(data.liked, (err, res) =>{
+      if(res){
+        socket.broadcast.emit("match1"+data.liked, {liker:data.liker, status: true})
+      }
+      else{
+        socket.emit("match1"+data.liked, {status: false})
+      }
+    })
+  })
+  socket.on("match2", (data) => {
+        socket.emit("match2"+data.liker, {liked:data.liked, status: true})
+  })
+
+  socket.on("visit", (data) => {
+    redis.get(data.visited, (err, res) => {
+      if(res){
+        socket.broadcast.emit("visit"+data.visited, {visitor: data.visitor, status: true})
+      }
+      else
+        socket.emit("visit"+data.visited, {status: false})
+    })
+  })
+
   socket.on('disconnect', function () {     
     if(usr)
     {

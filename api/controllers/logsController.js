@@ -8,7 +8,7 @@ exports.getHistory = (req, res) =>{
     })
     .catch(e => {
         console.log(e.message);
-        res.status(200).send({data: e.message, error: true}); 
+        res.status(200).send({data: e.message, error: true})
     })
 }
 

@@ -42,7 +42,7 @@ export default {
     });
     const listElm = document.querySelector('#page-cnt');
     newNotif = document.querySelector('#new-notif')
-    newNotif.innerHTML = (newNotif.innerHTML !== "" && (parseInt(newNotif.textContent) -  this.notifCounter > 0)) ? parseInt(newNotif.textContent) -  this.notifCounter : ""
+    newNotif.innerHTML = ""
     listElm.addEventListener('scroll', async e => {
         if(listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight)
         {
@@ -68,7 +68,6 @@ export default {
             }, 10 * 1000)
         },
         async fetchNew(){
-            console.log(from);
             from += num;
             num = hpr;
             const ret = await this.$axios.$post('/matcha/getNotifications', {from: from, num: num + 1});
@@ -88,7 +87,6 @@ export default {
                 newNotif.innerHTML = parseInt(newNotif.textContent) - ret.notifications.length
             else
                 newNotif.innerHTML = ""
-            console.log(from);
         }
     },
     async fetch()
