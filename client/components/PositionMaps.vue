@@ -69,7 +69,7 @@ export default {
       infoOptions: {
         pixelOffset: {
           width: 0,
-          height: -70
+          height: -35
         }
       },
       meOpen:true,

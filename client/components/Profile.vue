@@ -23,6 +23,7 @@
         <div v-if="!data.is_me && data.user.images" id="like-act" :class="{'liked':data.liked}" @click="likeButton"><i class="fas fa-heart"></i></div>
       </div>
       <div id="card-info">
+        <div id="inf-rt">
         <div class="prf-txts" id="prf-name-cnt">
           <div id="prf-name">{{data.user.fname}} {{data.user.lname}}</div>
           <span
@@ -32,6 +33,7 @@
           <i v-if="data.user.gender == 'F'" class="fas fa-venus usr-gender"></i>
           <i v-if="data.user.gender == 'M'" class="fas fa-mars usr-gender"></i>
           <i v-if="data.user.gender == 'O'" class="fas fa-neuter usr-gender"></i>
+        </div>
           <div v-if="data.user.rating" id="rating">
             <b-rate
               v-model="rate"
@@ -54,10 +56,12 @@
           <span class="prf-txts" id="prf-username" v-if="data.user.login">@{{data.user.login}}</span>
           <span v-if="data.is_me"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
           <span>online</span></span>
-          <span v-if="connected"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
+          <span v-if="connected && !data.is_me"><i id="usr-state" style="color:green;" class="fas fa-circle"></i>
           <span>online</span></span>
-          <span v-else><i id="usr-state" style="color:gray;" class="fas fa-circle"></i>
-          <span>offline</span></span>
+          <span v-if="!connected && !data.is_me"><i id="usr-state" style="color:gray;" class="fas fa-circle"></i>
+          <span>Active {{lastTime}}</span>
+          <!-- <span v-else>Active {{moment(data.user.last_connection).fromNow()}}</span> -->
+          </span>
         </div>
         <div v-if="data.user.tags" id="tags">
           <b-taglist>
@@ -88,39 +92,60 @@ export default {
         socket.emit("sendNotif", this.data.user.login)
       if(!this.data.block && data.user)
           this.rate= this.data.user.rating * 5 / 100
+      
       const that = this
-      socket.emit("isConnected", this.$route.params.profile)
-      socket.on(this.$route.params.profile, (message) => {
-        that.connected = message
-      });
+      let flag = 0
+      if(!data.is_me)
+      {
+        this.lastTime = moment(this.data.user.last_connection).fromNow()
+        setInterval(function(){
+          that.updateTime()
+        },60000);
+        socket.emit("isConnected", this.$route.params.profile)
+        socket.on(this.$route.params.profile, (message) => {
+          that.connected = message
+          if(!message && flag)
+          {
+            that.data.user.last_connection = moment()
+            this.lastTime = moment(that.data.user.last_connection).fromNow()
+          }
+          flag = 1
+        });
+      }
   },
   // mounted() {
-  //   socket.emit("isConnected", this.$route.params.profile)
-  //     socket.on('returnStatus', function(message) {
-  //     this.status = message
-  //     console.log(this.status)
-  // });
+  //   if(!this.connected)
+  //     {
+  //         setInterval(function(){
+  //         this.user.last_connection = moment();
+  //         console.log("done!")
+  //       },60000);
+  //     }
   // },
   data()
   {
-    return{
-        data:{
-            user: {images: null},
-            liked: null
-        },
-        rate: null,
-        maxs: 5,
-        sizes: '',
-        icons: 'star',
-        isSpaced: true,
-        moment: moment,
-        connected: false
-    }
+      return{
+          data:{
+              user: {images: null},
+              liked: null
+          },
+          rate: null,
+          maxs: 5,
+          sizes: '',
+          icons: 'star',
+          isSpaced: true,
+          moment: moment,
+          connected: false,
+          lastTime: null
+      }
   },
   beforeDestroy() {
     this.$snoast.close()
   },
   methods: {
+    updateTime(){
+      this.lastTime = moment(this.data.user.last_connection).fromNow()
+    },
     async likeButton()
     {
       if(this.data.status > 2){

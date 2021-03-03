@@ -1,56 +1,57 @@
 <template>
   <div style="padding:40px">
-    <b-field class="filters">
+    <h1 id="srch-ttl">Custom Search</h1>
+    <b-field class="filters" label="Age">
       <b-slider
         v-model="ageGap"
-        type="is-success"
+        type="is-primary"
         :min="18"
         :max="50"
-        :custom-formatter=" val => (val===50)?val.toString()+'+':val.toString()"
+        :custom-formatter=" val => (val===50)?'+'+val.toString():val.toString()"
         :step="1"
         rounded
-        tooltip-always
       />
     </b-field>
-    <b-field class="filters">
+    <div class="sinfo"><span class="rinfo" >{{ageGap[0]}}</span>  <span class="linfo">{{ageGap[1]>=50?'+':''}}{{ageGap[1]}}</span></div>
+    <b-field class="filters" label="Rating">
       <b-slider
         v-model="rateGap"
-        type="is-success"
+        type="is-primary"
         :min="0"
         :max="5"
-        :custom-formatter=" val => val+ '☆'"
         :step="1"
         rounded
-        tooltip-always
         
       />
     </b-field>
-    <b-field class="filters">
+      <div class="sinfo"><span class="rinfo" >{{rateGap[0]}} <i class="sstar fas fa-star"></i></span>
+      <span class="linfo" >{{rateGap[1]}} <i class="sstar fas fa-star"></i></span>
+      </div>
+    <b-field class="filters" label="Distance">
       <b-slider
-        type="is-success"
+        type="is-primary"
         v-model="distance"
         :min="10"
         :max="200"
-        :custom-formatter=" val => (val===200)?val.toString()+'+ Km':val.toString()+' Km'"
+        :custom-formatter=" val => (val===200)?'+'+val.toString()+' Km':val.toString()+' Km'"
         :step="1"
-        lazy
         rounded
-        tooltip-always
       ></b-slider>
     </b-field>
+      <div class="sinfo"><span class="rinfo" >{{distance>=200?'+':' '}}{{distance}} km</span></div>
     <b-field class="filters">
-      <b-field label="Add some tags">
+      <b-field label="Tags">
         <b-taginput
           v-model="tags"
           ellipsis
           icon="label"
-          placeholder="Add a tag"
+          placeholder="Add Tags"
           aria-close-label="Delete this tag"
         ></b-taginput>
       </b-field>
     </b-field>
     <b-field>
-      <button @click="search">Search</button>
+    <b-button id="srch-btn" @click="search" type="is-primary" expanded><b>Search</b></b-button>
     </b-field>
   </div>
 </template>
@@ -77,6 +78,32 @@ export default {
 
 <style lang="scss" scoped>
 .filters{
-  margin-bottom: 60px;
+  margin-bottom: 0px;
+}
+.linfo{
+  float: right;
+  margin-bottom: 20px;
+  font-weight: 700;
+
+}
+.rinfo{
+  font-weight: 700;
+}
+.sinfo{
+  margin-top: -10px;
+  margin-bottom: 30px;
+}
+.sstar{
+  color: #ffd83d;
+}
+#srch-ttl{
+  color: black;
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 30px;
+}
+#srch-btn{
+  margin-top: 30px;
 }
 </style>

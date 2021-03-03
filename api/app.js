@@ -49,7 +49,7 @@ const io = require('socket.io')(server, {
 
 
 
-
+const User = require('./models/User')
 io.on('connection', function(socket){
   let usr;
   socket.on("connectUser", (user) =>{
@@ -80,6 +80,7 @@ io.on('connection', function(socket){
   socket.on('disconnect', function () {     
     if(usr)
     {
+      User.UpdateLastConnection(usr)
       socket.broadcast.emit(usr, false);
       redis.del(usr)
     }

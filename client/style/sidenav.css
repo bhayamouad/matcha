@@ -138,10 +138,10 @@
         display: none;
     }
     #thenav{
-        width: 80px;
+        width: 65px;
     }
     #content{
-        margin-left: 80px;
+        margin-left: 65px;
     }
     #logo{
         margin: 0px auto;
@@ -151,16 +151,21 @@
         margin-top: 20px;
     }
     #thenav li{
-        width: 50px;
+        width: 30px;
         height: 50px;
-        margin-top: 12px;
+        margin-top: 10px;
     }
+    #thenav a li:hover{
+        color:  rgb(195, 7, 63);
+        background-color: white;
+    }
+   
     #thenav li i{
-        margin-left: 14px;
+        margin-left: 10px;
         margin-right: 0px;
     }
     #uicon{
-        margin-left: 12px!important;
+        margin-left: 8px!important;
     }
     #logout-btn{
         display: block;
@@ -175,6 +180,7 @@
         margin-top: 10px;
         margin-left: 2px;
     }
+    
     #lgo-img{
         display: block;
     }
