@@ -100,4 +100,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#content{
+    padding-bottom: 40px;
+}
 </style>

@@ -1,17 +1,24 @@
 <template>
   <section id="section">
     <div class="header">
+      <div style="display: flex;justify-content: space-around;">
       <i @click="openMap" class="fas fa-map-marked-alt clk"></i>
-
-      <b-tooltip
-        type="is-light"
-        :triggers="['click']"
-        :auto-close="['outside', 'escape']"
-        position="is-bottom"
+      <i @click="opens = true" class="clk fas fa-sort-amount-up"></i>
+      <i @click="openf = true" class="clk fas fa-filter"></i>
+      <i @click="open = true" class="clk fas fa-search"></i>
+      </div>
+    <b-sidebar
+      type="is-light"
+      :fullheight="true"
+      :fullwidth="false"
+      :overlay="false"
+      :right="true"
+      v-model="openf"
+      
       >
-        <template v-slot:content>
-          <div style="width:250px">
-            <b-field class="filters">
+          <div style="padding:40px">
+            <h1 id="filter-ttl">Filter Results</h1>
+            <b-field class="filters" label="Age">
               <b-slider
                 v-model="ageGap"
                 type="is-primary"
@@ -20,11 +27,10 @@
                 :custom-formatter=" val => (val===50)?'+'+val.toString():val.toString()"
                 :step="1"
                 rounded
-                @change="filters"
               />
             </b-field>
             <div class="sinfo"><span class="rinfo" >{{ageGap[0]}}</span>  <span class="linfo">{{ageGap[1]>=50?'+':''}}{{ageGap[1]}}</span></div>
-            <b-field class="filters">
+            <b-field class="filters" label="Rating">
               <b-slider
                 v-model="rateGap"
                 type="is-primary"
@@ -32,13 +38,12 @@
                 :max="5"
                 :step="1"
                 rounded
-                @change="filters"
               />
             </b-field>
             <div class="sinfo"><span class="rinfo" >{{rateGap[0]}} <i class="sstar fas fa-star"></i></span>
       <span class="linfo" >{{rateGap[1]}} <i class="sstar fas fa-star"></i></span>
       </div>
-            <b-field class="filters">
+            <b-field class="filters" label="Distance">
               <b-slider
                 type="is-primary"
                 v-model="distance"
@@ -47,48 +52,54 @@
                 :custom-formatter=" val => (val===200)?'+'+val.toString()+' Km':val.toString()+' Km'"
                 :step="1"
                 rounded
-                @change="filters"
               ></b-slider>
-            </b-field>
+            </b-field >
             <div class="sinfo"><span class="rinfo" >{{distance>=200?'+':' '}}{{distance}} km</span></div>
-            <b-field class="filters">
+            <b-field class="filters" label="Common Tags">
               <b-numberinput v-model="commonTags" :max="5" :min="0" @input="filters"></b-numberinput>
             </b-field>
+          <b-button id="filter-btn" @click="filters" type="is-primary" expanded><b>Apply Filters</b></b-button>
           </div>
-        </template>
-       <i class="clk fas fa-filter"></i>
-      </b-tooltip>
-      
-      
-      
-      <b-sidebar
+
+    </b-sidebar>
+    <b-sidebar
       type="is-light"
       :fullheight="true"
       :fullwidth="false"
-      :overlay="true"
+      :overlay="false"
       :right="true"
       v-model="open"
       
       >
       <search @clicked="moreUsers"/>
     </b-sidebar>
-    <i @click="open = true" class="clk fas fa-search"></i>
-    <br>
-    <div style="width:450px">
-            <b-checkbox v-model="sortGroup" native-value="1" @input="sort">
+    <b-sidebar
+      type="is-light"
+      :fullheight="true"
+      :fullwidth="false"
+      :overlay="false"
+      :right="true"
+      v-model="opens"
+      
+      >
+        <div id="sort-check">
+            <div id="filter-ttl">Sort By</div>
+            <b-switch class="filter-switch" v-model="sortGroup" native-value="1" @input="sort">
                 Age
-            </b-checkbox>
-            <b-checkbox v-model="sortGroup" native-value="2" @input="sort">
+            </b-switch>
+            <b-switch class="filter-switch" v-model="sortGroup" native-value="2" @input="sort">
                 Location
-            </b-checkbox>
-            <b-checkbox v-model="sortGroup" native-value="3" @input="sort">
+            </b-switch>
+            <b-switch class="filter-switch" v-model="sortGroup" native-value="3" @input="sort">
                 Fame Rating
-            </b-checkbox>
-            <b-checkbox v-model="sortGroup" native-value="4" @input="sort">
+            </b-switch>
+            <b-switch class="filter-switch" v-model="sortGroup" native-value="4" @input="sort">
                 Common Tags
-            </b-checkbox>
+            </b-switch>
           </div>
+        </b-sidebar>
     </div>
+
 
 
     <div class="fixed fixed--center" v-if="loading"><div class="loaders"></div></div>
@@ -207,7 +218,7 @@
 <script>
 import { Vue2InteractDraggable, InteractEventBus } from "vue2-interact";
 import PositionMaps from "@/components/PositionMaps.vue";
-import Search from "@/Components/SearchMore.vue"
+import Search from "@/components/SearchMore.vue"
 let data = [];
 export default {
   props: ["status"],
@@ -233,6 +244,8 @@ export default {
       commonTags: 0,
       sortGroup:[],
       open: false,
+      openf: false,
+      opens: false,
       loading: true
     };
   },
@@ -308,6 +321,7 @@ export default {
     },
     async filters() {
       this.loading = true
+      this.openf = false
       await new Promise(r => {
               setTimeout(r, 500)
           });
@@ -323,6 +337,10 @@ export default {
     },
     async sort(){
       this.loading = true
+      await new Promise(r => {
+              setTimeout(r, 100)
+          });
+      this.opens = false;
       await new Promise(r => {
               setTimeout(r, 500)
           });
@@ -376,10 +394,13 @@ section {
   height: 100vh;
 }
 .header {
-  padding: 12px 30px;
+  padding: 20px 30px;
   color: white;
   background: rgb(195, 7, 63);
-  height: 150px;
+  // height: 150px;
+}
+.clk{
+  font-size: 25px;
 }
 .clk:hover{
   cursor: pointer;
@@ -536,6 +557,32 @@ section {
 .filters {
   margin-bottom: 50px;
 }
+#sort-check{
+  text-align: center;
+  color: black;
+  padding: 40px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+#filter-ttl, #filter-ttl{
+  color: black;
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 30px;
+}
+.filter-switch{
+  margin-top: 30px;
+  font-size: 1.2rem;
+}
+
+#filter-btn{
+  margin-top: 30px;
+}
 
 @keyframes appear {
   from {
@@ -563,5 +610,12 @@ section {
 }
 .sstar{
   color: #ffd83d;
+}
+@media (max-width: 800px)
+{
+  #sort-check{
+  font-size: .8rem;
+  font-weight: 500;
+}
 }
 </style>

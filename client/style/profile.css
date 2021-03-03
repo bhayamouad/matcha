@@ -1,5 +1,7 @@
 #content{
     padding-top: 40px;
+    padding-bottom: 40px;
+    cursor: default;
 }
 #profile-card{
     color: black;
@@ -165,4 +167,30 @@
     font-weight: 600;
     color: #6f6969;
     padding-bottom: 20px;
+}
+
+#inf-rt{
+    display: flex;
+}
+@media (max-width: 800px)
+{
+    #rating{
+        display: block;
+    }
+    #inf-rt{
+        display: block;
+    }
+    #prf-name,#prf-age{
+        font-size: 1.5rem;
+    }
+    .usr-gender{
+        font-size: 1.5rem;
+        margin-top: 15px;
+    }
+    #rating{
+        padding-top: 10px;
+    }
+    #prf-name{
+        max-width: 70%;
+    }
 }

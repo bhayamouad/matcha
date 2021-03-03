@@ -23,6 +23,7 @@
         <div v-if="!data.is_me && data.user.images" id="like-act" :class="{'liked':data.liked}" @click="likeButton"><i class="fas fa-heart"></i></div>
       </div>
       <div id="card-info">
+        <div id="inf-rt">
         <div class="prf-txts" id="prf-name-cnt">
           <div id="prf-name">{{data.user.fname}} {{data.user.lname}}</div>
           <span
@@ -32,6 +33,7 @@
           <i v-if="data.user.gender == 'F'" class="fas fa-venus usr-gender"></i>
           <i v-if="data.user.gender == 'M'" class="fas fa-mars usr-gender"></i>
           <i v-if="data.user.gender == 'O'" class="fas fa-neuter usr-gender"></i>
+        </div>
           <div v-if="data.user.rating" id="rating">
             <b-rate
               v-model="rate"
