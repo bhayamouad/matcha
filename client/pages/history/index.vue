@@ -77,7 +77,7 @@ export default {
     async fetch()
     {
         hpr = 5;
-        num = 25;
+        num = 15;
         from = 0;
         const ret = await this.$axios.$post('/matcha/gethistory', {from: 0, num: num + 1});
         if(!ret.error)

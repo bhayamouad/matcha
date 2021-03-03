@@ -11,11 +11,12 @@ module.exports = class Message {
                 })
     }
 
-    static getMatchesByIdUser(id){
+    static getMatchesByIdUser(id,start,limit){
         return db.execute(`SELECT u.id_user, u.login, u.fname, u.lname, i.path, msg.message, msg.created_at AS sent_at, m.created_at AS matched_at FROM users u
                             INNER JOIN images i ON (i.user_id = u.id_user and i.is_profile = 0)
                             INNER JOIN matches m ON ((u.id_user = m.first_profile AND m.second_profile = ${id}) OR (m.first_profile = ${id} AND u.id_user = m.second_profile))
                             LEFT JOIN (SELECT * FROM messages ORDER BY created_at DESC LIMIT 1) msg  ON (u.id_user = msg.sender_id OR u.id_user = msg.receiver_id)
-                            WHERE u.id_user <> ?`,[id])
+                            WHERE u.id_user <> ?
+                            LIMIT ${start},${limit}`,[id])
     }
 }

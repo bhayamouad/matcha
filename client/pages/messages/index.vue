@@ -11,8 +11,8 @@
               <img class="profile-img" :src="$config.baseURL+'/'+match.path" />
             </span>
             <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
-            <span class="match-message">{{match.message}}</span>
-            <span id="match-time">{{moment(match.sent_at).fromNow()}}</span>
+            <span class="match-message">{{(match.message)?match.message:`Start chatting with ${match.login}`}}</span>
+            <span id="match-time">{{(match.sent_at)?moment(match.sent_at).fromNow():moment(match.matched_at).fromNow()}}</span>
           </div>
         </li>
         <div id="loader-cnt" v-if="showmore">
@@ -26,12 +26,9 @@
 
 <script>
 import moment from "moment";
-let newMoment = moment;
-let hpr = 5,
-  num,
-  from,
-  newMessages;
-  newMoment.updateLocale('en', {
+
+let hpr = 2, num, from, newMessages
+moment.updateLocale('en', {
     relativeTime : {
         past: "%s",
         s: "%d s",
@@ -90,13 +87,48 @@ export default {
     });
   },
   async fetch() {
+    num = 7
+    from = 0
     const res = await this.$axios.$post("/matcha/getMessages", {
-      from: 0,
+      from,
       num: num + 1
     });
-
-    this.matches = res.matches;
-  }
+    if(!res.error)
+    {
+        if(res.matches.length)
+        {
+          if(res.matches[num])
+          {
+            this.more = true;
+            res.matches.pop()
+          }
+          else
+            this.more = false;
+          this.matches = res.matches;
+        }
+        else
+          this.matches = null;
+    }
+  },
+  methods: {
+    async fetchNew(){
+      from += num;
+      num = hpr;
+      const ret = await this.$axios.$post('/matcha/getMessages', {from: from, num: num + 1});
+      if(!ret.error)
+      {
+        console.log(ret.matches);
+          if(ret.matches[num])
+          {
+            this.more = true;
+            ret.matches.pop()
+          }
+          else
+            this.more = false;
+          this.matches = this.matches.concat(ret.matches);
+      }
+    }
+  },
 };
 </script>
 
@@ -140,5 +172,20 @@ export default {
     grid-area: tme;
     margin: auto;
     font-size: 1.5rem;
+}
+#loader-cnt{
+    width: 100%;
+    height: 50px;
+    margin-top: 20px;
+}
+.loader {
+    margin: auto;
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid gray;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
 }
 </style>

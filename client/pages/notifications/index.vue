@@ -23,7 +23,7 @@
 <script>
 import moment from 'moment'
 
-let hpr = 5, num, from, newNotif
+let hpr = 2, num, from, newNotif
 export default {
     middleware: 'redirect',
     layout: 'home',
@@ -68,7 +68,8 @@ export default {
             }, 10 * 1000)
         },
         async fetchNew(){
-            from = num;
+            console.log(from);
+            from += num;
             num = hpr;
             const ret = await this.$axios.$post('/matcha/getNotifications', {from: from, num: num + 1});
             if(!ret.error)
@@ -87,12 +88,12 @@ export default {
                 newNotif.innerHTML = parseInt(newNotif.textContent) - ret.notifications.length
             else
                 newNotif.innerHTML = ""
-            from += num;
+            console.log(from);
         }
     },
     async fetch()
     {
-        num = 25;
+        num = 14;
         from = 0;
         const ret = await this.$axios.$post('/matcha/getNotifications', {from: 0, num: num + 1});
         if(!ret.error)
