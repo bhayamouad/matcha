@@ -1,3 +1,4 @@
+const moment = require('moment')
 const db = require('../setup/db_connection')
 
 module.exports = class Notification {
@@ -13,11 +14,19 @@ module.exports = class Notification {
       return db.execute("INSERT INTO notifications (type, `from`, `to`) VALUES (?,?,?)", [type, from, to])
 
   }
-  static getAllByUser(id,start,limit){
+  static getAllByUser(id,start,limit,time){
+    // let before
+    // if(!time)
+    //   before = `TRUE`
+    // else
+    //   before = `(n.created_at <= ${moment(time).format('YYYY-MM-DD HH:mm:ss')})`
+    // console.log(before);
     return db.execute(`SELECT id_notification, type, \`to\`, ut.login AS \`login_to\` ,uf.login AS \`login_from\`, n.created_at  FROM notifications n 
                         INNER JOIN users uf ON n.from = uf.id_user
                         INNER JOIN users ut ON n.to = ut.id_user
-                      WHERE \`to\` = ? ORDER BY n.created_at DESC LIMIT  ${start},${limit}`,[id])
+                      WHERE \`to\` = ?
+                        AND  n.created_at <= '${moment(time).format('YYYY-MM-DD HH:mm:ss')}'
+                        ORDER BY n.created_at DESC LIMIT  ${start},${limit}`,[id])
   }
 
   static getCountNewNotification(id){
