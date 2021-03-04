@@ -6,14 +6,16 @@
     <div id="page-cnt">
       <ul v-if="matches">
         <li v-for="match in matches" :key="match.reciever">
-          <div class="match-info">
-            <span class="match-img-icon match-img">
-              <img class="profile-img" :src="$config.baseURL+'/'+match.path" />
-            </span>
-            <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
-            <span :class="{'bold':match.status === 0}" class="match-message">{{(match.sender_id!==match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Start chatting with ${match.login}`}}</span>
-            <span id="match-time">{{(match.sent_at)?moment(match.sent_at).fromNow():moment(match.matched_at).fromNow()}}</span>
-          </div>
+          <nuxt-link :to="`/messages/${match.login}`">
+            <div class="match-info">
+              <span class="match-img-icon match-img">
+                <img class="profile-img" :src="$config.baseURL+'/'+match.path" />
+              </span>
+              <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
+              <span :class="{'bold':match.status === 0}" class="match-message">{{(match.sender_id!==match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Start chatting with ${match.login}`}}</span>
+              <span id="match-time">{{(match.sent_at)?moment(match.sent_at).fromNow():moment(match.matched_at).fromNow()}}</span>
+            </div>
+          </nuxt-link>
         </li>
         <div id="loader-cnt" v-if="showmore">
           <div class="loader"></div>

@@ -6,12 +6,12 @@
       <div id="page-cnt">
       <ul v-if="notifications">
         <li v-for="item in notifications" :key="item.id_notification">
-            <p v-if="item.type === 'like'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Liked you {{moment(item.created_at).fromNow()}}.</p>
-            <p v-if="item.type === 'dislike'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Unliked you {{moment(item.created_at).fromNow()}}.</p>
-            <p v-if="item.type === 'visit'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Visited your Profile {{moment(item.created_at).fromNow()}}.</p>
-            <p v-if="item.type === 'match1'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> Liked you Back You are Connected  {{moment(item.created_at).fromNow()}}.</p>
-            <p v-if="item.type === 'match2'">You and <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> are Connected  {{moment(item.created_at).fromNow()}}.</p>
-            <p v-if="item.type === 'message'"> <a :href="$config.clientURL+'/profile/'+item.login">{{item.login}}</a> send you a message  {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'like'"> <nuxt-link :to="`/profile/${item.login}`">{{item.login}}</nuxt-link> Liked you {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'dislike'"> <nuxt-link :to="`/profile/${item.login}`">{{item.login}}</nuxt-link> Unliked you {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'visit'"> <nuxt-link :to="`/profile/${item.login}`">{{item.login}}</nuxt-link> Visited your Profile {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'match1'"> <nuxt-link :to="`/profile/${item.login}`">{{item.login}}</nuxt-link> Liked you Back You are Connected  {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'match2'">You and <nuxt-link :to="`/profile/${item.login}`">{{item.login}}</nuxt-link> are Connected  {{moment(item.created_at).fromNow()}}.</p>
+            <p v-if="item.type === 'message'"> <nuxt-link :to="`/profile/${item.login}`">{{item.login}}</nuxt-link> send you a message  {{moment(item.created_at).fromNow()}}.</p>
         </li>
         <div id="loader-cnt" v-if="showmore"><div class="loader"></div></div>
       </ul>

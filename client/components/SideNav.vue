@@ -22,9 +22,10 @@
         </li>
       </nuxt-link>
       <nuxt-link to="/notifications">
-        <li>
+        <li @click="newNotif=''">
           <i class="fas fa-bell notif">
-            <div id="new-notif" :class="{'new-notif': newNotif}">{{newNotif}}</div>
+            <span id="new-notif" :class="{'new-notif': newNotif}">{{newNotif}}</span>
+            {{newNotif}}
           </i>
           <span class="pg-title">Notifications</span>
         </li>
@@ -72,7 +73,8 @@ export default {
         profile: null,
         status: null
       },
-    newNotif: "",
+    newNotif: 0,
+    isNotif:false,
     newMessages: "",
     nolink: true     
     }
@@ -84,30 +86,34 @@ export default {
       this.newNotif = (parseInt(notif.data.number) > 0) ? notif.data.number : ""
     this.loggedUser = res.loggedUser
     this.nolink = (this.loggedUser.status>1) ? false : true
-    
-    socket.emit("connectUser", this.loggedUser.username)
     const that = this
-    socket.on("like"+this.loggedUser.username, (res) => {
-        if(res.status)
-          that.newNotif = (that.newNotif) ? parseInt(that.newNotif) + 1 : 1
+    socket.emit("connectUser", this.loggedUser.username)
+    socket.on("like"+this.loggedUser.username, (socketResult) => {
+        if(socketResult.status){
+          console.log(this.newNotif);
+          that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
+          console.log(that.newNotif);
+          console.log(this.newNotif);
+
+        }
       })
-    socket.on("dislike"+this.loggedUser.username, (res) => {
-        if(res.status)
-          that.newNotif = (that.newNotif) ? parseInt(that.newNotif) + 1 : 1
+    socket.on("dislike"+this.loggedUser.username, (socketResult) => {
+        if(socketResult.status)
+          that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
       })
 
-    socket.on("match1"+this.loggedUser.username, (res) => {
-      if(res.status)
-        that.newNotif = (that.newNotif) ? parseInt(that.newNotif) + 1 : 1
+    socket.on("match1"+this.loggedUser.username, (socketResult) => {
+      if(socketResult.status)
+        that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
     })
-    socket.on("match2"+this.loggedUser.username, (res) => {
-        console.log(that.newNotif)
-        that.newNotif = (that.newNotif) ? parseInt(that.newNotif) + 1 : 1
+    socket.on("match2"+this.loggedUser.username, (socketResult) => {
+        that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
+        that.isNotif = true
     })
 
-    socket.on("visit"+this.loggedUser.username, (res) => {
-      if(res.status)
-        that.newNotif = (that.newNotif) ? parseInt(that.newNotif) + 1 : 1
+    socket.on("visit"+this.loggedUser.username, (socketResult) => {
+      if(socketResult.status)
+        that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
     })
   },
   methods: {
