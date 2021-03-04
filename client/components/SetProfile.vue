@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="set-pfl-cnt">
     
     <b-field v-if="!(parent=='steps')" label="First Name"
       :type="{'is-danger': errors.fname}" 
@@ -306,4 +306,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+#set-pfl-cnt
+{
+  padding: 10px 10px;
+}
 </style>

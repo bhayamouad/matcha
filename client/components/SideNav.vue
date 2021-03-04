@@ -16,7 +16,7 @@
       <nuxt-link to="/messages">
         <li>
           <i class="fas fa-envelope">
-            <span id="new-messages">{{newMessages}}</span>
+            <div v-if="newMessages" class="new-notif">{{newMessages}}</div>
           </i>
           <span class="pg-title">Messages</span>
         </li>
@@ -24,7 +24,7 @@
       <nuxt-link to="/notifications">
         <li>
           <i class="fas fa-bell notif">
-            <span id="new-notif">{{newNotif}}</span>
+            <div v-if="newNotif" class="new-notif">{{newNotif}}</div>
           </i>
           <span class="pg-title">Notifications</span>
         </li>

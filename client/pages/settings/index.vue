@@ -4,28 +4,28 @@
       <b-tab-item>
         <template #header>
           <b-icon icon="image"></b-icon>
-          <span>Pictures</span>
+          <span class="sttg-ttl">Pictures</span>
         </template>
         <image-upload ref="images" />
       </b-tab-item>
       <b-tab-item>
         <template #header>
           <b-icon icon="account"></b-icon>
-          <span>Profile</span>
+          <span class="sttg-ttl">Profile</span>
         </template>
         <set-profile ref="profile" />
       </b-tab-item>
       <b-tab-item>
         <template #header>
           <b-icon icon="lock"></b-icon>
-          <span>Change Password</span>
+          <span class="sttg-ttl">Change Password</span>
         </template>
         <change-password :isPass="isPass"></change-password>
       </b-tab-item>
       <b-tab-item>
         <template #header>
           <b-icon icon="map-marker"></b-icon>
-          <span>Location</span>
+          <span class="sttg-ttl">Location</span>
         </template>
         <position-maps ref="location"/>
       </b-tab-item>
@@ -102,5 +102,11 @@ export default {
 <style lang="scss" scoped>
 #content{
     padding-bottom: 40px;
+}
+@media (max-width: 800px)
+{
+  .sttg-ttl{
+    display:none;
+  }
 }
 </style>
