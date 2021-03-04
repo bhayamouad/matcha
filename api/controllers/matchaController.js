@@ -44,8 +44,10 @@ exports.unLike = (req, res) => {
                 if(checkMatch){
                     await Notification.push('dislike', req.id_user, req.body.idLiked)
                     await Match.delete(req.id_user, req.body.idLiked)
+                    res.send({unlike:true, unliker: unliker.login, unliked: unliked.login})
                 }
-                res.send({message:"unLike", unliker: unliker.login, unliked: unliked.login})
+                else
+                    res.send({unlike:false})
             })
             .catch(err => console.log(err.message))
     } catch (error) {

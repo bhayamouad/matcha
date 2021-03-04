@@ -166,8 +166,10 @@ export default {
                 message: `Are you Sure you want to Unlike <b>${this.data.user.login}</b>`,
                 onConfirm:  async () => {
                     const result = await this.$axios.$post("/matcha/unlike", {idLiked: this.data.user.id_user})
-                    this.data.liked =  this.data.liked ? false : true
-                    socket.emit("dislike", {unliker: result.unliker, unliked: result.unliked})
+                    if(result.unlike){
+                      socket.emit("dislike", {unliker: result.unliker, unliked: result.unliked})
+                    }
+                      this.data.liked =  this.data.liked ? false : true
                   }
               })
         }
