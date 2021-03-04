@@ -8,7 +8,7 @@
         <li v-for="(item,index) in notifications" :key="index">
           <p v-if="item.type === 'like'">
             <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>
-            Liked you {{time[0]}}.
+            Liked you {{time[index]}}.
           </p>
           <p v-if="item.type === 'dislike'">
             <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>
@@ -45,11 +45,8 @@
 import moment from "moment";
 import socket from "../../socket";
 
-let hpr = 2,
-  num,
-  from,
-  newNotif;
-let notifs = document.querySelector('#notifs') 
+let hpr = 5, num, from, time
+
 export default {
   middleware: "redirect",
   layout: "home",
@@ -64,6 +61,8 @@ export default {
     };
   },
   async mounted() {
+      time = new Date(Date.now())
+      console.log(time);
     const listElm = document.querySelector("#page-cnt");
     listElm.addEventListener("scroll", async e => {
       if (listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight) {
@@ -93,7 +92,8 @@ export default {
       num = hpr;
       const ret = await this.$axios.$post("/matcha/getNotifications", {
         from: from,
-        num: num + 1
+        num: num + 1,
+        time
       });
       if (!ret.error) {
         if (ret.notifications[num]) {
@@ -101,15 +101,19 @@ export default {
           ret.notifications.pop();
         } else this.more = false;
         this.notifications = this.notifications.concat(ret.notifications);
+        this.time = []
+        this.notifications.forEach(element => {
+            this.time.push(moment(element.created_at).fromNow())
+        })
         await this.$axios.$put("/matcha/setNotifStatus", {
           from: from,
-          num: num
+          num: num+1
         });
       }
     },
     updateTime(){
         this.time = []
-        this.notifications.forEach((element, index) => {
+        this.notifications.forEach(element => {
             this.time.push(moment(element.created_at).fromNow())
         });
     }
@@ -119,7 +123,8 @@ export default {
     from = 0;
     const ret = await this.$axios.$post("/matcha/getNotifications", {
       from: 0,
-      num: num + 1
+      num: num + 1,
+      time: Date.now
     });
     if (!ret.error) {
       if (ret.notifications.length) {
@@ -128,7 +133,7 @@ export default {
           ret.notifications.pop();
         } else this.more = false;
         this.notifications = ret.notifications;
-        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: num });
+        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: num+1 });
       } else this.notifications = null;
       this.notifCounter = ret.new;
     }
@@ -136,39 +141,45 @@ export default {
     this.notifications.forEach((element,index) => {
           that.time.push(moment(element.created_at).fromNow())
       })
-      console.log(this.time);
       
     setInterval(function() {
         that.updateTime();
       }, 60000);
 
-    socket.on("like" + ret.to, socketResult => {
+    socket.on("like" + ret.to, async (socketResult) => {
         if (socketResult.status){
+        console.log(this.time);
         this.time.splice(0,0,moment(Date.now()).fromNow())
-        this.notifications.splice(0,0, {type: 'like', login_from: socketResult.liker})
+        console.log(this.time);
+        this.notifications.splice(0,0, {type: 'like', created_at: Date.now(), login_from: socketResult.liker})
+        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
       }
     });
-    socket.on("dislike" + ret.to, socketResult => {
+    socket.on("dislike" + ret.to, async (socketResult) => {
       if (socketResult.status){
         this.time.splice(0,0,moment(Date.now()).fromNow())
-        this.notifications.splice(0,0, {type: 'dislike', login_from: socketResult.unliker})
+        this.notifications.splice(0,0, {type: 'dislike', created_at: Date.now(),  login_from: socketResult.unliker})
+        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
       }
     });
 
-    socket.on("match1" + ret.to, socketResult => {
+    socket.on("match1" + ret.to, async (socketResult) => {
       if (socketResult.status){
         this.time.splice(0,0,moment(Date.now()).fromNow())
-        this.notifications.splice(0,0, {type: 'match1', login_from: socketResult.liker})
+        this.notifications.splice(0,0, {type: 'match1', created_at: Date.now(), login_from: socketResult.liker})
+        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
       }
     });
-    socket.on("match2" + ret.to, socketResult => {
+    socket.on("match2" + ret.to, async (socketResult) => {
         this.time.splice(0,0,moment(Date.now()).fromNow())
-        this.notifications.splice(0,0, {type: 'match2', login_from: socketResult.liked})
+        this.notifications.splice(0,0, {type: 'match2', created_at: Date.now(), login_from: socketResult.liked})
+        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
-    socket.on("visit" + ret.to, socketResult => {
+    socket.on("visit" + ret.to, async (socketResult) => {
       if (socketResult.status){
         this.time.splice(0,0,moment(Date.now()).fromNow())
-        this.notifications.splice(0,0, {type: 'visit', login_from: socketResult.visitor})
+        this.notifications.splice(0,0, {type: 'visit', created_at: Date.now(), login_from: socketResult.visitor})
+        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
       }
     });
   }
