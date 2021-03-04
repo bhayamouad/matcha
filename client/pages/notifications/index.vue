@@ -37,9 +37,9 @@ export default {
         }
     },
     async mounted () {
-    await new Promise(r => {
-        setTimeout(r, 400)
-    });
+    // await new Promise(r => {
+    //     setTimeout(r, 400)
+    // });
     const listElm = document.querySelector('#page-cnt');
     newNotif = document.querySelector('#new-notif')
     newNotif.innerHTML = ""

@@ -1,5 +1,6 @@
 <template>
   <section id="profile-sec">
+    <div v-if="fetched">
     <div v-if="!data.block && data.user" id="profile-card">
       <div v-if="data.user" id="prf-images">
         <b-carousel v-if="data.user.images" :has-drag="false" :autoplay="false" :repeat="false" animated="fade">
@@ -65,7 +66,7 @@
         </div>
         <div v-if="data.user.tags" id="tags">
           <b-taglist>
-            <b-tag v-for="(item, i) in data.user.tags.split(',')" :key="i" id="single-tag">#{{item}}</b-tag>
+            <b-tag size="is-medium" v-for="(item, i) in data.user.tags.split(',')" :key="i" id="single-tag">#{{item}}</b-tag>
           </b-taglist>
         </div>
         <div id="prf-bio">{{data.user.biography}}</div>
@@ -76,6 +77,7 @@
         <img id="nf-img" src="@/assets/profile.png" />
         <div id="nf-msg">User Not Found!</div>
       </div>
+    </div>
     </div>
   </section>
 </template>
@@ -88,20 +90,26 @@ export default {
   {
       const data = await this.$axios.$post('/account/getprofile', {username: this.$route.params.profile});
       this.data = data;
-      if(!this.data.is_me)
-        socket.emit("visit", {visited: this.data.user.login, visitor: this.data.loggedUser.login})
-      if(!this.data.block && data.user)
+      await new Promise(r => {
+        setTimeout(r, 100)
+    });
+      this.fetched = true;
+      if(!data.block && data.user)
           this.rate= this.data.user.rating * 5 / 100
-      
-      const that = this
-      let flag = 0
-      if(!data.is_me)
+  
+      if(!data.is_me && data.user && !data.block)
       {
+        socket.emit("visit", {visited: this.data.user.login, visitor: this.data.loggedUser.login})
         this.lastTime = moment(this.data.user.last_connection).fromNow()
+        const that = this
+        let flag = 0
+
         setInterval(function(){
           that.updateTime()
         },60000);
+
         socket.emit("isConnected", this.$route.params.profile)
+
         socket.on(this.$route.params.profile, (message) => {
           that.connected = message
           if(!message && flag)
@@ -111,17 +119,9 @@ export default {
           }
           flag = 1
         });
+
       }
   },
-  // mounted() {
-  //   if(!this.connected)
-  //     {
-  //         setInterval(function(){
-  //         this.user.last_connection = moment();
-  //         console.log("done!")
-  //       },60000);
-  //     }
-  // },
   data()
   {
       return{
@@ -136,7 +136,8 @@ export default {
           isSpaced: true,
           moment: moment,
           connected: false,
-          lastTime: null
+          lastTime: null,
+          fetched: false
       }
   },
   beforeDestroy() {

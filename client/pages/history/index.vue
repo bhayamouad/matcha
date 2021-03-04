@@ -31,9 +31,9 @@ export default {
         }
     },
     async mounted () {
-    await new Promise(r => {
-        setTimeout(r, 400)
-    });
+    // await new Promise(r => {
+    //     setTimeout(r, 400)
+    // });
     const listElm = document.querySelector('#page-cnt');
     listElm.addEventListener('scroll', async e => {
         if(listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight)

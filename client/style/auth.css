@@ -39,12 +39,10 @@ html, body{
 #msg-txt{
     /* font-family: 'Nerko One', cursive; */
     color: black;
-    font-size: 30px;
+    font-size: 27px;
     font-weight: 300;
 }
-#msg-txt img{
-    /* opacity: .8; */
-}
+
 
 #slogan{
     font-family: 'Nerko One', cursive;
