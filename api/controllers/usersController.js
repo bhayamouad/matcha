@@ -544,6 +544,7 @@ exports.getProfileInfo = (req, res) => {
         .catch(e => res.status(200).send({error: e.message}))   
     })
     .then((user) => {
+        let sendNotif = false
         if(user)
         {
             if(user.id_user == req.id_user)
@@ -559,9 +560,11 @@ exports.getProfileInfo = (req, res) => {
                         liked = false
                     return History.insertHistory(req.id_user, user.id_user)
                     .then( async () => {
-                        await Notification.push('visit', req.id_user, user.id_user)
+                        const check = await Notification.push('visit', req.id_user, user.id_user)
+                        if(check)
+                            sendNotif = true
                         const [[loggedUser]] = await User.getById(req.id_user)
-                        res.status(200).send({error: false, user, liked, block: false,  is_me: false, loggedUser:{login: loggedUser.login, status: loggedUser.status}})
+                        res.status(200).send({error: false, user, liked, block: false,  is_me: false, loggedUser:{login: loggedUser.login, status: loggedUser.status}, sendNotif })
                     })
                     .catch(e => res.status(200).send({error: "Adding Visit to History Error!"}))
                 }).catch(e => res.status(200).send({error: "Get Like Error"}))
