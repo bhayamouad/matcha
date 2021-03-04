@@ -88,7 +88,6 @@ export default {
   {
       const data = await this.$axios.$post('/account/getprofile', {username: this.$route.params.profile});
       this.data = data;
-      console.log(this.data.user.login, this.data.loggedUser.login);
       if(!this.data.is_me)
         socket.emit("visit", {visited: this.data.user.login, visitor: this.data.loggedUser.login})
       if(!this.data.block && data.user)
