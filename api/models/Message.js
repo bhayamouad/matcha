@@ -40,4 +40,7 @@ module.exports = class Message {
         AND (u.id_user IN (SELECT first_profile FROM matches WHERE second_profile = ${id}) OR u.id_user IN (SELECT second_profile FROM matches WHERE first_profile = ${id}))
         ORDER BY m.created_at ASC`,[usr])
     }
+    static sendMessage(from, to, msg){
+        return db.execute(`INSERT INTO messages (message, sender_id, receiver_id) VALUES(?,?,?)`,[msg, from, to])
+    }
 }

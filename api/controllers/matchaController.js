@@ -104,3 +104,20 @@ exports.getChat = async (req, res) => {
         res.status(200).send({error:e.message})
     }
 }
+
+exports.sendMsg = async (req, res) => {
+    const from = req.id_user
+    const to = req.body.to
+    const msg = req.body.msg
+    try{
+        const [ret] = await Message.sendMessage(from, to, msg)
+        if(ret.affectedRows)
+            res.status(200).send({error:false})
+        else
+            res.status(200).send({error:"Not sent"})
+    }
+    catch(e){
+        res.status(200).send({error:e.message})
+    }
+
+}

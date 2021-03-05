@@ -12,19 +12,19 @@
         <span id="usr-login">@{{info.login}}</span><span ><i style="color:green;" class=" usr-state fas fa-circle"></i></span>
       </div></nuxt-link>
     </div>
-      <div id="chat-cnt">
-        <div v-for="(item,i) in messages" :key="i" >
-          <span class="oth-msg" v-if="info.id_user == item.sender_id">{{item.message}}</span>
-          <span class="self-msg" v-if="info.id_user != item.sender_id">{{item.message}}</span>
-          <hr style="height:12px; visibility:hidden;" />
+      <div v-if="messages" id="chat-cnt">
+        <div  v-for="(item,i) in messages.slice().reverse()" :key="i" >
+          <span class="oth-msg msg" v-if="info.id_user == item.sender_id">{{item.message}}</span>
+          <span class="self-msg msg" v-if="info.id_user != item.sender_id">{{item.message}}</span>
+          <!-- <hr style="height:0px; visibility:hidden;" /> -->
           </div>
+      </div>
         <div id="msg-inp-cnt"><b-field @keyup.native.enter="sendMsg" id="msg-input">
             <b-input  type="text"
                 v-model="msg"
-                placeholder="...">
+                placeholder="">
             </b-input>
         </b-field></div>
-      </div>
     </div>
   </div>
 </template>
@@ -38,8 +38,7 @@ export default {
       const data = await this.$axios.$post("/matcha/getchat", {login: this.$route.params.inbox})
       this.info = data.info
       this.messages = data.messages
-
-      console.log(data)
+      // console.log(data)
     },
     data(){
       return{
@@ -47,12 +46,31 @@ export default {
         messages: null,
         link: this.$config.clientURL,
         user: this.$route.params.inbox,
-        msg: null
+        msg: null,
       }
     },
    methods: {
-   sendMsg(){
-     alert("trrrrr")
+     scrollToElement() {
+      const elm = this.$el.getElementsByClassName('msg')[0];
+      if (elm) 
+        elm.scrollIntoView({behavior: 'smooth'});
+  },
+   async sendMsg(){
+     if(this.msg)
+     {
+        const ret = await this.$axios.$post("/matcha/sendmsg",{to: this.info.id_user, msg: this.msg})
+        if(!ret.error)
+        {
+          this.messages.push({sender_id:0,message:this.msg})
+          this.msg = null
+           await new Promise(r => {
+              setTimeout(r, 10)
+            });
+          this.scrollToElement()
+        }
+        else
+          alert("something went wong!")
+     }
    } 
   },
 }
@@ -80,6 +98,7 @@ export default {
 }
 #inbox{
   position: relative;
+  height: 100vh;
 }
 #prfl-cnt{
   width: 50px;
@@ -111,9 +130,13 @@ export default {
 
 }
 #chat-cnt{
-  padding: 7px 7px;
+  display: flex;
+  flex-direction: column-reverse;
+  padding: 7px 10px;
   width: 100%;
-  height: calc(100vh - 70px);
+  height: calc(100vh - 120px);
+  overflow-y:  scroll;
+  overflow-x: hidden;
 }
 #msg-inp-cnt{
   position: absolute;
@@ -124,12 +147,14 @@ export default {
   left: 50%;
 }
 #msg-input{
-width: 98%;
+width: 95%;
 margin: auto;
 }
-
+.msg{
+  margin-bottom: 5px;
+}
 .self-msg{
-  background-color: #0099ff;
+  background-color: #C3073F;
   float: right;
   padding: 5px 15px;
   border-radius: 20px;

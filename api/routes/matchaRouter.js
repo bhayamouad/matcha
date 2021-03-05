@@ -15,5 +15,7 @@ router.get('/getNewNotification', usersMiddleware.authorize, logsController.getN
 router.put('/setNotifStatus', usersMiddleware.authorize, logsController.setNotifStatus)
 router.post('/getMessages', usersMiddleware.authorize, matchaController.getMessages)
 router.post('/getchat', usersMiddleware.authorize, matchaController.getChat)
+router.post('/sendmsg', usersMiddleware.authorize, matchaController.sendMsg)
+
 
 module.exports = router
