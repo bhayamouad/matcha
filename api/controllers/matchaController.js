@@ -90,13 +90,17 @@ exports.getMessages = (req,res) => {
 }
 
 exports.getChat = async (req, res) => {
-    const [[ret]] = await Message.getChatInfoByLogin(req.id_user, req.body.login)
-    if(ret)
-    {
-        const [messages] = await Message.getChatByLogin(req.id_user, req.body.login)
-        console.log(messages)  
-        res.status(200).send({info:ret, messages})
+
+    try{
+        const [[ret]] = await Message.getChatInfoByLogin(req.id_user, req.body.login)
+        if(ret)
+        {
+            const [messages] = await Message.getChatByLogin(req.id_user, req.body.login)
+            res.status(200).send({info:ret, messages})
+        }
+        else
+            res.status(200).send({error:"Not Found"})
+    }catch(e){
+        res.status(200).send({error:e.message})
     }
-    else
-    res.status(200).send({error:"error"})
 }
