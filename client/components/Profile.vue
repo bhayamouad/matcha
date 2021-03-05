@@ -118,7 +118,7 @@ export default {
     await new Promise(r => {
       setTimeout(r, 100);
     });
-    console.log(data);
+    // console.log(data);
 
     this.fetched = true;
     if (!data.block && data.user) this.rate = (this.data.user.rating * 5) / 100;
