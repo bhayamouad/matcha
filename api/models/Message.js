@@ -19,6 +19,7 @@ module.exports = class Message {
                             WHERE u.id_user <> ?
                                 AND u.id_user NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ${id} AND blocked_id = u.id_user)
                                 AND u.id_user NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = u.id_user AND blocked_id = ${id})
+                            ORDER BY sent_at DESC, matched_at DESC
                             LIMIT ${start},${limit}`,[id])
     }
 }

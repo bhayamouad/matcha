@@ -5,7 +5,7 @@
     </div>
     <div id="page-cnt">
       <ul v-if="matches">
-        <li v-for="match in matches" :key="match.reciever">
+        <li v-for="(match,index) in matches" :key="match.reciever">
           <nuxt-link :to="`/messages/${match.login}`">
             <div class="match-info">
               <span class="match-img-icon match-img">
@@ -13,7 +13,7 @@
               </span>
               <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
               <span :class="{'bold':match.status === 0}" class="match-message">{{(match.sender_id!==match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Start chatting with ${match.login}`}}</span>
-              <span id="match-time">{{(match.sent_at)?moment(match.sent_at).fromNow():moment(match.matched_at).fromNow()}}</span>
+              <span class="match-time">{{time[index]}}</span>
             </div>
           </nuxt-link>
         </li>
@@ -55,6 +55,7 @@ export default {
   data() {
     return {
       matches: [],
+      time: [],
       moment,
       more: null,
       showmore: false,
@@ -110,6 +111,14 @@ export default {
         }
         else
           this.matches = null;
+        
+        this.matches.forEach(element => {
+          (element.sent_at) ? this.time.push(moment(element.sent_at).fromNow()) : this.time.push(moment(element.matched_at).fromNow())
+        });
+        const that = this
+        setInterval(function() {
+        that.updateTime();
+      }, 60000);
     }
   },
   methods: {
@@ -131,6 +140,12 @@ export default {
       }
     }
   },
+  updateTime(){
+    this.time = []
+        this.notifications.forEach(element => {
+            (element.sent_at) ? this.time.push(moment(element.sent_at).fromNow()) : this.time.push(moment(element.matched_at).fromNow())
+        });
+  }
 };
 </script>
 
@@ -138,11 +153,11 @@ export default {
 .match-info{
     display: grid;
     grid-template-areas:
-    'img nme tme'
-    'img msg tme';
-    grid-column-gap: 9px;
+        "img nme tme"
+        "img msg tme";
+    grid-template-columns: 25% 50% 25%;
     padding: 5px 8px;
-    margin: auto 20px 40px 15px;
+    margin: 20px 0px 20px 0px;
     border-radius: 50px;
 }
 .match-img{
@@ -157,7 +172,7 @@ export default {
     grid-area: nme;
     color: black;
     font-weight: 550;
-    width: 110px;
+    width: 100%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -165,15 +180,13 @@ export default {
 .match-message{
     grid-area: msg;
     color: black;
-    width: 110px;
+    width: 100%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 .match-time{
     grid-area: tme;
-    margin: auto;
-    font-size: 1.5rem;
 }
 #loader-cnt{
     width: 100%;
