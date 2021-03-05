@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="inbox">
+    <div v-if="fetched" id="inbox">
     <div id="chat-hdr">
       <nuxt-link id="chat-bck-btn" to="/messages"><i class="fas fa-arrow-left"></i></nuxt-link>
       <nuxt-link :to="'/profile/'+info.login">
@@ -36,22 +36,31 @@
 <script>
 import socket from "@/socket";
 export default {
-    middleware: 'redirect',
+    // middleware: 'redirect',
     layout: 'home',
     async fetch(){
       const data = await this.$axios.$post("/matcha/getchat", {login: this.$route.params.inbox})
-      this.info = data.info
-      this.messages = data.messages
-      // console.log(data)
-      const that = this
-      socket.emit("isConnected", this.$route.params.inbox);
-      socket.on(this.$route.params.inbox, message => {
-        that.connected = message;
-      });
-      socket.on(this.$route.params.inbox+"=>"+this.info.me, message => {
-        // console.log(message)
-        that.messages.push({sender_id:that.info.id_user ,message:message})
-      });
+      if(data.error)
+      {
+        this.$router.push('/messages')
+      }
+      else
+      {
+        await new Promise(r => {
+          setTimeout(r, 100);
+        });
+        this.fetched = true;
+        this.info = data.info
+        this.messages = data.messages
+        const that = this
+        socket.emit("isConnected", this.$route.params.inbox);
+        socket.on(this.$route.params.inbox, message => {
+          that.connected = message;
+        });
+        socket.on(this.$route.params.inbox+"=>"+this.info.me, message => {
+          that.messages.push({sender_id:that.info.id_user ,message:message})
+        });
+      }
     },
     data(){
       return{
@@ -61,6 +70,7 @@ export default {
         user: this.$route.params.inbox,
         msg: null,
         connected: false,
+        fetched: false
       }
     },
    methods: {
