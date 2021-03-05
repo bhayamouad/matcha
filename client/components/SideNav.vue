@@ -25,7 +25,6 @@
         <li @click="newNotif=''">
           <i class="fas fa-bell notif">
             <span id="new-notif" :class="{'new-notif': newNotif}">{{newNotif}}</span>
-            {{newNotif}}
           </i>
           <span class="pg-title">Notifications</span>
         </li>
@@ -73,7 +72,7 @@ export default {
         profile: null,
         status: null
       },
-    newNotif: 0,
+    newNotif: '',
     isNotif:false,
     newMessages: "",
     nolink: true     
@@ -86,34 +85,26 @@ export default {
       this.newNotif = (parseInt(notif.data.number) > 0) ? notif.data.number : ""
     this.loggedUser = res.loggedUser
     this.nolink = (this.loggedUser.status>1) ? false : true
-    const that = this
     socket.emit("connectUser", this.loggedUser.username)
     socket.on("like"+this.loggedUser.username, (socketResult) => {
-        if(socketResult.status){
-          console.log(this.newNotif);
-          that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
-          console.log(that.newNotif);
-          console.log(this.newNotif);
-
-        }
+        if(socketResult.status)
+          this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
       })
     socket.on("dislike"+this.loggedUser.username, (socketResult) => {
         if(socketResult.status)
-          that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
+          this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
       })
 
     socket.on("match1"+this.loggedUser.username, (socketResult) => {
       if(socketResult.status)
-        that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
+        this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
     })
     socket.on("match2"+this.loggedUser.username, (socketResult) => {
-        that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
-        that.isNotif = true
+        this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
     })
-
     socket.on("visit"+this.loggedUser.username, (socketResult) => {
       if(socketResult.status)
-        that.newNotif = (this.newNotif) ? parseInt(that.newNotif) + 1 : 1
+        this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
     })
   },
   methods: {

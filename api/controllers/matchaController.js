@@ -82,7 +82,7 @@ exports.getSearchedUser = async (req, res) => {
 }
 
 exports.getMessages = (req,res) => {
-    Message.getMatchesByIdUser(req.id_user, req.body.from, req.body.num)
+    Message.getMatchesByIdUser(req.id_user, req.body.from, req.body.num, req.body.now)
         .then(([matches]) => {
             res.status(200).send({matches, error: false})
         })
@@ -119,5 +119,4 @@ exports.sendMsg = async (req, res) => {
     catch(e){
         res.status(200).send({error:e.message})
     }
-
 }

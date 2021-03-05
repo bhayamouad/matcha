@@ -6,8 +6,8 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors =require('cors')
 const red = require("redis")
-// const redis = red.createClient(6379, process.env.HOST)
-const redis = red.createClient(6379, '172.23.0.4')
+const redis = red.createClient(6379, process.env.HOST)
+// const redis = red.createClient(6379, '172.23.0.4')
 
 
 redis.on("error", function(error) {
@@ -79,7 +79,7 @@ io.on('connection', function(socket){
   socket.on("dislike", (data) => {
     redis.get(data.unliked, (err, res) =>{
       if(res){
-        socket.broadcast.emit("dislike"+data.unliked, {liker:data.unliker, status: true})
+        socket.broadcast.emit("dislike"+data.unliked, {unliker:data.unliker, status: true})
       }
       else{
         socket.emit("dislike"+data.unliked, {status: false})
