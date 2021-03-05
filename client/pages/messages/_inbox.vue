@@ -9,7 +9,11 @@
       <nuxt-link style="width: 100%" :to="'/profile/'+info.login">
       <div id="prfl-name">
         <span id="usr-fullname">{{info.fname}} {{info.lname}}</span><br>
-        <span id="usr-login">@{{info.login}}</span><span ><i style="color:green;" class=" usr-state fas fa-circle"></i></span>
+        <span id="usr-login">@{{info.login}}</span>
+        <span >
+          <i v-if="connected" style="color:green;" class=" usr-state fas fa-circle"></i>
+          <i v-else style="color:gray;" class=" usr-state fas fa-circle"></i>
+        </span>
       </div></nuxt-link>
     </div>
       <div v-if="messages" id="chat-cnt">
@@ -30,7 +34,7 @@
 </template>
 
 <script>
-
+import socket from "@/socket";
 export default {
     middleware: 'redirect',
     layout: 'home',
@@ -39,6 +43,15 @@ export default {
       this.info = data.info
       this.messages = data.messages
       // console.log(data)
+      const that = this
+      socket.emit("isConnected", this.$route.params.inbox);
+      socket.on(this.$route.params.inbox, message => {
+        that.connected = message;
+      });
+      socket.on(this.$route.params.inbox+"=>"+this.info.me, message => {
+        // console.log(message)
+        that.messages.push({sender_id:that.info.id_user ,message:message})
+      });
     },
     async created(){
       await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.$route.params.inbox})
@@ -50,6 +63,7 @@ export default {
         link: this.$config.clientURL,
         user: this.$route.params.inbox,
         msg: null,
+        connected: false,
       }
     },
    methods: {
@@ -64,12 +78,13 @@ export default {
         const ret = await this.$axios.$post("/matcha/sendmsg",{to: this.info.id_user, msg: this.msg})
         if(!ret.error)
         {
+          socket.emit("sendMsg", {from:this.info.me, to:this.$route.params.inbox, msg:this.msg});
           this.messages.push({sender_id:0,message:this.msg})
           this.msg = null
-           await new Promise(r => {
-              setTimeout(r, 10)
-            });
-          this.scrollToElement()
+          //  await new Promise(r => {
+          //     setTimeout(r, 10)
+          //   });
+          // this.scrollToElement()
         }
         else
           alert("something went wong!")

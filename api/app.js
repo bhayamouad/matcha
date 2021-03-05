@@ -48,6 +48,8 @@ const io = require('socket.io')(server, {
   },
 });
 
+
+
 const User = require('./models/User')
 io.on('connection', function(socket){
   let usr;
@@ -65,6 +67,16 @@ io.on('connection', function(socket){
         socket.emit(user, false)
     })
   })
+
+  socket.on("sendMsg", (data) =>{ 
+
+    redis.get(data.to, (err, res) =>{
+      if(res)
+        socket.broadcast.emit(data.from+"=>"+data.to, data.msg)
+      // ba3boooooola
+    })
+  })
+
   socket.on("like", (data) => {
     redis.get(data.liked, (err, res) =>{
       if(res){
