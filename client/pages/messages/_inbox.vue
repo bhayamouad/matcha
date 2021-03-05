@@ -40,6 +40,9 @@ export default {
       this.messages = data.messages
       // console.log(data)
     },
+    async created(){
+      await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.$route.params.inbox})
+    },
     data(){
       return{
         info: {},

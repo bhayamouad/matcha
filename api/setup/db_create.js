@@ -29,7 +29,7 @@ connection.connect(function(err) {
                         status int(1) NOT NULL DEFAULT 0,
                         token varchar(255),
                         expire_token TIMESTAMP DEFAULT NOW(),
-                        last_connection TIMESTAMP DEFAULT NULL,
+                        last_connection TIMESTAMP DEFAULT NOW(),
                         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
                         updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW()
                   );`);
@@ -83,6 +83,7 @@ connection.connect(function(err) {
                   connection.query(`CREATE TABLE matches(
                                     first_profile int(11) NOT NULL,
                                     second_profile int(11) NOT NULL,
+                                    status int(1) NOT NULL DEFAULT 0,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                               );`);
 
@@ -141,7 +142,6 @@ connection.connect(function(err) {
                                     message varchar(255) NOT NULL,
                                     sender_id int(11),
                                     receiver_id int(11),
-                                    status int(1) NOT NULL DEFAULT 0,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                                     );`);
 

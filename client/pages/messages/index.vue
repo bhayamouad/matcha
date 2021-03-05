@@ -7,12 +7,13 @@
       <ul v-if="matches">
         <li v-for="(match,index) in matches" :key="match.reciever">
           <nuxt-link :to="`/messages/${match.login}`">
-            <div class="match-info">
+            <div class="match-info" style="position: relative;">
               <span class="match-img-icon match-img">
                 <img class="profile-img" :src="$config.baseURL+'/'+match.path" />
               </span>
+              <i v-if="connected[index]" style="color: green;" class="fas fa-circle user-state"></i>
               <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
-              <span :class="{'bold':match.status === 0 && (match.sender_id !== match.id_user && match.message)}" class="match-message">{{(match.sender_id === match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}</span>
+              <span :class="{'bold':match.status === 0 && (match.sender_id === match.id_user && match.message)}" class="match-message">{{(match.sender_id !== match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}</span>
               <span class="match-time">{{time[index]}}</span>
             </div>
           </nuxt-link>
@@ -28,6 +29,7 @@
 
 <script>
 import moment from "moment";
+import socket from "../../socket"
 
 let hpr = 2, num, from, newMessages, now
 // moment.updateLocale('en', {
@@ -59,6 +61,7 @@ export default {
       moment,
       more: null,
       showmore: false,
+      connected: [],
       messagesCounter: null
     };
   },
@@ -100,27 +103,34 @@ export default {
     });
     if(!res.error)
     {
-        if(res.matches.length)
+      if(res.matches.length)
+      {
+        if(res.matches[num])
         {
-          if(res.matches[num])
-          {
-            this.more = true;
-            res.matches.pop()
-          }
-          else
-            this.more = false;
-          this.matches = res.matches;
+          this.more = true;
+          res.matches.pop()
         }
         else
-          this.matches = null;
-        
-        this.matches.forEach(element => {
-          this.time.push(moment(element.sent_at).fromNow())
+          this.more = false;
+        this.matches = res.matches;
+      }
+      else
+        this.matches = null;
+      
+      const that = this
+      this.matches.forEach((element, index) => {
+        this.time.push(moment(element.sent_at).fromNow())
+        socket.emit("isConnected", element.login);
+        socket.on(element.login, message => {
+          const tmp = that.connected.slice()
+          tmp[index] = message
+          that.connected = tmp
         });
-        const that = this
-        setInterval(function() {
-          that.updateTime();
-        }, 60000);
+      });
+      
+      setInterval(function() {
+        that.updateTime();
+      }, 60000);
     }
   },
   methods: {
@@ -210,6 +220,16 @@ export default {
 }
 .bold{
   font-weight: bold;
+}
+.user-state{
+    color: green;
+    font-size: 10px;
+    border: solid 2px white;
+    border-radius: 50%;
+    background-color: white;
+    position: absolute;
+    bottom: 2px;
+    left: 40px;
 }
 @media (max-width: 800px)
 {

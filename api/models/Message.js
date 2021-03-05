@@ -18,7 +18,7 @@ module.exports = class Message {
             before = 'TRUE'
         else
             before = `( (CASE WHEN msg.created_at IS NULL THEN m.created_at ELSE msg.created_at END) <= '${moment(now).format('YYYY-MM-DD HH:mm:ss')}')`
-        return db.execute(`SELECT u.id_user, u.login, u.fname, u.lname, i.path, msg.message, msg.sender_id, msg.status, 
+        return db.execute(`SELECT u.id_user, u.login, u.fname, u.lname, i.path, msg.message, msg.sender_id, m.status, 
                                 (CASE WHEN msg.created_at IS NULL 
                                     THEN m.created_at
                                     ELSE msg.created_at END) as sent_at 
@@ -54,5 +54,8 @@ module.exports = class Message {
     }
     static sendMessage(from, to, msg){
         return db.execute(`INSERT INTO messages (message, sender_id, receiver_id) VALUES(?,?,?)`,[msg, from, to])
+    }
+    static setStatus(status, profile1, profile2){
+        return db.execute(`UPDATE matches SET status = ${status} WHERE (first_profile = ? AND second_profile = ? ) OR first_profile = ? AND second_profile = ?`,[profile1, profile2, profile2, profile1])
     }
 }

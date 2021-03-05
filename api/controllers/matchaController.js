@@ -20,17 +20,17 @@ exports.like = (req, res) => {
                     await Notification.push('match2', liked.id_user, liker.id_user)
                     Match.add(req.body.idLiked, req.id_user)
                         .then(()=>{
-                            res.send({like:'match', liker:liker.login, liked: liked.login})
+                            res.status(200).send({like:'match', liker:liker.login, liked: liked.login, error: false})
                         })
-                        .catch(err => console.log(err.message)) 
+                        .catch(e => res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true } )) 
                 }
                 else{
                     await Notification.push('like', liker.id_user, liked.id_user)
-                    res.send({like:'like', liker:liker.login, liked: liked.login})
+                    res.status(200).send({like:'like', liker:liker.login, liked: liked.login, error: false})
                 }
-            }).catch(err => console.log(err.message))
+            }).catch(e => res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true } ))
     } catch (error) {
-        res.status('201').send({ message: 'Something went Wrong! Please try Later', error: true } )
+        res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true } )
     }
 }
 
@@ -44,29 +44,29 @@ exports.unLike = (req, res) => {
                 if(checkMatch){
                     await Notification.push('dislike', req.id_user, req.body.idLiked)
                     await Match.delete(req.id_user, req.body.idLiked)
-                    res.send({unlike:true, unliker: unliker.login, unliked: unliked.login})
+                    res.status(200).send({unlike:true, unliker: unliker.login, unliked: unliked.login})
                 }
                 else
-                    res.send({unlike:false})
+                    res.status(200).send({unlike:false})
             })
-            .catch(err => console.log(err.message))
+            .catch(err => res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true } ))
     } catch (error) {
-        res.status('201').send({ message: 'Something went Wrong! Please try Later', error: true } )
+        res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true } )
     }
 }
 
 exports.reject = (req, res) => {
     Like.reject(req.id_user, req.body.idDisliked).then(() => {
-        res.send({message:"reject success"})
-    }).catch(err => console.log(err.message))
+        res.status(200).send({error:false})
+    }).catch(err => res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true } ))
 }
 
 exports.getSuggestedUser = (req, res) => {
     User.getUsersPosImg(req.id_user)
         .then( ([users]) => {
-            res.status(200).send({users})
+            res.status(200).send({users, error: false})
         }) 
-        .catch(err => console.log(err.message))
+        .catch(err => res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true }))
 }
 
 exports.getSearchedUser = async (req, res) => {
@@ -74,11 +74,10 @@ exports.getSearchedUser = async (req, res) => {
     const search = {ageGap, rateGap, distance, tags} 
     try {
         const [moreUsers] = await User.getUserPosImgSearch(req.id_user, search)
-        res.send({users:moreUsers}) 
+        res.status(200).send({users:moreUsers, error: false})
     } catch (error) {
-        console.log(error.message);
+        res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true } )
     }
-
 }
 
 exports.getMessages = (req,res) => {
@@ -86,7 +85,7 @@ exports.getMessages = (req,res) => {
         .then(([matches]) => {
             res.status(200).send({matches, error: false})
         })
-        .catch(err => console.log(err.message))
+        .catch(err => res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true } ))
 }
 
 exports.getChat = async (req, res) => {
@@ -118,5 +117,18 @@ exports.sendMsg = async (req, res) => {
     }
     catch(e){
         res.status(200).send({error:e.message})
+    }
+}
+
+exports.setMessageStatus = (req, res) => {
+    try {
+        User.getByLogin(req.body.profile)
+            .then( async ([[user]]) => {
+                await Message.setStatus(req.body.status, req.id_user, user.id_user)
+                    res.status(200).send({error: false})
+            })
+            .catch(err => res.status(200).send({message: "Something went Wrong! Please try Later", error: true}))
+    } catch (error) {
+        res.status(200).send({message: "Something went Wrong! Please try Later", error: true})
     }
 }
