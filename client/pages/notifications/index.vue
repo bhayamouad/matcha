@@ -45,7 +45,7 @@
 import moment from "moment";
 import socket from "../../socket";
 
-let hpr = 5, num, from, time
+let hpr = 5, num, from, now
 
 export default {
   middleware: "redirect",
@@ -61,8 +61,7 @@ export default {
     };
   },
   async mounted() {
-      time = new Date(Date.now())
-      console.log(time);
+    now = new Date(Date.now())
     const listElm = document.querySelector("#page-cnt");
     listElm.addEventListener("scroll", async e => {
       if (listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight) {
@@ -93,7 +92,7 @@ export default {
       const ret = await this.$axios.$post("/matcha/getNotifications", {
         from: from,
         num: num + 1,
-        time
+        now
       });
       if (!ret.error) {
         if (ret.notifications[num]) {
@@ -124,7 +123,7 @@ export default {
     const ret = await this.$axios.$post("/matcha/getNotifications", {
       from: 0,
       num: num + 1,
-      time: Date.now
+      now: null
     });
     if (!ret.error) {
       if (ret.notifications.length) {
@@ -147,10 +146,8 @@ export default {
       }, 60000);
 
     socket.on("like" + ret.to, async (socketResult) => {
-        if (socketResult.status){
-        console.log(this.time);
+      if (socketResult.status){
         this.time.splice(0,0,moment(Date.now()).fromNow())
-        console.log(this.time);
         this.notifications.splice(0,0, {type: 'like', created_at: Date.now(), login_from: socketResult.liker})
         await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
       }

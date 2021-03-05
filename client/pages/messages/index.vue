@@ -12,7 +12,7 @@
                 <img class="profile-img" :src="$config.baseURL+'/'+match.path" />
               </span>
               <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
-              <span :class="{'bold':match.status === 0}" class="match-message">{{(match.sender_id!==match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Start chatting with ${match.login}`}}</span>
+              <span :class="{'bold':match.status === 0 && (match.sender_id !== match.id_user && match.message)}" class="match-message">{{(match.sender_id === match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}</span>
               <span class="match-time">{{time[index]}}</span>
             </div>
           </nuxt-link>
@@ -29,7 +29,7 @@
 <script>
 import moment from "moment";
 
-let hpr = 2, num, from, newMessages
+let hpr = 2, num, from, newMessages, now
 // moment.updateLocale('en', {
 //     relativeTime : {
 //         past: "%s",
@@ -63,6 +63,7 @@ export default {
     };
   },
   async mounted() {
+    now = Date.now()
     await new Promise(r => {
       setTimeout(r, 400);
     });
@@ -94,7 +95,8 @@ export default {
     from = 0
     const res = await this.$axios.$post("/matcha/getMessages", {
       from,
-      num: num + 1
+      num: num + 1,
+      now: null
     });
     if(!res.error)
     {
@@ -113,19 +115,19 @@ export default {
           this.matches = null;
         
         this.matches.forEach(element => {
-          (element.sent_at) ? this.time.push(moment(element.sent_at).fromNow()) : this.time.push(moment(element.matched_at).fromNow())
+          this.time.push(moment(element.sent_at).fromNow())
         });
         const that = this
         setInterval(function() {
-        that.updateTime();
-      }, 60000);
+          that.updateTime();
+        }, 60000);
     }
   },
   methods: {
     async fetchNew(){
       from += num;
       num = hpr;
-      const ret = await this.$axios.$post('/matcha/getMessages', {from: from, num: num + 1});
+      const ret = await this.$axios.$post('/matcha/getMessages', {from: from, num: num + 1, now});
       if(!ret.error)
       {
         console.log(ret.matches);
@@ -138,13 +140,13 @@ export default {
             this.more = false;
           this.matches = this.matches.concat(ret.matches);
       }
-    }
-  },
-  updateTime(){
-    this.time = []
-        this.notifications.forEach(element => {
-            (element.sent_at) ? this.time.push(moment(element.sent_at).fromNow()) : this.time.push(moment(element.matched_at).fromNow())
-        });
+    },
+    updateTime(){
+      this.time = []
+      this.matches.forEach(element => {
+        this.time.push(moment(element.sent_at).fromNow())
+      });
+  }
   }
 };
 </script>
@@ -187,6 +189,9 @@ export default {
 }
 .match-time{
     grid-area: tme;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #909090;
 }
 #loader-cnt{
     width: 100%;
@@ -205,5 +210,13 @@ export default {
 }
 .bold{
   font-weight: bold;
+}
+@media (max-width: 800px)
+{
+  #page-cnt li{
+    color: black;
+    padding: 0px;
+    border-bottom: solid 1px #ebeef0;
+  }
 }
 </style>

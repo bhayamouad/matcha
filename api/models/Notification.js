@@ -14,18 +14,17 @@ module.exports = class Notification {
       return db.execute("INSERT INTO notifications (type, `from`, `to`) VALUES (?,?,?)", [type, from, to])
 
   }
-  static getAllByUser(id,start,limit,time){
-    // let before
-    // if(!time)
-    //   before = `TRUE`
-    // else
-    //   before = `(n.created_at <= ${moment(time).format('YYYY-MM-DD HH:mm:ss')})`
-    // console.log(before);
+  static getAllByUser(id,start, limit, now){
+    let before
+    if(!now)
+      before = 'TRUE'
+    else
+      before = `(n.created_at <= '${moment(now).format('YYYY-MM-DD HH:mm:ss')}')`
     return db.execute(`SELECT id_notification, type, \`to\`, ut.login AS \`login_to\` ,uf.login AS \`login_from\`, n.created_at  FROM notifications n 
                         INNER JOIN users uf ON n.from = uf.id_user
                         INNER JOIN users ut ON n.to = ut.id_user
                       WHERE \`to\` = ?
-                        AND  n.created_at <= '${moment(time).format('YYYY-MM-DD HH:mm:ss')}'
+                        AND  ${before}
                         ORDER BY n.created_at DESC LIMIT  ${start},${limit}`,[id])
   }
 
