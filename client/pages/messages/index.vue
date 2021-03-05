@@ -31,26 +31,8 @@
 import moment from "moment";
 import socket from "../../socket"
 
-let hpr = 2, num, from, newMessages, now
-// moment.updateLocale('en', {
-//     relativeTime : {
-//         past: "%s",
-//         s: "%d s",
-//         ss: "%d s",
-//         m: "%d m",
-//         mm: "%d m",
-//         h: "%d h",
-//         hh: "%d h",
-//         d: "%d d",
-//         dd: "%d d",
-//         w: "%d w",
-//         ww: "%d w",
-//         M: "%d m",
-//         MM: "%d m",
-//         y: "%d y",
-//         yy: "%d y"
-//     }
-// });
+let hpr = 2, num, from, newMessages, now, that
+
 export default {
   middleware: "redirect",
   layout: "home",
@@ -117,7 +99,7 @@ export default {
       else
         this.matches = null;
       
-      const that = this
+      that = this
       this.matches.forEach((element, index) => {
         this.time.push(moment(element.sent_at).fromNow())
         socket.emit("isConnected", element.login);
@@ -149,6 +131,16 @@ export default {
           else
             this.more = false;
           this.matches = this.matches.concat(ret.matches);
+          that = this
+          this.matches.forEach((element, index) => {
+            this.time.push(moment(element.sent_at).fromNow())
+            socket.emit("isConnected", element.login);
+            socket.on(element.login, message => {
+              const tmp = that.connected.slice()
+              tmp[index] = message
+              that.connected = tmp
+            });
+      });
       }
     },
     updateTime(){

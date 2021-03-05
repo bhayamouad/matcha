@@ -85,7 +85,7 @@ exports.getMessages = (req,res) => {
         .then(([matches]) => {
             res.status(200).send({matches, error: false})
         })
-        .catch(err => res.status(200).send({ message: 'Something went Wrong! Please try Later', error: true } ))
+        .catch(err => res.status(200).send({ message: err.message, error: true } ))
 }
 
 exports.getChat = async (req, res) => {

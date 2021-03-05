@@ -10,18 +10,29 @@
             :repeat="false"
             animated="fade"
           >
-            <b-carousel-item v-for="(image, i) in data.user.images.split(',')" :key="i">
+            <b-carousel-item
+              v-for="(image, i) in data.user.images.split(',')"
+              :key="i"
+            >
               <section>
                 <div class="hero-body has-text-centered">
-                  <img class="crsl-img" :src="$config.baseURL+'/'+image" />
+                  <img class="crsl-img" :src="$config.baseURL + '/' + image" />
                 </div>
               </section>
             </b-carousel-item>
           </b-carousel>
           <img v-else class="crsl-img" src="@/assets/profile.png" />
           <div id="user-action">
-            <i @click="blockUser" v-if="!data.is_me" class="fas fa-ban act-icons"></i>
-            <i @click="reportUser" v-if="!data.is_me" class="fas fa-flag act-icons"></i>
+            <i
+              @click="blockUser"
+              v-if="!data.is_me"
+              class="fas fa-ban act-icons"
+            ></i>
+            <i
+              @click="reportUser"
+              v-if="!data.is_me"
+              class="fas fa-flag act-icons"
+            ></i>
             <nuxt-link v-if="data.is_me" to="/settings">
               <i class="fas fa-user-edit act-icons"></i>
             </nuxt-link>
@@ -32,7 +43,7 @@
           <div
             v-if="!data.is_me && data.user.images"
             id="like-act"
-            :class="{'liked':data.liked}"
+            :class="{ liked: data.liked }"
             @click="likeButton"
           >
             <i class="fas fa-heart"></i>
@@ -41,14 +52,24 @@
         <div id="card-info">
           <div id="inf-rt">
             <div class="prf-txts" id="prf-name-cnt">
-              <div id="prf-name">{{data.user.fname}} {{data.user.lname}}</div>
-              <span
-                v-if="data.user.birthdate"
-                id="prf-age"
-              >, {{moment().diff(data.user.birthdate, 'years')}}</span>
-              <i v-if="data.user.gender == 'F'" class="fas fa-venus usr-gender"></i>
-              <i v-if="data.user.gender == 'M'" class="fas fa-mars usr-gender"></i>
-              <i v-if="data.user.gender == 'O'" class="fas fa-neuter usr-gender"></i>
+              <div id="prf-name">
+                {{ data.user.fname }} {{ data.user.lname }}
+              </div>
+              <span v-if="data.user.birthdate" id="prf-age"
+                >, {{ moment().diff(data.user.birthdate, "years") }}</span
+              >
+              <i
+                v-if="data.user.gender == 'F'"
+                class="fas fa-venus usr-gender"
+              ></i>
+              <i
+                v-if="data.user.gender == 'M'"
+                class="fas fa-mars usr-gender"
+              ></i>
+              <i
+                v-if="data.user.gender == 'O'"
+                class="fas fa-neuter usr-gender"
+              ></i>
             </div>
             <div v-if="data.user.rating" id="rating">
               <b-rate
@@ -64,23 +85,41 @@
           </div>
           <div v-if="data.user" id="interest">
             <span>Looking For</span>
-            <i v-if="data.user.interest == 'F'" class="fas fa-venus usr-int"></i>
+            <i
+              v-if="data.user.interest == 'F'"
+              class="fas fa-venus usr-int"
+            ></i>
             <i v-if="data.user.interest == 'M'" class="fas fa-mars usr-int"></i>
-            <i v-if="data.user.interest == 'B'" class="fas fa-venus-mars usr-int"></i>
+            <i
+              v-if="data.user.interest == 'B'"
+              class="fas fa-venus-mars usr-int"
+            ></i>
           </div>
           <div v-if="data.user" id="sta-cnt">
-            <span class="prf-txts" id="prf-username" v-if="data.user.login">@{{data.user.login}}</span>
+            <span class="prf-txts" id="prf-username" v-if="data.user.login"
+              >@{{ data.user.login }}</span
+            >
             <span v-if="data.is_me">
-              <i id="usr-state" style="color:green;" class="fas fa-circle"></i>
+              <i id="usr-state" style="color: green" class="fas fa-circle"></i>
               <span>online</span>
             </span>
             <span v-if="connected && !data.is_me">
-              <i id="usr-state" style="color:green;" class="fas fa-circle"></i>
+              <i id="usr-state" style="color: green" class="fas fa-circle"></i>
               <span>online</span>
             </span>
             <span v-if="!connected && !data.is_me">
-              <i id="usr-state" style="color:gray;" class="fas fa-circle"></i>
-              <span>Active {{lastTime}}</span>
+              <i id="usr-state" style="color: gray" class="fas fa-circle"></i>
+              <span
+                >Last seen
+                {{
+                  moment(data.user.last_connection).calendar(null, {
+                    sameDay: "[Today at] LT",
+                    lastDay: "[Yesterday at] LT",
+                    lastWeek: "dddd [at] LT",
+                    sameElse: "DD/MM/YYYY [at] LT",
+                  })
+                }}</span
+              >
             </span>
           </div>
           <div v-if="data.user.tags" id="tags">
@@ -90,10 +129,11 @@
                 v-for="(item, i) in data.user.tags.split(',')"
                 :key="i"
                 id="single-tag"
-              >#{{item}}</b-tag>
+                >#{{ item }}</b-tag
+              >
             </b-taglist>
           </div>
-          <div id="prf-bio">{{data.user.biography}}</div>
+          <div id="prf-bio">{{ data.user.biography }}</div>
         </div>
       </div>
       <div v-else id="profile-card">
@@ -112,10 +152,10 @@ import socket from "../socket";
 export default {
   async fetch() {
     const data = await this.$axios.$post("/account/getprofile", {
-      username: this.$route.params.profile
+      username: this.$route.params.profile,
     });
     this.data = data;
-    await new Promise(r => {
+    await new Promise((r) => {
       setTimeout(r, 100);
     });
     this.fetched = true;
@@ -125,23 +165,21 @@ export default {
       if (data.sendNotif)
         socket.emit("visit", {
           visited: this.data.user.login,
-          visitor: this.data.loggedUser.login
+          visitor: this.data.loggedUser.login,
         });
-      this.lastTime = moment(this.data.user.last_connection).fromNow();
       const that = this;
       let flag = 0;
 
-      setInterval(function() {
+      setInterval(function () {
         that.updateTime();
       }, 60000);
 
       socket.emit("isConnected", this.$route.params.profile);
 
-      socket.on(this.$route.params.profile, message => {
+      socket.on(this.$route.params.profile, (message) => {
         that.connected = message;
         if (!message && flag) {
           that.data.user.last_connection = moment();
-          this.lastTime = moment(that.data.user.last_connection).fromNow();
         }
         flag = 1;
       });
@@ -151,7 +189,7 @@ export default {
     return {
       data: {
         user: { images: null },
-        liked: null
+        liked: null,
       },
       rate: null,
       maxs: 5,
@@ -160,8 +198,7 @@ export default {
       isSpaced: true,
       moment: moment,
       connected: false,
-      lastTime: null,
-      fetched: false
+      fetched: false,
     };
   },
   beforeDestroy() {
@@ -169,13 +206,15 @@ export default {
   },
   methods: {
     updateTime() {
-      this.lastTime = moment(this.data.user.last_connection).fromNow();
+      this.data.user.last_connection = moment(
+        this.data.user.last_connection
+      ).fromNow();
     },
     async likeButton() {
       if (this.data.loggedUser.status > 2) {
         if (!this.data.liked) {
           const res = await this.$axios.$post("/matcha/like", {
-            idLiked: this.data.user.id_user
+            idLiked: this.data.user.id_user,
           });
           this.data.liked = this.data.liked ? false : true;
           if (res.like === "like")
@@ -190,16 +229,16 @@ export default {
             message: `Are you Sure you want to Unlike <b>${this.data.user.login}</b>`,
             onConfirm: async () => {
               const result = await this.$axios.$post("/matcha/unlike", {
-                idLiked: this.data.user.id_user
+                idLiked: this.data.user.id_user,
               });
               if (result.unlike) {
                 socket.emit("dislike", {
                   unliker: result.unliker,
-                  unliked: result.unliked
+                  unliked: result.unliked,
                 });
               }
               this.data.liked = this.data.liked ? false : true;
-            }
+            },
           });
         }
       } else
@@ -211,7 +250,7 @@ export default {
     },
     async reportUseract() {
       const ret = await this.$axios.$post("/account/reportuser", {
-        usr: this.data.user.id_user
+        usr: this.data.user.id_user,
       });
       if (ret.error)
         this.$snoast.toast(
@@ -229,7 +268,7 @@ export default {
     },
     async blockUseract() {
       const ret = await this.$axios.$post("/account/blockuser", {
-        usr: this.data.user.id_user
+        usr: this.data.user.id_user,
       });
       if (ret.error)
         this.$snoast.toast(
@@ -248,7 +287,7 @@ export default {
         confirmText: "Block User",
         type: "is-danger",
         hasIcon: true,
-        onConfirm: async () => this.blockUseract()
+        onConfirm: async () => this.blockUseract(),
       });
     },
     reportUser() {
@@ -259,10 +298,10 @@ export default {
         confirmText: "Report User",
         type: "is-danger",
         hasIcon: true,
-        onConfirm: async () => this.reportUseract()
+        onConfirm: async () => this.reportUseract(),
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

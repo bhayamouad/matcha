@@ -16,7 +16,7 @@
       <nuxt-link to="/messages">
         <li>
           <i class="fas fa-envelope">
-            <div id="new-messages" :class="{'new-notif': newMessages}">{{newMessages}}</div>
+            <span id="new-messages" :class="{'new-notif': newMessages}">{{newMessages}}</span>
           </i>
           <span class="pg-title">Messages</span>
         </li>
@@ -86,26 +86,12 @@ export default {
     this.loggedUser = res.loggedUser
     this.nolink = (this.loggedUser.status>1) ? false : true
     socket.emit("connectUser", this.loggedUser.username)
-    socket.on("like"+this.loggedUser.username, (socketResult) => {
-        if(socketResult.status)
-          this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
-      })
-    socket.on("dislike"+this.loggedUser.username, (socketResult) => {
-        if(socketResult.status)
-          this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
-      })
-
-    socket.on("match1"+this.loggedUser.username, (socketResult) => {
-      if(socketResult.status)
-        this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
-    })
-    socket.on("match2"+this.loggedUser.username, (socketResult) => {
-        this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
-    })
-    socket.on("visit"+this.loggedUser.username, (socketResult) => {
-      if(socketResult.status)
-        this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1
-    })
+    socket.on("like"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
+    socket.on("dislike"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
+    socket.on("match1"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
+    socket.on("match2"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
+    socket.on("visit"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
+    socket.on("msg"+this.loggedUser.username, ( ) => this.newMessages = (this.newMessages) ? parseInt(this.newMessages) + 1 : 1)
   },
   methods: {
     async logout()

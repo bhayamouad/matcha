@@ -8,28 +8,24 @@
         <li v-for="(item,index) in notifications" :key="index">
           <p v-if="item.type === 'like'">
             <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>
-            Liked you {{time[index]}}.
+            liked you. <span class="match-time">{{time[index]}}</span>
           </p>
           <p v-if="item.type === 'dislike'">
             <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>
-            Unliked you {{time[index]}}.
+            unliked you. <span class="match-time">{{time[index]}}</span>
           </p>
           <p v-if="item.type === 'visit'">
             <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>
-            Visited your Profile {{time[index]}}.
+            visited your Profile. <span class="match-time">{{time[index]}}</span>
           </p>
           <p v-if="item.type === 'match1'">
             <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>
-            Liked you Back You are Connected {{time[index]}}.
+            liked you back. <nuxt-link :to="`/messages/${item.login_from}`">Begin a conversation </nuxt-link>. <span class="match-time">{{time[index]}}</span>
           </p>
           <p v-if="item.type === 'match2'">
             You and
             <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>
-            are Connected {{time[index]}}.
-          </p>
-          <p v-if="item.type === 'message'">
-            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>
-            send you a message {{time[index]}}.
+            are Connected. <nuxt-link :to="`/messages/${item.login_from}`">Begin a conversation</nuxt-link>. <span class="match-time">{{time[index]}}</span>
           </p>
         </li>
         <div id="loader-cnt" v-if="showmore">
@@ -183,7 +179,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #loader-cnt {
   width: 100%;
   height: 50px;
@@ -234,6 +230,10 @@ export default {
 }
 #loader-cnt {
   margin-top: 20px;
+}
+.match-time{
+  margin-left: 5px;
+  color: #909090;
 }
 @-webkit-keyframes spin {
   0% {

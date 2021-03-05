@@ -26,10 +26,6 @@ const corsOptions = {
 app.use(cors(corsOptions))
 app.use(cookieParser())
 
-
-app.get('/test', (req, res)=> {
-  res.send(`The API is running!`)
-})
 const usersRouter = require('./routes/usersRouter')
 const matchaRouter = require('./routes/matchaRouter')
 
@@ -71,55 +67,41 @@ io.on('connection', function(socket){
   socket.on("sendMsg", (data) =>{ 
 
     redis.get(data.to, (err, res) =>{
-      if(res)
+      if(res){
         socket.broadcast.emit(data.from+"=>"+data.to, data.msg)
-      // ba3boooooola
+        socket.broadcast.emit("msg"+data.to, data)
+      }
     })
   })
 
   socket.on("like", (data) => {
     redis.get(data.liked, (err, res) =>{
-      if(res){
-        socket.broadcast.emit("like"+data.liked, {liker:data.liker, status: true})
-      }
-      else{
-        socket.emit("like"+data.liked, {status: false})
-      }
+      if(res)
+        socket.broadcast.emit("like"+data.liked, {liker:data.liker})
     })
   })
 
   socket.on("dislike", (data) => {
     redis.get(data.unliked, (err, res) =>{
-      if(res){
-        socket.broadcast.emit("dislike"+data.unliked, {unliker:data.unliker, status: true})
-      }
-      else{
-        socket.emit("dislike"+data.unliked, {status: false})
-      }
+      if(res)
+        socket.broadcast.emit("dislike"+data.unliked, {unliker:data.unliker})
     })
   })
 
   socket.on("match1", (data) => {
     redis.get(data.liked, (err, res) =>{
-      if(res){
-        socket.broadcast.emit("match1"+data.liked, {liker:data.liker, status: true})
-      }
-      else{
-        socket.emit("match1"+data.liked, {status: false})
-      }
+      if(res)
+        socket.broadcast.emit("match1"+data.liked, {liker:data.liker})
     })
   })
   socket.on("match2", (data) => {
-        socket.emit("match2"+data.liker, {liked:data.liked, status: true})
+        socket.emit("match2"+data.liker, {liked:data.liked})
   })
 
   socket.on("visit", (data) => {
     redis.get(data.visited, (err, res) => {
-      if(res){
-        socket.broadcast.emit("visit"+data.visited, {visitor: data.visitor, status: true})
-      }
-      else
-        socket.emit("visit"+data.visited, {status: false})
+      if(res)
+        socket.broadcast.emit("visit"+data.visited, {visitor: data.visitor})
     })
   })
 

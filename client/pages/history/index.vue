@@ -6,9 +6,9 @@
     <div id="page-cnt">
       <ul v-if="history">
         <li v-for="(item, index) in history" :key="item.id_history">
-          You Visited
+          You visited
           <nuxt-link :to="`/profile/${item.login}`">{{ item.login }}</nuxt-link>
-          Profile {{ time[index] }}.
+          profile. <span class="match-time">{{time[index]}}</span>
         </li>
         <div id="loader-cnt" v-if="showmore"><div class="loader"></div></div>
       </ul>
@@ -165,6 +165,10 @@ export default {
 }
 #loader-cnt {
   margin-top: 20px;
+}
+.match-time{
+  margin-left: 5px;
+  color: #909090;
 }
 @-webkit-keyframes spin {
   0% {
