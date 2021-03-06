@@ -13,7 +13,10 @@
               </span>
               <i v-if="connected[index]" style="color: green;" class="fas fa-circle user-state"></i>
               <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
-              <span :class="{'bold':match.status === 0 && (match.sender_id === match.id_user && match.message)}" class="match-message">{{(match.sender_id !== match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}</span>
+              <span :class="{
+                              'bold':(match.status_first === 0 && (match.sender_id === match.id_user && match.message)) 
+                                      || (match.status_second === 0 && (match.sender_id === match.id_user && match.message))}"
+                     class="match-message">{{(match.sender_id !== match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}</span>
               <span class="match-time">{{time[index]}}</span>
             </div>
           </nuxt-link>

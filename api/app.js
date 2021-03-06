@@ -54,36 +54,7 @@ io.on('connection', function(socket){
     redis.set(user, socket.id)
     socket.broadcast.emit(usr, true);
   })
-  socket.on("activeInbox", (inbox) => {
-    console.log(inbox);
-    let tmp
-    tmp = inbox
-    redis.set("to=>"+inbox.to+"from=>"+inbox.from, true)
-  })
-  socket.on("isActive", (inbox) =>{
-    console.log(inbox);
-    redis.get("to=>"+inbox.from+"from=>"+inbox.to, (err, data) =>{
-      if(data){
-        console.log(data+" isActive if")
-        socket.emit("active_"+inbox.to, true)
-      }
-      else{
-        console.log(data+" isActive else")
-        socket.emit("active_"+inbox.to, false)
-      }
-    })
-  })
-  socket.on("inactiveInbox", (inbox) => {
-    redis.get("to=>"+inbox.to+"from=>"+inbox.from, (err, data) =>{
-      if(data){
-        console.log(data+" inActive if")
-        redis.del("to=>"+inbox.to+"from=>"+inbox.from)
-      }
-      else{
-        console.log(data+" inActive else")
-      }
-    })
-  })
+  
   socket.on("isConnected", (user) =>{ 
 
     redis.get(user, (err, data) =>{
