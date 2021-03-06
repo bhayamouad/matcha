@@ -112,7 +112,6 @@ exports.sendMsg = async (req, res) => {
     const msg = req.body.msg
     try{
         const [[match]] = await Message.ifMatched(from, to)
-        console.log(match)
         if(match)
         {
             const [ret] = await Message.sendMessage(from, to, msg)

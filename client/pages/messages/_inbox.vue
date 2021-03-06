@@ -73,6 +73,9 @@ export default {
         fetched: false
       }
     },
+    beforeDestroy() {
+    this.$snoast.close()
+  },
    methods: {
      scrollToElement() {
       const elm = this.$el.getElementsByClassName('msg')[0];
