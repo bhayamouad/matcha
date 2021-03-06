@@ -111,9 +111,16 @@ exports.sendMsg = async (req, res) => {
     const to = req.body.to
     const msg = req.body.msg
     try{
-        const [ret] = await Message.sendMessage(from, to, msg)
-        if(ret.affectedRows)
-            res.status(200).send({error:false})
+        const [[match]] = await Message.ifMatched(from, to)
+        console.log(match)
+        if(match)
+        {
+            const [ret] = await Message.sendMessage(from, to, msg)
+            if(ret.affectedRows)
+                res.status(200).send({error:false})
+            else
+                res.status(200).send({error:"Not sent"})
+        }
         else
             res.status(200).send({error:"Not sent"})
     }

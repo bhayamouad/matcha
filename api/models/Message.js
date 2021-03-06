@@ -55,4 +55,12 @@ module.exports = class Message {
     static sendMessage(from, to, msg){
         return db.execute(`INSERT INTO messages (message, sender_id, receiver_id) VALUES(?,?,?)`,[msg, from, to])
     }
+    static ifMatched(from, to)
+    {
+        // return db.execute(`SELECT * FROM matches WHERE (matches.first_profile = ? AND matches.second_profile = ?) OR (matches.first_profile = ? AND matches.second_profile = ?)
+        // `,[from, to, to, from])
+        return db.execute(`SELECT * FROM matches WHERE ((matches.first_profile = ${from} AND matches.second_profile = ?) OR (matches.first_profile = ? AND matches.second_profile = ${from}))
+        AND ${from}  NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ? AND blocked_id = ${from})
+        AND ${from} NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = ${from} AND blocked_id = ?)`,[to,to,to,to])
+    }
 }
