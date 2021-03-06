@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const fs = require('fs')
-const bcrypt = require('bcrypt') 
+const bcrypt = require('bcrypt')
 const multer  = require('multer')
 const axios = require('axios')
 

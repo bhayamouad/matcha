@@ -83,7 +83,8 @@ connection.connect(function(err) {
                   connection.query(`CREATE TABLE matches(
                                     first_profile int(11) NOT NULL,
                                     second_profile int(11) NOT NULL,
-                                    status int(1) NOT NULL DEFAULT 0,
+                                    status_first int(1) NOT NULL DEFAULT 0,
+                                    status_second int(1) NOT NULL DEFAULT 0,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                               );`);
 
