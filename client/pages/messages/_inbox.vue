@@ -94,6 +94,9 @@ export default {
         fetched: false
       }
     },
+    beforeDestroy() {
+    this.$snoast.close()
+  },
    methods: {
      scrollToElement() {
       const elm = this.$el.getElementsByClassName('msg')[0];
@@ -101,6 +104,7 @@ export default {
         elm.scrollIntoView({behavior: 'smooth'});
   },
    async sendMsg(){
+     this.msg = this.msg.trim()
      if(this.msg)
      {
         const ret = await this.$axios.$post("/matcha/sendmsg",{to: this.info.id_user, msg: this.msg})
@@ -115,7 +119,8 @@ export default {
           // this.scrollToElement()
         }
         else
-          alert("something went wong!")
+          this.$snoast.toast(this.$buefy, 'Something went wrong, Please try later!', 'is-danger')
+          // alert("something went wong!")
      }
    } 
   },

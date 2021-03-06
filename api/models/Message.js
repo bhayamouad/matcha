@@ -37,25 +37,31 @@ module.exports = class Message {
     static getChatInfoByLogin(id, usr)
     {
         return db.execute(`SELECT u.id_user,u.login, u.fname,u.lname,i.path from users u
-        JOIN images i ON (i.user_id = u.id_user and i.is_profile = 0)
-        where u.login = ? 
-        AND (u.id_user IN (SELECT first_profile FROM matches WHERE second_profile = ${id}) OR u.id_user IN (SELECT second_profile FROM matches WHERE first_profile = ${id}))
-        AND u.id_user NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ${id} AND blocked_id = u.id_user)
-        AND u.id_user NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = u.id_user AND blocked_id = ${id})`,[usr])
+                            JOIN images i ON (i.user_id = u.id_user and i.is_profile = 0)
+                             where u.login = ? 
+                                AND (u.id_user IN (SELECT first_profile FROM matches WHERE second_profile = ${id}) OR u.id_user IN (SELECT second_profile FROM matches WHERE first_profile = ${id}))
+                                AND u.id_user NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ${id} AND blocked_id = u.id_user)
+                                AND u.id_user NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = u.id_user AND blocked_id = ${id})`,[usr])
     }
 
     static getChatByLogin(id, usr)
     {
         return db.execute(`SELECT m.message,m.created_at,m.sender_id  from users u
-        JOIN messages m on (m.sender_id = u.id_user and m.receiver_id = ${id} OR m.receiver_id = u.id_user AND m.sender_id = ${id})
-        where u.login = ? 
-        AND (u.id_user IN (SELECT first_profile FROM matches WHERE second_profile = ${id}) OR u.id_user IN (SELECT second_profile FROM matches WHERE first_profile = ${id}))
-        ORDER BY m.created_at ASC`,[usr])
+                            JOIN messages m on (m.sender_id = u.id_user and m.receiver_id = ${id} OR m.receiver_id = u.id_user AND m.sender_id = ${id})
+                            where u.login = ? 
+                                AND (u.id_user IN (SELECT first_profile FROM matches WHERE second_profile = ${id}) OR u.id_user IN (SELECT second_profile FROM matches WHERE first_profile = ${id}))
+                                ORDER BY m.created_at ASC`,[usr])
     }
     static sendMessage(from, to, msg){
         return db.execute(`INSERT INTO messages (message, sender_id, receiver_id) VALUES(?,?,?)`,[msg, from, to])
     }
     static setStatus(status, profile1, profile2){
         return db.execute(`UPDATE matches SET status = ${status} WHERE (first_profile = ? AND second_profile = ? ) OR first_profile = ? AND second_profile = ?`,[profile1, profile2, profile2, profile1])
+    }
+    static ifMatched(from, to)
+    {
+        return db.execute(`SELECT * FROM matches WHERE ((matches.first_profile = ${from} AND matches.second_profile = ?) OR (matches.first_profile = ? AND matches.second_profile = ${from}))
+                            AND ${from}  NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ? AND blocked_id = ${from})
+                            AND ${from} NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = ${from} AND blocked_id = ?)`,[to,to,to,to])
     }
 }
