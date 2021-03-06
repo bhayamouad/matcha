@@ -12,6 +12,7 @@ router.get('/getSuggestedUser', usersMiddleware.authorize, matchaController.getS
 router.post('/search', usersMiddleware.authorize, matchaController.getSearchedUser)
 router.post('/getNotifications', usersMiddleware.authorize, logsController.getNotifications)
 router.get('/getNewNotification', usersMiddleware.authorize, logsController.getNewNotifications)
+router.get('/getNewMessages', usersMiddleware.authorize, logsController.getNewMessages)
 router.put('/setNotifStatus', usersMiddleware.authorize, logsController.setNotifStatus)
 router.post('/getMessages', usersMiddleware.authorize, matchaController.getMessages)
 router.post('/getchat', usersMiddleware.authorize, matchaController.getChat)

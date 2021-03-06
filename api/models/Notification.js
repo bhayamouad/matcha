@@ -14,7 +14,7 @@ module.exports = class Notification {
       return db.execute("INSERT INTO notifications (type, `from`, `to`) VALUES (?,?,?)", [type, from, to])
 
   }
-  static getAllByUser(id,start, limit, now){
+  static getNotificationsByUser(id,start, limit, now){
     let before
     if(!now)
       before = 'TRUE'

@@ -102,12 +102,12 @@ export default {
         this.history.forEach((element) => {
           this.time.push(moment(element.created_at).fromNow());
         });
+        const that = this;
+        setInterval(function () {
+          that.updateTime();
+        }, 60000);
       } else this.history = null;
     }
-    const that = this;
-    setInterval(function () {
-      that.updateTime();
-    }, 60000);
     from = num;
     num = hpr;
   },

@@ -14,9 +14,7 @@
           <i v-if="connected" style="color:green;" class=" usr-state fas fa-circle"></i>
           <i v-else style="color:gray;" class=" usr-state fas fa-circle"></i>
         </span>
-        
       </div></nuxt-link>
-      {{active}}
     </div>
       <div v-if="messages" id="chat-cnt">
         <div  v-for="(item,i) in messages.slice().reverse()" :key="i" >
@@ -43,8 +41,6 @@ export default {
     layout: 'home',
     async fetch(){
       to = this.$route.params.inbox
-      console.log(to);
-      
       const data = await this.$axios.$post("/matcha/getchat", {login: to})
       if(data.error)
       {
@@ -61,16 +57,8 @@ export default {
         const that = this
         socket.emit("isConnected", to);
         socket.on(to, message => {
-          if(message){
-            socket.emit("activeInbox", {from: this.info.me, to})
-            socket.emit("isActive", {from: this.info.me, to})
-          }
           that.connected = message;
         });
-        
-        socket.on("active_"+ this.info.me, active => {
-          that.active = active
-        })
         socket.on(to+"=>"+this.info.me, message => {
           that.messages.push({sender_id:that.info.id_user ,message:message})
         });
@@ -78,9 +66,6 @@ export default {
     },
     async created(){
       await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})
-    },
-    beforeDestroy(){
-      socket.emit("inactiveInbox", {from: this.info.me, to});
     },
     data(){
       return{
@@ -90,7 +75,6 @@ export default {
         user: this.$route.params.inbox,
         msg: null,
         connected: false,
-        active: null,
         fetched: false
       }
     },
@@ -104,7 +88,8 @@ export default {
         elm.scrollIntoView({behavior: 'smooth'});
   },
    async sendMsg(){
-     this.msg = this.msg.trim()
+     if(this.msg)
+      this.msg = this.msg.trim()
      if(this.msg)
      {
         const ret = await this.$axios.$post("/matcha/sendmsg",{to: this.info.id_user, msg: this.msg})
@@ -113,14 +98,9 @@ export default {
           socket.emit("sendMsg", {from:this.info.me, to:this.$route.params.inbox, msg:this.msg});
           this.messages.push({sender_id:0,message:this.msg})
           this.msg = null
-          //  await new Promise(r => {
-          //     setTimeout(r, 10)
-          //   });
-          // this.scrollToElement()
         }
         else
           this.$snoast.toast(this.$buefy, 'Something went wrong, Please try later!', 'is-danger')
-          // alert("something went wong!")
      }
    } 
   },

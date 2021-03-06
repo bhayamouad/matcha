@@ -134,7 +134,6 @@ export default {
     },
     onFilePicked(event, index) {
       const files = event.target.files;
-      console.log(files);
       if (files.length && files[0].type.match('image.*')) {
         const fileReader = new FileReader();
         fileReader.addEventListener("load", e => {
