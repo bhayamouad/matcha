@@ -126,16 +126,3 @@ exports.sendMsg = async (req, res) => {
         res.status(200).send({error:e.message})
     }
 }
-
-exports.setMessageStatus = (req, res) => {
-    try {
-        User.getByLogin(req.body.profile)
-            .then( async ([[user]]) => {
-                await Message.setStatus(req.body.status, req.id_user, user.id_user)
-                    res.status(200).send({error: false})
-            })
-            .catch(err => res.status(200).send({message: "Something went Wrong! Please try Later", error: true}))
-    } catch (error) {
-        res.status(200).send({message: "Something went Wrong! Please try Later", error: true})
-    }
-}

@@ -18,7 +18,7 @@ module.exports = class Message {
             before = 'TRUE'
         else
             before = `( (CASE WHEN msg.created_at IS NULL THEN m.created_at ELSE msg.created_at END) <= '${moment(now).format('YYYY-MM-DD HH:mm:ss')}')`
-        return db.execute(`SELECT u.id_user, u.login, u.fname, u.lname, i.path, msg.message, msg.sender_id, m.status, 
+        return db.execute(`SELECT u.id_user, u.login, u.fname, u.lname, i.path, msg.message, msg.sender_id, m.status_first, m.status_second, 
                                 (CASE WHEN msg.created_at IS NULL 
                                     THEN m.created_at
                                     ELSE msg.created_at END) as sent_at 
@@ -56,7 +56,15 @@ module.exports = class Message {
         return db.execute(`INSERT INTO messages (message, sender_id, receiver_id) VALUES(?,?,?)`,[msg, from, to])
     }
     static setStatus(status, profile1, profile2){
-        return db.execute(`UPDATE matches SET status = ${status} WHERE (first_profile = ? AND second_profile = ? ) OR first_profile = ? AND second_profile = ?`,[profile1, profile2, profile2, profile1])
+        return db.execute(`SELECT * FROM matches where (first_profile = ${profile1} AND second_profile = ${profile2} ) OR (first_profile = ${profile2} AND second_profile = ${profile1})` )
+                    .then( ([[match]]) => {
+                        let change
+                        if(match.first_profile === profile1)
+                            change = "status_first"
+                        else
+                            change = "status_second"
+                        return db.execute(`UPDATE matches SET ${change} = ${status} WHERE (first_profile = ? AND second_profile = ? ) OR first_profile = ? AND second_profile = ?`,[profile1, profile2, profile2, profile1])
+                    })
     }
     static ifMatched(from, to)
     {

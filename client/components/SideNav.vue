@@ -14,7 +14,7 @@
 
     <div :class="{'nolink':nolink}">
       <nuxt-link to="/messages">
-        <li>
+        <li @click="newMessages=''">
           <i class="fas fa-envelope">
             <span id="new-messages" :class="{'new-notif': newMessages}">{{newMessages}}</span>
           </i>
@@ -91,7 +91,12 @@ export default {
     socket.on("match1"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
     socket.on("match2"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
     socket.on("visit"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
-    socket.on("msg"+this.loggedUser.username, ( ) => this.newMessages = (this.newMessages) ? parseInt(this.newMessages) + 1 : 1)
+    socket.on("msg"+this.loggedUser.username, async ( users ) => {
+      if(this.$route.params.inbox !== users.from){
+        await this.$axios.$put("/matcha/setMessageStatus", {status: 0, profile: users.to})
+        this.newMessages = (this.newMessages) ? parseInt(this.newMessages) + 1 : 1
+      }
+    })
   },
   methods: {
     async logout()
