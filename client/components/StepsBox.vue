@@ -110,6 +110,6 @@ export default {
 };
 </script>
 
-<style src="@/style/steps.css">
+<style src="@/style/steps.css" scoped>
 
 </style>

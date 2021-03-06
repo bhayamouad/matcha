@@ -149,6 +149,47 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#loader-cnt {
+  width: 100%;
+  height: 50px;
+  /* background-color: red; */
+}
+#page-title {
+  color: black;
+  border-bottom: solid 3px #ebeef0;
+  padding: 10px 30px;
+  height: 50px;
+}
+#page-title h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+#page-cnt {
+  /* background-color: bisque; */
+  overflow: auto;
+  height: calc(100vh - 50px);
+}
+#page-cnt li {
+  color: black;
+  padding: 7px 30px;
+  border-bottom: solid 1px #ebeef0;
+}
+#page-cnt ul {
+  margin-bottom: 40vh;
+}
+#page-cnt li:hover {
+  background-color: #f0f3f5;
+}
+#empty-msg {
+  /* color: black; */
+  width: 100%;
+  text-align: center;
+  padding-top: 20px;
+  font-size: 1.3rem;
+}
+.profile-img{
+  transform: translateY(-25%);
+}
 .match-info{
     display: grid;
     grid-template-areas:

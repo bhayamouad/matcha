@@ -19,10 +19,9 @@
       {{active}}
     </div>
       <div v-if="messages" id="chat-cnt">
-        <div  v-for="(item,i) in messages.slice().reverse()" :key="i" >
+        <div  v-for="(item,i) in messages" :key="i" >
           <span class="oth-msg msg" v-if="info.id_user == item.sender_id">{{item.message}}</span>
           <span class="self-msg msg" v-if="info.id_user != item.sender_id">{{item.message}}</span>
-          <!-- <hr style="height:0px; visibility:hidden;" /> -->
           </div>
       </div>
         <div id="msg-inp-cnt"><b-field @keyup.native.enter="sendMsg" id="msg-input">
@@ -38,14 +37,17 @@
 <script>
 import socket from "@/socket";
 let to
+let from = 0
+let num = 20;
 export default {
     middleware: 'redirect',
     layout: 'home',
     async fetch(){
       to = this.$route.params.inbox
-      console.log(to);
       
-      const data = await this.$axios.$post("/matcha/getchat", {login: to})
+      const data = await this.$axios.$post("/matcha/getchat", {login: to, from, num})
+      from += num;
+      num =2;
       if(data.error)
       {
         this.$router.push('/messages')
@@ -72,12 +74,25 @@ export default {
           that.active = active
         })
         socket.on(to+"=>"+this.info.me, message => {
-          that.messages.push({sender_id:that.info.id_user ,message:message})
+          that.messages.unshift({sender_id:that.info.id_user ,message:message})
+          that.scrollToElement();
         });
       }
     },
     async created(){
       await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})
+    },
+    async mounted(){
+      await new Promise(r => {
+        setTimeout(r, 400)
+    });
+       const listElm = document.querySelector("#chat-cnt");
+    listElm.addEventListener("scroll", async (e) => {
+      if (listElm.scrollTop == 0) {
+        console.log("ok")
+        this.fetchNew()
+      }
+    });
     },
     beforeDestroy(){
       socket.emit("inactiveInbox", {from: this.info.me, to});
@@ -98,29 +113,35 @@ export default {
     this.$snoast.close()
   },
    methods: {
-     scrollToElement() {
+     async fetchNew(){
+       const newData = await this.$axios.$post("/matcha/getchat", {login: to, from, num})
+       this.messages = this.messages.concat(newData.messages)
+        from += num;
+        console.log(newData.messages)
+     },
+     async scrollToElement() {
+       await new Promise(r => {
+              setTimeout(r, 10)
+            });
       const elm = this.$el.getElementsByClassName('msg')[0];
       if (elm) 
         elm.scrollIntoView({behavior: 'smooth'});
   },
    async sendMsg(){
-     this.msg = this.msg.trim()
+     if(this.msg)
+      this.msg = this.msg.trim()
      if(this.msg)
      {
         const ret = await this.$axios.$post("/matcha/sendmsg",{to: this.info.id_user, msg: this.msg})
         if(!ret.error)
         {
           socket.emit("sendMsg", {from:this.info.me, to:this.$route.params.inbox, msg:this.msg});
-          this.messages.push({sender_id:0,message:this.msg})
+          this.messages.unshift({sender_id:0,message:this.msg})
           this.msg = null
-          //  await new Promise(r => {
-          //     setTimeout(r, 10)
-          //   });
-          // this.scrollToElement()
+          this.scrollToElement()
         }
         else
           this.$snoast.toast(this.$buefy, 'Something went wrong, Please try later!', 'is-danger')
-          // alert("something went wong!")
      }
    } 
   },
@@ -203,13 +224,16 @@ margin: auto;
 }
 .msg{
   margin-bottom: 5px;
+  max-width: 90%;
+    word-wrap: break-word;
 }
 .self-msg{
   background-color: #C3073F;
-  float: right;
-  padding: 5px 15px;
-  border-radius: 20px;
-  color: white;
+    float: right;
+    padding: 5px 15px;
+    border-radius: 20px;
+    color: white;
+    
 }
 .oth-msg{
   background-color: #e4e6eb;

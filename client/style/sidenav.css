@@ -6,7 +6,6 @@
     z-index: 1;
     padding: 10px 0px;
     border-right: solid 1px #ebeef0;
-    /* overflow: auto; */
     margin-right: 240px;
     display: flex;
     flex-direction: column;
@@ -22,8 +21,6 @@
     width: 60px;
     height: 60px;
     margin-left: 20px;
-    /* background-color: red; */
-
 }
 #logo:hover{
     background-color: rgb(195, 7, 63, 0.2);
@@ -127,7 +124,7 @@
 .profile-img{
     width: 100%;
     height: auto;
-    transform: translateY(-20%);
+    /* transform: translateY(-20%); */
 }
 #lgo-name{
     grid-area: lgname;
@@ -178,6 +175,10 @@
         color:  rgb(195, 7, 63);
         background-color: white;
     }
+
+    #logout-btn:hover{
+        background-color: white;
+    }
    
     #thenav li i{
         margin-left: 10px;
@@ -200,21 +201,19 @@
         margin-left: 2px;
         color: black;
     }
+    #lgo-btn:hover{
+        color:  rgb(195, 7, 63);
+    }
     
     #lgo-img{
         display: block;
     }
     .lgo-img-icon{
-        /* background-color: initial;
-        display: block; */
         display: none;
 
     }
     #lgo-img{
-        /* width: 25px;
-        height: 25px; */
         display: none;
-
     }
 
 }

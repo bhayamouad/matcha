@@ -44,13 +44,13 @@ module.exports = class Message {
                                 AND u.id_user NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = u.id_user AND blocked_id = ${id})`,[usr])
     }
 
-    static getChatByLogin(id, usr)
+    static getChatByLogin(id, usr, from, num)
     {
         return db.execute(`SELECT m.message,m.created_at,m.sender_id  from users u
                             JOIN messages m on (m.sender_id = u.id_user and m.receiver_id = ${id} OR m.receiver_id = u.id_user AND m.sender_id = ${id})
                             where u.login = ? 
                                 AND (u.id_user IN (SELECT first_profile FROM matches WHERE second_profile = ${id}) OR u.id_user IN (SELECT second_profile FROM matches WHERE first_profile = ${id}))
-                                ORDER BY m.created_at ASC`,[usr])
+                                ORDER BY m.created_at DESC LIMIT ${from},${num}`,[usr])
     }
     static sendMessage(from, to, msg){
         return db.execute(`INSERT INTO messages (message, sender_id, receiver_id) VALUES(?,?,?)`,[msg, from, to])

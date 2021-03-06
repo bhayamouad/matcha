@@ -21,6 +21,9 @@ b-steps{
     max-width: 280px;
     margin: auto;
 }
+#content{
+    padding-bottom: 40px;
+}
 @media (max-width: 800px)
 {
     #steps-id{

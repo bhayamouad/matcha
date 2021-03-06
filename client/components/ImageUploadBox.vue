@@ -13,7 +13,7 @@
           :key="image.position"
         >
           <div class="card" aria-id="contentIdForA11y3">
-            <div class="card-content">
+            <div class="card-trr">
               <div class="content">
                 <input
                   type="file"
@@ -26,15 +26,15 @@
 
                 <span
                   v-if="image.url"
-                  class="material-icons del-icons"
+                  class="material-icons del-icons iconz"
                   @click="deleteImage($event,index)"
                 >clear</span>
                 <span
                   v-else
-                  class="material-icons up-icons"
+                  class="material-icons up-icons iconz"
                   @click="uploadClick(index)"
                 >add_circle_outline</span>
-                <img v-if="image.url" :src="image.url" :width="280" :height="380"/>
+                <img class="imgs" v-if="image.url" :src="image.url"/>
               </div>
             </div>
           </div>
@@ -195,29 +195,44 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card-content {
+.card-trr {
   background-color: transparent;
-  padding: 1.5rem;
+  padding: 0 15px 30px 17px;
   height: 370px;
 }
-
-.button-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 17px;
+.card{
+  max-width: 350px;
+  margin: auto;
+}
+.imgs{
+  width: 100%;
+  height: 100%;
 }
 .content{
-  margin-top: -10px;
+  height: 100%;
+  padding-bottom: 20px;
 }
-.card-content{
-  min-height: 427px!important;
+.iconz{
+  color: #950740;
+  margin-top: 5px;
 }
-#thecroper{
-  height: 70vh;
-}
-#croper-cnt{
-  height: 60vh;
-}
+// .button-wrapper {
+//   display: flex;
+//   justify-content: center;
+//   margin-top: 17px;
+// }
+// .content{
+//   margin-top: -10px;
+// }
+// .card-content{
+//   min-height: 427px!important;
+// }
+// #thecroper{
+//   height: 70vh;
+// }
+// #croper-cnt{
+//   height: 60vh;
+// }
 @media (max-width: 800px)
 {
   .card-content{

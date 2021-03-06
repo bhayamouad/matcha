@@ -89,12 +89,14 @@ exports.getMessages = (req,res) => {
 }
 
 exports.getChat = async (req, res) => {
+    const from = req.body.from
+    const num = req.body.num
 
     try{
         const [[ret]] = await Message.getChatInfoByLogin(req.id_user, req.body.login)
         if(ret)
         {
-            const [messages] = await Message.getChatByLogin(req.id_user, req.body.login)
+            const [messages] = await Message.getChatByLogin(req.id_user, req.body.login, from, num)
             const [[me]] = await User.getById(req.id_user)
             res.status(200).send({info:{...ret, me: me.login}, messages})
         }
