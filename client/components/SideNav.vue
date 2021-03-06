@@ -1,9 +1,9 @@
 <template>
   <div id="thenav">
     <div id="logo">
-      <a id="home-link" href="/">
+      <nuxt-link id="home-link" to="/">
         <img src="@/assets/logo-small.svg" />
-      </a>
+      </nuxt-link>
     </div>
     <ul>
       <nuxt-link to="/home">

@@ -12,7 +12,7 @@
         </li>
         <div id="loader-cnt" v-if="showmore"><div class="loader"></div></div>
       </ul>
-      <div id="empty-msg" v-else>We Found Nothing!</div>
+      <div id="empty-msg" v-else>No profile visited yet!</div>
     </div>
   </section>
 </template>

@@ -110,13 +110,13 @@
             <span v-if="!connected && !data.is_me">
               <i id="usr-state" style="color: gray" class="fas fa-circle"></i>
               <span
-                >Last seen
+                >Active
                 {{
                   moment(data.user.last_connection).calendar(null, {
-                    sameDay: "[Today at] LT",
-                    lastDay: "[Yesterday at] LT",
-                    lastWeek: "dddd [at] LT",
-                    sameElse: "DD/MM/YYYY [at] LT",
+                    sameDay: "[today at] LT",
+                    lastDay: "[yesterday at] LT",
+                    lastWeek: "[last] dddd [at] LT",
+                    sameElse: "[since] DD/MM/YYYY [at] LT",
                   })
                 }}</span
               >
@@ -168,20 +168,10 @@ export default {
           visitor: this.data.loggedUser.login,
         });
       const that = this;
-      let flag = 0;
-
-      setInterval(function () {
-        that.updateTime();
-      }, 60000);
-
       socket.emit("isConnected", this.$route.params.profile);
 
       socket.on(this.$route.params.profile, (message) => {
         that.connected = message;
-        if (!message && flag) {
-          that.data.user.last_connection = moment();
-        }
-        flag = 1;
       });
     }
   },
@@ -205,11 +195,6 @@ export default {
     this.$snoast.close();
   },
   methods: {
-    updateTime() {
-      this.data.user.last_connection = moment(
-        this.data.user.last_connection
-      ).fromNow();
-    },
     async likeButton() {
       if (this.data.loggedUser.status > 2) {
         if (!this.data.liked) {

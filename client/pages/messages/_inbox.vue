@@ -14,7 +14,9 @@
           <i v-if="connected" style="color:green;" class=" usr-state fas fa-circle"></i>
           <i v-else style="color:gray;" class=" usr-state fas fa-circle"></i>
         </span>
+        
       </div></nuxt-link>
+      {{active}}
     </div>
       <div v-if="messages" id="chat-cnt">
         <div  v-for="(item,i) in messages.slice().reverse()" :key="i" >
@@ -35,11 +37,15 @@
 
 <script>
 import socket from "@/socket";
+let to
 export default {
-    // middleware: 'redirect',
+    middleware: 'redirect',
     layout: 'home',
     async fetch(){
-      const data = await this.$axios.$post("/matcha/getchat", {login: this.$route.params.inbox})
+      to = this.$route.params.inbox
+      console.log(to);
+      
+      const data = await this.$axios.$post("/matcha/getchat", {login: to})
       if(data.error)
       {
         this.$router.push('/messages')
@@ -53,17 +59,28 @@ export default {
         this.info = data.info
         this.messages = data.messages
         const that = this
-        socket.emit("isConnected", this.$route.params.inbox);
-        socket.on(this.$route.params.inbox, message => {
+        socket.emit("isConnected", to);
+        socket.on(to, message => {
+          if(message){
+            socket.emit("activeInbox", {from: this.info.me, to})
+            socket.emit("isActive", {from: this.info.me, to})
+          }
           that.connected = message;
         });
-        socket.on(this.$route.params.inbox+"=>"+this.info.me, message => {
+        
+        socket.on("active_"+ this.info.me, active => {
+          that.active = active
+        })
+        socket.on(to+"=>"+this.info.me, message => {
           that.messages.push({sender_id:that.info.id_user ,message:message})
         });
       }
     },
     async created(){
-      await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.$route.params.inbox})
+      await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})
+    },
+    beforeDestroy(){
+      socket.emit("inactiveInbox", {from: this.info.me, to});
     },
     data(){
       return{
@@ -73,6 +90,7 @@ export default {
         user: this.$route.params.inbox,
         msg: null,
         connected: false,
+        active: null,
         fetched: false
       }
     },

@@ -12,7 +12,7 @@ exports.getNotifications = async (req, res) => {
     try {
         const [notifications] = await Notification.getAllByUser(req.id_user, req.body.from, req.body.num, req.body.now)
         const [[count]] = await Notification.getCountNewNotification(req.id_user)
-        res.status(200).send({notifications, to: notifications[0].login_to, new: count.number, error: false})
+        res.status(200).send({notifications, to: (notifications.length > 0) ? notifications[0].login_to : "", new: count.number, error: false})
     } catch (error) {
         res.status(200).send({message: "Something went Wrong! Please try Later", error: true})
     }

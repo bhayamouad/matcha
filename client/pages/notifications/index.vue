@@ -32,7 +32,7 @@
           <div class="loader"></div>
         </div>
       </ul>
-      <div id="empty-msg" v-else>You don't have any Notification Right Now!</div>
+      <div id="empty-msg" v-else>You don't have any notification right now!</div>
     </div>
   </section>
 </template>
@@ -179,7 +179,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 #loader-cnt {
   width: 100%;
   height: 50px;

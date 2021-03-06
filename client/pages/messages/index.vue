@@ -31,7 +31,7 @@
 import moment from "moment";
 import socket from "../../socket"
 
-let hpr = 2, num, from, newMessages, now, that
+let hpr = 2, num, from, now, that
 
 export default {
   middleware: "redirect",
@@ -53,12 +53,6 @@ export default {
       setTimeout(r, 400);
     });
     const listElm = document.querySelector("#page-cnt");
-    newMessages = document.querySelector("#new-messages");
-    newMessages.innerHTML =
-      newMessages.innerHTML !== "" &&
-      parseInt(newMessages.textContent) - this.messagesCounter > 0
-        ? parseInt(newMessages.textContent) - this.messagesCounter
-        : "";
     listElm.addEventListener("scroll", async e => {
       if (listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight) {
         await new Promise(r => {
@@ -95,21 +89,19 @@ export default {
         else
           this.more = false;
         this.matches = res.matches;
+        that = this
+        this.matches.forEach((element, index) => {
+          this.time.push(moment(element.sent_at).fromNow())
+          socket.emit("isConnected", element.login);
+          socket.on(element.login, message => {
+            const tmp = that.connected.slice()
+            tmp[index] = message
+            that.connected = tmp
+          });
+        });
       }
       else
         this.matches = null;
-      
-      that = this
-      this.matches.forEach((element, index) => {
-        this.time.push(moment(element.sent_at).fromNow())
-        socket.emit("isConnected", element.login);
-        socket.on(element.login, message => {
-          const tmp = that.connected.slice()
-          tmp[index] = message
-          that.connected = tmp
-        });
-      });
-      
       setInterval(function() {
         that.updateTime();
       }, 60000);
