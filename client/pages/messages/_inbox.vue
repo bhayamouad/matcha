@@ -18,11 +18,15 @@
       </div></nuxt-link>
       {{active}}
     </div>
-      <div v-if="messages" id="chat-cnt">
+      <div v-if="messages" ref="chat" id="chat-cnt">
         <div  v-for="(item,i) in messages" :key="i" >
           <span class="oth-msg msg" v-if="info.id_user == item.sender_id">{{item.message}}</span>
           <span class="self-msg msg" v-if="info.id_user != item.sender_id">{{item.message}}</span>
           </div>
+          <div id="loader-cnt" >
+            <div v-if="loader" class="loader"></div>
+            <div v-else style="height:40px;width:40px;"></div>
+            </div>
       </div>
         <div id="msg-inp-cnt"><b-field @keyup.native.enter="sendMsg" id="msg-input">
             <b-input  type="text"
@@ -37,17 +41,20 @@
 <script>
 import socket from "@/socket";
 let to
-let from = 0
-let num = 20;
+
 export default {
     middleware: 'redirect',
     layout: 'home',
     async fetch(){
       to = this.$route.params.inbox
       
-      const data = await this.$axios.$post("/matcha/getchat", {login: to, from, num})
-      from += num;
-      num =2;
+      const data = await this.$axios.$post("/matcha/getchat", {login: to, from:this.from, num:this.num+1})
+      if(!data.messages[this.num])
+        this.flag = false
+      else
+        data.messages.pop();
+      this.from += this.num;
+      this.num = 10; // here number to bring after fisrt fetsh
       if(data.error)
       {
         this.$router.push('/messages')
@@ -84,15 +91,25 @@ export default {
     },
     async mounted(){
       await new Promise(r => {
-        setTimeout(r, 400)
+        setTimeout(r, 1000)
     });
        const listElm = document.querySelector("#chat-cnt");
-    listElm.addEventListener("scroll", async (e) => {
-      if (listElm.scrollTop == 0) {
-        console.log("ok")
-        this.fetchNew()
-      }
-    });
+    if(listElm)
+      listElm.addEventListener("scroll", async (e) => {
+        if(listElm.clientHeight - listElm.scrollTop >= listElm.scrollHeight && this.flag && this.sflag) {
+
+          this.sflag = false
+          this.loader = true;
+          await new Promise(r => {
+            setTimeout(r, 1000)
+          });
+          const messages = await this.fetchNew()
+          this.sflag = true
+          this.loader = false;
+          if(messages)
+            this.messages = this.messages.concat(messages)
+        }
+      });
     },
     beforeDestroy(){
       socket.emit("inactiveInbox", {from: this.info.me, to});
@@ -106,7 +123,12 @@ export default {
         msg: null,
         connected: false,
         active: null,
-        fetched: false
+        fetched: false,
+        loader: false,
+        from: 0,
+        num: 30,
+        flag: true,
+        sflag: true
       }
     },
     beforeDestroy() {
@@ -114,10 +136,17 @@ export default {
   },
    methods: {
      async fetchNew(){
-       const newData = await this.$axios.$post("/matcha/getchat", {login: to, from, num})
-       this.messages = this.messages.concat(newData.messages)
-        from += num;
+       const newData = await this.$axios.$post("/matcha/getchat", {login: to, from:this.from, num:this.num + 1})
+      //  this.messages = this.messages.concat(newData.messages)
+      if(!newData.messages[this.num])
+        this.flag = false
+      else
+        newData.messages.pop();
+        this.from += this.num;
         console.log(newData.messages)
+        if(!newData.messages.length)
+          this.flag = false;
+        return (newData.messages)
      },
      async scrollToElement() {
        await new Promise(r => {
@@ -148,7 +177,24 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+#loader-cnt {
+  /* background-color: red; */
+  width: 100%;
+  height: 200px;
+  padding: 30px;
+}
+.loader {
+  margin: auto;
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid gray;
+  width: 40px;
+  height: 40px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
 #chat-hdr{
   width: 100%;
   height: 70px;
