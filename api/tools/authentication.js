@@ -56,10 +56,10 @@ const authorize = (req, res, next)=>{
                         res.status(200).send('invalid reftok key')
                 })
             }catch(e){
-                res.status(201).send(e.message)
+                res.status(201).send({error: e.message})
             }
         else
-            res.status(202).send(e.message)
+            res.status(202).send({error: e.message})
     }
 
 }

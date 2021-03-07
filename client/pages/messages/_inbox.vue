@@ -115,7 +115,7 @@ export default {
         fetched: false,
         loader: false,
         from: 0,
-        num: 20,
+        num: 40,
         flag: true,
         sflag: true,
         now: new Date(Date.now())
@@ -150,16 +150,21 @@ export default {
       this.msg = this.msg.trim()
      if(this.msg)
      {
-        const ret = await this.$axios.$post("/matcha/sendmsg",{to: this.info.id_user, msg: this.msg})
-        if(!ret.error)
-        {
-          socket.emit("sendMsg", {from:this.info.me, to:this.$route.params.inbox, msg:this.msg});
-          this.messages.unshift({sender_id:0,message:this.msg})
-          this.msg = null
-          this.scrollToElement()
-        }
+       if(this.msg.length > 200)
+          this.$snoast.toast(this.$buefy, 'Your message is too long!', 'is-danger')
         else
-          this.$snoast.toast(this.$buefy, 'Something went wrong, Please try later!', 'is-danger')
+        {
+          const ret = await this.$axios.$post("/matcha/sendmsg",{to: this.info.id_user, msg: this.msg})
+          if(!ret.error)
+          {
+            socket.emit("sendMsg", {from:this.info.me, to:this.$route.params.inbox, msg:this.msg});
+            this.messages.unshift({sender_id:0,message:this.msg})
+            this.msg = null
+            this.scrollToElement()
+          }
+          else
+            this.$snoast.toast(this.$buefy, 'Something went wrong, Please try later!', 'is-danger')
+        }
      }
    } 
   },
@@ -180,7 +185,7 @@ export default {
   border-top: 4px solid gray;
   width: 40px;
   height: 40px;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
+  -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }
 
@@ -243,7 +248,7 @@ export default {
   width: 100%;
   height: calc(100vh - 120px);
   overflow-y:  scroll;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 #msg-inp-cnt{
   position: absolute;
@@ -260,7 +265,7 @@ margin: auto;
 .msg{
   margin-bottom: 5px;
   max-width: 90%;
-    word-wrap: break-word;
+  word-wrap: break-word;
 }
 .self-msg{
   background-color: #C3073F;

@@ -154,7 +154,6 @@ export default {
 #loader-cnt {
   width: 100%;
   height: 50px;
-  /* background-color: red; */
 }
 #page-title {
   color: black;
@@ -167,7 +166,6 @@ export default {
   font-weight: 600;
 }
 #page-cnt {
-  /* background-color: bisque; */
   overflow: auto;
   height: calc(100vh - 50px);
 }
@@ -183,7 +181,6 @@ export default {
   background-color: #f0f3f5;
 }
 #empty-msg {
-  /* color: black; */
   width: 100%;
   text-align: center;
   padding-top: 20px;
