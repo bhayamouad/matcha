@@ -1,6 +1,8 @@
 const moment = require('moment')
 const db = require('../setup/db_connection')
 
+const User = require('./User')
+
 module.exports = class Message {
     static send(sender, receiver, message) {
         return db.execute(`SELECT * FROM matches 
@@ -18,20 +20,23 @@ module.exports = class Message {
             before = 'TRUE'
         else
             before = `( (CASE WHEN msg.created_at IS NULL THEN m.created_at ELSE msg.created_at END) <= '${moment(now).format('YYYY-MM-DD HH:mm:ss')}')`
-        return db.execute(`SELECT u.id_user, u.login, u.fname, u.lname, i.path, msg.message, msg.sender_id, m.status_first, m.status_second, 
-                                (CASE WHEN msg.created_at IS NULL 
-                                    THEN m.created_at
-                                    ELSE msg.created_at END) as sent_at 
+        return db.execute(`SELECT u.id_user, u.login, u.fname, u.lname, i.path, 
+                            (SELECT message FROM messages WHERE u.id_user = sender_id OR u.id_user = receiver_id ORDER BY created_at DESC LIMIT 1)as message, 
+                            (SELECT sender_id FROM messages WHERE u.id_user = sender_id OR u.id_user = receiver_id ORDER BY created_at DESC LIMIT 1) as sender_id,
+                            (CASE WHEN 
+                                    (SELECT created_at FROM messages WHERE u.id_user = sender_id OR u.id_user = receiver_id ORDER BY created_at DESC LIMIT 1) IS NULL 
+                                THEN m.created_at
+                                ELSE (SELECT created_at FROM messages WHERE u.id_user = sender_id OR u.id_user = receiver_id ORDER BY created_at DESC LIMIT 1) END) as sent_at,
+                            m.status_first, m.status_second
                             FROM users u
                                 INNER JOIN images i ON (i.user_id = u.id_user and i.is_profile = 0)
                                 INNER JOIN matches m ON ((u.id_user = m.first_profile AND m.second_profile = ${id}) OR (m.first_profile = ${id} AND u.id_user = m.second_profile))
-                                LEFT JOIN (SELECT * FROM messages ORDER BY created_at DESC LIMIT 1) msg  ON ((u.id_user = msg.sender_id AND ${id} = msg.receiver_id) OR (u.id_user = msg.receiver_id AND ${id} = msg.sender_id))
-                            WHERE u.id_user <> ?
+                            WHERE u.id_user <> ${id}
                                 AND ${before}
                                 AND u.id_user NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ${id} AND blocked_id = u.id_user)
                                 AND u.id_user NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = u.id_user AND blocked_id = ${id})
                             ORDER BY sent_at DESC
-                            LIMIT ${start},${limit}`, [id])
+                            LIMIT 0,10`, [id])
     }
 
     static getChatInfoByLogin(id, usr)
@@ -73,4 +78,16 @@ module.exports = class Message {
                             AND ${from}  NOT IN (SELECT blocked_id FROM blocks WHERE blocker_id = ? AND blocked_id = ${from})
                             AND ${from} NOT IN (SELECT blocker_id FROM blocks WHERE blocker_id = ${from} AND blocked_id = ?)`,[to,to,to,to])
     }
+
+    static getCountNewMessages(id){
+        return db.execute(`SELECT * FROM matches WHERE (status_first = 0 AND first_profile = ${id}) OR (second_profile = ${id} AND status_second = 0)`)
+    }
+    static ifSendMessage(login){
+        return User.getByLogin(login)
+                    .then(([[user]]) => {
+                        if(user)
+                            return this.getCountNewMessages(user.id_user)
+                    })
+    }
+
 }

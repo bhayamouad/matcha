@@ -14,9 +14,7 @@
           <i v-if="connected" style="color:green;" class=" usr-state fas fa-circle"></i>
           <i v-else style="color:gray;" class=" usr-state fas fa-circle"></i>
         </span>
-        
       </div></nuxt-link>
-      {{active}}
     </div>
       <div v-if="messages" ref="chat" id="chat-cnt">
         <div  v-for="(item,i) in messages" :key="i" >
@@ -69,16 +67,8 @@ export default {
         const that = this
         socket.emit("isConnected", to);
         socket.on(to, message => {
-          if(message){
-            socket.emit("activeInbox", {from: this.info.me, to})
-            socket.emit("isActive", {from: this.info.me, to})
-          }
           that.connected = message;
         });
-        
-        socket.on("active_"+ this.info.me, active => {
-          that.active = active
-        })
         socket.on(to+"=>"+this.info.me, message => {
           that.messages.unshift({sender_id:that.info.id_user ,message:message})
           that.scrollToElement();

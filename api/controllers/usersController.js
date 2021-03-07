@@ -574,7 +574,6 @@ exports.getProfileInfo = (req, res) => {
             res.status(200).send({error: false, block: true})  
     })
     .catch(e => {
-        console.log(e.message) 
         if(e.message == 'notFound')
             res.status(200).send({error: false,user: null})
         else

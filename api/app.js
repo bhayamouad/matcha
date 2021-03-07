@@ -47,6 +47,7 @@ const io = require('socket.io')(server, {
 
 
 const User = require('./models/User')
+const Message = require('./models/Message')
 io.on('connection', function(socket){
   let usr;
   socket.on("connectUser", (user) =>{
@@ -67,10 +68,12 @@ io.on('connection', function(socket){
 
   socket.on("sendMsg", (data) =>{ 
 
-    redis.get(data.to, (err, res) =>{
+    redis.get(data.to, async (err, res) =>{
       if(res){
         socket.broadcast.emit(data.from+"=>"+data.to, data.msg)
-        socket.broadcast.emit("msg"+data.to, data)
+        const [check] = await Message.ifSendMessage(data.to)
+        if(!check.length)
+          socket.broadcast.emit("msg"+data.to, data)
       }
     })
   })

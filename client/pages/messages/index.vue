@@ -13,10 +13,14 @@
               </span>
               <i v-if="connected[index]" style="color: green;" class="fas fa-circle user-state"></i>
               <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
-              <span :class="{
-                              'bold':(match.status_first === 0 && (match.sender_id === match.id_user && match.message)) 
-                                      || (match.status_second === 0 && (match.sender_id === match.id_user && match.message))}"
-                     class="match-message">{{(match.sender_id !== match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}</span>
+              <span
+                :class="{
+                          'bold':(!match.message || match.status_first === 0 && (match.sender_id === match.id_user && match.message)) 
+                                  || (match.status_second === 0 && (match.sender_id === match.id_user && match.message))}"
+                class="match-message"
+              >
+                {{(match.sender_id !== match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}
+              </span>
               <span class="match-time">{{time[index]}}</span>
             </div>
           </nuxt-link>
@@ -32,9 +36,13 @@
 
 <script>
 import moment from "moment";
-import socket from "../../socket"
+import socket from "../../socket";
 
-let hpr = 2, num, from, now, that
+let hpr = 2,
+  num,
+  from,
+  now,
+  that;
 
 export default {
   middleware: "redirect",
@@ -51,7 +59,7 @@ export default {
     };
   },
   async mounted() {
-    now = Date.now()
+    now = Date.now();
     await new Promise(r => {
       setTimeout(r, 400);
     });
@@ -73,77 +81,71 @@ export default {
     });
   },
   async fetch() {
-    num = 7
-    from = 0
+    num = 7;
+    from = 0;
     const res = await this.$axios.$post("/matcha/getMessages", {
       from,
       num: num + 1,
       now: null
     });
-    if(!res.error)
-    {
-      if(res.matches.length)
-      {
-        if(res.matches[num])
-        {
+    if (!res.error) {
+      if (res.matches.length) {
+        if (res.matches[num]) {
           this.more = true;
-          res.matches.pop()
-        }
-        else
-          this.more = false;
+          res.matches.pop();
+        } else this.more = false;
         this.matches = res.matches;
-        that = this
+        console.log(this.matches);
+
+        that = this;
         this.matches.forEach((element, index) => {
-          this.time.push(moment(element.sent_at).fromNow())
+          this.time.push(moment(element.sent_at).fromNow());
           socket.emit("isConnected", element.login);
           socket.on(element.login, message => {
-            const tmp = that.connected.slice()
-            tmp[index] = message
-            that.connected = tmp
+            const tmp = that.connected.slice();
+            tmp[index] = message;
+            that.connected = tmp;
           });
         });
-      }
-      else
-        this.matches = null;
+      } else this.matches = null;
       setInterval(function() {
         that.updateTime();
       }, 60000);
     }
   },
   methods: {
-    async fetchNew(){
+    async fetchNew() {
       from += num;
       num = hpr;
-      const ret = await this.$axios.$post('/matcha/getMessages', {from: from, num: num + 1, now});
-      if(!ret.error)
-      {
-        console.log(ret.matches);
-          if(ret.matches[num])
-          {
-            this.more = true;
-            ret.matches.pop()
-          }
-          else
-            this.more = false;
-          this.matches = this.matches.concat(ret.matches);
-          that = this
-          this.matches.forEach((element, index) => {
-            this.time.push(moment(element.sent_at).fromNow())
-            socket.emit("isConnected", element.login);
-            socket.on(element.login, message => {
-              const tmp = that.connected.slice()
-              tmp[index] = message
-              that.connected = tmp
-            });
+      const ret = await this.$axios.$post("/matcha/getMessages", {
+        from: from,
+        num: num + 1,
+        now
       });
+      if (!ret.error) {
+        if (ret.matches[num]) {
+          this.more = true;
+          ret.matches.pop();
+        } else this.more = false;
+        this.matches = this.matches.concat(ret.matches);
+        that = this;
+        this.matches.forEach((element, index) => {
+          this.time.push(moment(element.sent_at).fromNow());
+          socket.emit("isConnected", element.login);
+          socket.on(element.login, message => {
+            const tmp = that.connected.slice();
+            tmp[index] = message;
+            that.connected = tmp;
+          });
+        });
       }
     },
-    updateTime(){
-      this.time = []
+    updateTime() {
+      this.time = [];
       this.matches.forEach(element => {
-        this.time.push(moment(element.sent_at).fromNow())
+        this.time.push(moment(element.sent_at).fromNow());
       });
-  }
+    }
   }
 };
 </script>
@@ -200,68 +202,66 @@ export default {
     margin: 20px 0px 20px 0px;
     border-radius: 50px;
 }
-.match-img{
-    grid-area: img;
-    width: 50px;
-    height: 50px;
-    overflow: hidden;
-    border-radius: 50%;
-
+.match-img {
+  grid-area: img;
+  width: 50px;
+  height: 50px;
+  overflow: hidden;
+  border-radius: 50%;
 }
-.match-name{
-    grid-area: nme;
-    color: black;
-    font-weight: 550;
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+.match-name {
+  grid-area: nme;
+  color: black;
+  font-weight: 550;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-.match-message{
-    grid-area: msg;
-    color: black;
-    width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+.match-message {
+  grid-area: msg;
+  color: black;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
-.match-time{
-    grid-area: tme;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #909090;
+.match-time {
+  grid-area: tme;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #909090;
 }
-#loader-cnt{
-    width: 100%;
-    height: 50px;
-    margin-top: 20px;
+#loader-cnt {
+  width: 100%;
+  height: 50px;
+  margin-top: 20px;
 }
 .loader {
-    margin: auto;
-    border: 4px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 4px solid gray;
-    width: 40px;
-    height: 40px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
+  margin: auto;
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid gray;
+  width: 40px;
+  height: 40px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
 }
-.bold{
+.bold {
   font-weight: bold;
 }
-.user-state{
-    color: green;
-    font-size: 10px;
-    border: solid 2px white;
-    border-radius: 50%;
-    background-color: white;
-    position: absolute;
-    bottom: 2px;
-    left: 40px;
+.user-state {
+  color: green;
+  font-size: 10px;
+  border: solid 2px white;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+  bottom: 2px;
+  left: 40px;
 }
-@media (max-width: 800px)
-{
-  #page-cnt li{
+@media (max-width: 800px) {
+  #page-cnt li {
     color: black;
     padding: 0px;
     border-bottom: solid 1px #ebeef0;

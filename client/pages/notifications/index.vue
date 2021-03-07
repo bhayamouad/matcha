@@ -7,25 +7,25 @@
       <ul v-if="notifications" id="notifs">
         <li v-for="(item,index) in notifications" :key="index">
           <p v-if="item.type === 'like'">
-            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>liked you.
+            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link> liked you.
             <span class="match-time">{{time[index]}}</span>
           </p>
           <p v-if="item.type === 'dislike'">
-            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>unliked you.
+            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link> unliked you.
             <span class="match-time">{{time[index]}}</span>
           </p>
           <p v-if="item.type === 'visit'">
-            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>visited your Profile.
+            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link> visited your Profile.
             <span class="match-time">{{time[index]}}</span>
           </p>
           <p v-if="item.type === 'match1'">
-            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>liked you back.
+            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link> liked you back.
             <nuxt-link :to="`/messages/${item.login_from}`">Begin a conversation</nuxt-link>.
             <span class="match-time">{{time[index]}}</span>
           </p>
           <p v-if="item.type === 'match2'">
             You and
-            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link>are Connected.
+            <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link> are Connected.
             <nuxt-link :to="`/messages/${item.login_from}`">Begin a conversation</nuxt-link>.
             <span class="match-time">{{time[index]}}</span>
           </p>
@@ -140,67 +140,61 @@ export default {
         this.notifications.forEach((element, index) => {
           this.time.push(moment(element.created_at).fromNow());
         });
+        const that = this;
+        setInterval(function() {
+          that.updateTime();
+        }, 60000);
       } else this.notifications = null;
       this.notifCounter = ret.new;
     }
-    const that = this;
-    setInterval(function() {
-      that.updateTime();
-    }, 60000);
-
-    socket.on("like" + ret.to, async socketResult => {
-      if (socketResult.status) {
-        this.time.splice(0, 0, moment(Date.now()).fromNow());
-        this.notifications.splice(0, 0, {
+    
+    socket.on("like"+ret.to, async (socketResult) => {
+        that.time.splice(0, 0, moment(Date.now()).fromNow());
+        that.notifications.splice(0, 0, {
           type: "like",
           created_at: Date.now(),
           login_from: socketResult.liker
         });
-        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
-      }
+        await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
-    socket.on("dislike" + ret.to, async socketResult => {
-      if (socketResult.status) {
-        this.time.splice(0, 0, moment(Date.now()).fromNow());
-        this.notifications.splice(0, 0, {
+    socket.on("dislike" + ret.to, async (socketResult) => {
+        that.time.splice(0, 0, moment(Date.now()).fromNow());
+        that.notifications.splice(0, 0, {
           type: "dislike",
           created_at: Date.now(),
           login_from: socketResult.unliker
         });
-        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
-      }
+        await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
 
-    socket.on("match1" + ret.to, async socketResult => {
-      if (socketResult.status) {
-        this.time.splice(0, 0, moment(Date.now()).fromNow());
-        this.notifications.splice(0, 0, {
+    socket.on("match1" + ret.to, async (socketResult) => {
+        that.time.splice(0, 0, moment(Date.now()).fromNow());
+        that.notifications.splice(0, 0, {
           type: "match1",
           created_at: Date.now(),
           login_from: socketResult.liker
         });
-        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
-      }
+        await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
-    socket.on("match2" + ret.to, async socketResult => {
-      this.time.splice(0, 0, moment(Date.now()).fromNow());
-      this.notifications.splice(0, 0, {
+    socket.on("match2" + ret.to, async (socketResult) => {
+      that.time.splice(0, 0, moment(Date.now()).fromNow());
+      that.notifications.splice(0, 0, {
         type: "match2",
         created_at: Date.now(),
         login_from: socketResult.liked
       });
-      await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
+      await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
-    socket.on("visit" + ret.to, async socketResult => {
-      if (socketResult.status) {
-        this.time.splice(0, 0, moment(Date.now()).fromNow());
-        this.notifications.splice(0, 0, {
+    socket.on("visit" + ret.to, async (socketResult) => {
+      
+        that.time.splice(0, 0, moment(Date.now()).fromNow());
+        that.notifications.splice(0, 0, {
           type: "visit",
           created_at: Date.now(),
           login_from: socketResult.visitor
         });
-        await this.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
-      }
+        await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
+      
     });
   }
 };

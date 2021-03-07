@@ -83,8 +83,8 @@ connection.connect(function(err) {
                   connection.query(`CREATE TABLE matches(
                                     first_profile int(11) NOT NULL,
                                     second_profile int(11) NOT NULL,
-                                    status_first int(1) NOT NULL DEFAULT 0,
-                                    status_second int(1) NOT NULL DEFAULT 0,
+                                    status_first int(1) NOT NULL DEFAULT 1,
+                                    status_second int(1) NOT NULL DEFAULT 1,
                                     created_at TIMESTAMP NOT NULL DEFAULT NOW()
                               );`);
 
@@ -126,7 +126,7 @@ connection.connect(function(err) {
 
                   connection.query(`CREATE TABLE notifications(
                         id_notification int(11) NOT NULL,
-                        type ENUM('like', 'dislike', 'visit', 'match1', 'match2', 'message') NOT NULL,
+                        type ENUM('like', 'dislike', 'visit', 'match1', 'match2') NOT NULL,
                         \`from\` int(11) NOT NULL,
                         \`to\` int (11) NOT NULL,
                         status int(1) NOT NULL DEFAULT 0,

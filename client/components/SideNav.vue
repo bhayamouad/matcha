@@ -14,7 +14,7 @@
 
     <div :class="{'nolink':nolink}">
       <nuxt-link to="/messages">
-        <li @click="newMessages=''">
+        <li>
           <i class="fas fa-envelope">
             <span id="new-messages" :class="{'new-notif': newMessages}">{{newMessages}}</span>
           </i>
@@ -81,8 +81,11 @@ export default {
   async fetch() {
     const res = await this.$axios.$get('/account/loggedUser')
     const notif = await this.$axios.get('/matcha/getNewNotification')
+    const messages = await this.$axios.get('/matcha/getNewMessages')
     if(notif.data.number !== '0')
       this.newNotif = (parseInt(notif.data.number) > 0) ? notif.data.number : ""
+    if(messages.data.number !== '0')
+      this.newMessages = (parseInt(messages.data.number) > 0) ? messages.data.number : ""
     this.loggedUser = res.loggedUser
     this.nolink = (this.loggedUser.status>1) ? false : true
     socket.emit("connectUser", this.loggedUser.username)
@@ -93,7 +96,7 @@ export default {
     socket.on("visit"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
     socket.on("msg"+this.loggedUser.username, async ( users ) => {
       if(this.$route.params.inbox !== users.from){
-        await this.$axios.$put("/matcha/setMessageStatus", {status: 0, profile: users.to})
+        await this.$axios.$put("/matcha/setMessageStatus", {status: 0, profile: users.from})
         this.newMessages = (this.newMessages) ? parseInt(this.newMessages) + 1 : 1
       }
     })
