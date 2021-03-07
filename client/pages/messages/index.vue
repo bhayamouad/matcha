@@ -276,11 +276,5 @@ export default {
   bottom: 2px;
   left: 40px;
 }
-@media (max-width: 800px) {
-  #page-cnt li {
-    color: black;
-    padding: 0px;
-    border-bottom: solid 1px #ebeef0;
-  }
-}
+
 </style>

@@ -73,7 +73,7 @@ export default {
       else
         data.messages.pop();
       this.from += this.num;
-      this.num = 5; // here number to bring after fisrt fetsh
+      this.num = 10; // here number to bring after fisrt fetsh
     },
     async created(){
       const trr = await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})
@@ -134,7 +134,6 @@ export default {
       else
         newData.messages.pop();
         this.from += this.num;
-        console.log(newData.messages)
         if(!newData.messages.length)
           this.flag = false;
         return (newData.messages)

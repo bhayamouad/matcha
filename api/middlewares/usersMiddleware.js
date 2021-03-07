@@ -85,8 +85,7 @@ exports.fbOauth = (req, res, next) => {
       })
 } 
 
-exports.registerValidation = (req, res, next) => { 
-    // if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation 
+exports.registerValidation = (req, res, next) => {
     const { email, login } = req.body;
     User.ifUnique(email, login) 
         .then((ret) => {

@@ -85,6 +85,7 @@ export default {
     this.loggedUser = res.loggedUser
     this.nolink = (this.loggedUser.status>1) ? false : true
     socket.emit("connectUser", this.loggedUser.username)
+    socket.on(this.loggedUser.username+"*reconnect", ()=> socket.emit("connectUser", this.loggedUser.username))
     socket.on("like"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif') )
     socket.on("dislike"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
     socket.on("match1"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
