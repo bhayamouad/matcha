@@ -65,7 +65,9 @@ export default {
       }
     },
     async created(){
-      await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})
+      const trr = await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})
+      if(!trr.read)
+        this.$store.commit('notifications/clearMessages')
     },
     data(){
       return{

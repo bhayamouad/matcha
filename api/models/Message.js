@@ -58,14 +58,20 @@ module.exports = class Message {
         return db.execute(`INSERT INTO messages (message, sender_id, receiver_id) VALUES(?,?,?)`,[msg, from, to])
     }
     static setStatus(status, profile1, profile2){
-        return db.execute(`SELECT * FROM matches where (first_profile = ${profile1} AND second_profile = ${profile2} ) OR (first_profile = ${profile2} AND second_profile = ${profile1})` )
+        let st
+        st = (status === 0) ? 1 : 0
+        return db.execute(`SELECT * FROM matches where ((first_profile = ${profile1} AND second_profile = ${profile2} ) OR (first_profile = ${profile2} AND second_profile = ${profile1})) AND (status_first = ${st} OR status_second = ${st})` )
                     .then( ([[match]]) => {
-                        let change
-                        if(match.first_profile === profile1)
-                            change = "status_first"
+                        if(match){
+                            let change
+                            if(match.first_profile === profile1)
+                                change = "status_first"
+                            else
+                                change = "status_second"
+                            return db.execute(`UPDATE matches SET ${change} = ${status} WHERE (first_profile = ? AND second_profile = ? ) OR first_profile = ? AND second_profile = ?`,[profile1, profile2, profile2, profile1])
+                        }
                         else
-                            change = "status_second"
-                        return db.execute(`UPDATE matches SET ${change} = ${status} WHERE (first_profile = ? AND second_profile = ? ) OR first_profile = ? AND second_profile = ?`,[profile1, profile2, profile2, profile1])
+                            return null
                     })
     }
     static ifMatched(from, to)

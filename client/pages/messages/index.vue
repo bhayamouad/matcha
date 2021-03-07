@@ -17,7 +17,8 @@
               <span
                 :class="{
                           'bold':(!match.message || match.status_first === 0 && (match.sender_id === match.id_user && match.message)) 
-                                  || (match.status_second === 0 && (match.sender_id === match.id_user && match.message))}"
+                                  || (match.status_second === 0 && (match.sender_id === match.id_user && match.message))
+                        }"
                 class="match-message"
               >
                 {{(match.sender_id !== match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}
@@ -109,14 +110,14 @@ export default {
         socket.on("msg"+res.loggedUser, ( users ) => {
           if(that.matches.length)
             {
-              console.log("trrr");
               that.matches.forEach((element,index) => {
-                if(element.login === users.from){
+                if(element.login === users.data.from){
                   let newMsg = element
                   that.matches.splice(index,1)
-                  newMsg.message = users.msg
+                  newMsg.message = users.data.msg
                   newMsg.status_first = 0
                   newMsg.status_first = 0
+                  newMsg.sender_id = users.sender
                   newMsg.sent_at = Date.now()
                   that.matches.splice(0,0,newMsg)
                   return
