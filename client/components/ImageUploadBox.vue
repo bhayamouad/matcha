@@ -215,6 +215,9 @@ export default {
   color: #950740;
   margin-top: 5px;
 }
+.iconz:hover{
+  cursor: pointer;
+}
 .button-wrapper {
   display: flex;
   justify-content: center;
