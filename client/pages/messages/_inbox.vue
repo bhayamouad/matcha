@@ -41,20 +41,19 @@
 <script>
 import socket from "@/socket";
 let to
-
 export default {
     middleware: 'redirect',
     layout: 'home',
     async fetch(){
       to = this.$route.params.inbox
       
-      const data = await this.$axios.$post("/matcha/getchat", {login: to, from:this.from, num:this.num+1})
+      const data = await this.$axios.$post("/matcha/getchat", {login: to, from:this.from, num:this.num+1, now: this.now})
       if(!data.messages[this.num])
         this.flag = false
       else
         data.messages.pop();
       this.from += this.num;
-      this.num = 10; // here number to bring after fisrt fetsh
+      this.num = 5; // here number to bring after fisrt fetsh
       if(data.error)
       {
         this.$router.push('/messages')
@@ -96,7 +95,7 @@ export default {
        const listElm = document.querySelector("#chat-cnt");
     if(listElm)
       listElm.addEventListener("scroll", async (e) => {
-        if(listElm.clientHeight - listElm.scrollTop >= listElm.scrollHeight && this.flag && this.sflag) {
+        if(listElm.scrollTop == 0 &&  this.flag && this.sflag) {
 
           this.sflag = false
           this.loader = true;
@@ -126,9 +125,10 @@ export default {
         fetched: false,
         loader: false,
         from: 0,
-        num: 30,
+        num: 20,
         flag: true,
-        sflag: true
+        sflag: true,
+        now: new Date(Date.now())
       }
     },
     beforeDestroy() {
@@ -136,8 +136,7 @@ export default {
   },
    methods: {
      async fetchNew(){
-       const newData = await this.$axios.$post("/matcha/getchat", {login: to, from:this.from, num:this.num + 1})
-      //  this.messages = this.messages.concat(newData.messages)
+       const newData = await this.$axios.$post("/matcha/getchat", {login: to, from:this.from, num:this.num + 1, now: this.now})
       if(!newData.messages[this.num])
         this.flag = false
       else
