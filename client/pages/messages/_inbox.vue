@@ -3,17 +3,17 @@
     <div v-if="fetched" id="inbox">
     <div id="chat-hdr">
       <nuxt-link id="chat-bck-btn" to="/messages"><i class="fas fa-arrow-left"></i></nuxt-link>
-      <nuxt-link :to="'/profile/'+info.login">
-      <div id="prfl-cnt"><img v-if="info.path" id="prfl-img" :src="$config.baseURL+'/'+info.path"> </div>
+      <nuxt-link :to="'/profile/'+info.login" class="profile">
+      <div id="prfl-cnt">
+        <img v-if="info.path" id="prfl-img" :src="$config.baseURL+'/'+info.path">
+        <i v-if="connected" style="color:green;" class=" usr-state fas fa-circle"></i>
+        <i v-else style="color:gray;" class=" usr-state fas fa-circle"></i>
+      </div>
       </nuxt-link>
       <nuxt-link style="width: 100%" :to="'/profile/'+info.login">
       <div id="prfl-name">
         <span id="usr-fullname">{{info.fname}} {{info.lname}}</span><br>
         <span id="usr-login">@{{info.login}}</span>
-        <span >
-          <i v-if="connected" style="color:green;" class=" usr-state fas fa-circle"></i>
-          <i v-else style="color:gray;" class=" usr-state fas fa-circle"></i>
-        </span>
       </div></nuxt-link>
     </div>
       <div v-if="messages" ref="chat" id="chat-cnt">
@@ -76,7 +76,9 @@ export default {
       }
     },
     async created(){
-      await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})
+      const trr = await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})
+      if(!trr.read)
+        this.$store.commit('notifications/clearMessages')
     },
     async mounted(){
       await new Promise(r => {
@@ -236,9 +238,18 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+.profile{
+  position: relative;
+}
 .usr-state{
   font-size: 10px;
-    margin-left: 8px;
+  margin-left: 8px;
+  position: absolute;
+  bottom: 0;
+  right:4px;
+  border: solid 2px white;
+  border-radius: 50%;
+  background-color: white;
 
 }
 #chat-cnt{

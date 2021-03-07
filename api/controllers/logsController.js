@@ -14,8 +14,7 @@ exports.getHistory = (req, res) =>{
 exports.getNotifications = async (req, res) => {
     try {
         const [notifications] = await Notification.getNotificationsByUser(req.id_user, req.body.from, req.body.num, req.body.now)
-        const [[count]] = await Notification.getCountNewNotification(req.id_user)
-        res.status(200).send({notifications, to: (notifications.length > 0) ? notifications[0].login_to : "", new: count.number, error: false})
+        res.status(200).send({notifications, to: (notifications.length > 0) ? notifications[0].login_to : "", error: false})
     } catch (error) {
         res.status(200).send({message: "Something went Wrong! Please try Later", error: true})
     }
@@ -52,8 +51,11 @@ exports.setMessageStatus = async (req, res) => {
     try {
         User.getByLogin(req.body.profile)
             .then( async ([[user]]) => {
-                await Message.setStatus(req.body.status, req.id_user, user.id_user)
-                    res.status(200).send({error: false})
+                const check = await Message.setStatus(req.body.status, req.id_user, user.id_user)
+                if(check)    
+                    res.status(200).send({error: false, read: false})
+                else
+                    res.status(200).send({error: false, read: true})
             })
             .catch(err => res.status(200).send({message: err.message, error: true}))
     } catch (error) {

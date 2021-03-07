@@ -57,8 +57,7 @@ export default {
       time: [],
       moment: moment,
       more: false,
-      showmore: false,
-      notifCounter: null
+      showmore: false
     };
   },
   async mounted() {
@@ -126,6 +125,7 @@ export default {
       num: num + 1,
       now: null
     });
+    const that = this;
     if (!ret.error) {
       if (ret.notifications.length) {
         if (ret.notifications[num]) {
@@ -137,17 +137,15 @@ export default {
           from: 0,
           num: num + 1
         });
+        this.$store.commit('notifications/clearNotifs')
         this.notifications.forEach((element, index) => {
           this.time.push(moment(element.created_at).fromNow());
         });
-        const that = this;
         setInterval(function() {
           that.updateTime();
         }, 60000);
       } else this.notifications = null;
-      this.notifCounter = ret.new;
     }
-    
     socket.on("like"+ret.to, async (socketResult) => {
         that.time.splice(0, 0, moment(Date.now()).fromNow());
         that.notifications.splice(0, 0, {

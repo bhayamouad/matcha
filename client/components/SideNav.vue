@@ -16,15 +16,15 @@
       <nuxt-link to="/messages">
         <li>
           <i class="fas fa-envelope">
-            <span id="new-messages" :class="{'new-notif': newMessages}">{{newMessages}}</span>
+            <span id="new-messages" :class="{'new-notif': $store.state.notifications.messages}">{{$store.state.notifications.messages}}</span>
           </i>
           <span class="pg-title">Messages</span>
         </li>
       </nuxt-link>
       <nuxt-link to="/notifications">
-        <li @click="newNotif=''">
+        <li>
           <i class="fas fa-bell notif">
-            <span id="new-notif" :class="{'new-notif': newNotif}">{{newNotif}}</span>
+            <span id="new-notif" :class="{'new-notif': this.$store.state.notifications.notifs}">{{this.$store.state.notifications.notifs}}</span>
           </i>
           <span class="pg-title">Notifications</span>
         </li>
@@ -72,9 +72,7 @@ export default {
         profile: null,
         status: null
       },
-    newNotif: '',
     isNotif:false,
-    newMessages: "",
     nolink: true     
     }
   },
@@ -82,22 +80,20 @@ export default {
     const res = await this.$axios.$get('/account/loggedUser')
     const notif = await this.$axios.get('/matcha/getNewNotification')
     const messages = await this.$axios.get('/matcha/getNewMessages')
-    if(notif.data.number !== '0')
-      this.newNotif = (parseInt(notif.data.number) > 0) ? notif.data.number : ""
-    if(messages.data.number !== '0')
-      this.newMessages = (parseInt(messages.data.number) > 0) ? messages.data.number : ""
+    this.$store.commit('notifications/countNotif', parseInt(notif.data.number))
+    this.$store.commit('notifications/countMessages', parseInt(messages.data.number))
     this.loggedUser = res.loggedUser
     this.nolink = (this.loggedUser.status>1) ? false : true
     socket.emit("connectUser", this.loggedUser.username)
-    socket.on("like"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
-    socket.on("dislike"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
-    socket.on("match1"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
-    socket.on("match2"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
-    socket.on("visit"+this.loggedUser.username, () => this.newNotif = (this.newNotif) ? parseInt(this.newNotif) + 1 : 1)
-    socket.on("msg"+this.loggedUser.username, async ( users ) => {
+    socket.on("like"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif') )
+    socket.on("dislike"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
+    socket.on("match1"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
+    socket.on("match2"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
+    socket.on("visit"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
+    socket.on("msgNotif"+this.loggedUser.username, async ( users ) => {
       if(this.$route.params.inbox !== users.from){
         await this.$axios.$put("/matcha/setMessageStatus", {status: 0, profile: users.from})
-        this.newMessages = (this.newMessages) ? parseInt(this.newMessages) + 1 : 1
+        this.$store.commit('notifications/addNewMessage')
       }
     })
   },
