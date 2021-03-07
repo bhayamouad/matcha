@@ -44,17 +44,11 @@ export default {
     layout: 'home',
     async fetch(){
       to = this.$route.params.inbox
-      
       const data = await this.$axios.$post("/matcha/getchat", {login: to, from:this.from, num:this.num+1, now: this.now})
-      if(!data.messages[this.num])
-        this.flag = false
-      else
-        data.messages.pop();
-      this.from += this.num;
-      this.num = 5; // here number to bring after fisrt fetsh
       if(data.error)
       {
         this.$router.push('/messages')
+        return ;
       }
       else
       {
@@ -74,6 +68,12 @@ export default {
           that.scrollToElement();
         });
       }
+      if(!data.messages[this.num])
+        this.flag = false
+      else
+        data.messages.pop();
+      this.from += this.num;
+      this.num = 5; // here number to bring after fisrt fetsh
     },
     async created(){
       const trr = await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})

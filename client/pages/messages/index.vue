@@ -11,8 +11,8 @@
               <span class="match-img-icon match-img">
                 <img class="profile-img" :src="$config.baseURL+'/'+match.path" />
               </span>
-              <i v-if="connected[index]" style="color:green;" class=" user-state fas fa-circle"></i>
-              <i v-else style="color:gray;" class=" user-state fas fa-circle"></i>
+              <i v-if="connected[index]" style="color:green;" class="user-state fas fa-circle"></i>
+              <i v-else style="color:gray;" class="user-state fas fa-circle"></i>
               <span class="match-name">{{`${match.fname} ${match.lname}`}}</span>
               <span
                 :class="{
@@ -20,9 +20,7 @@
                                   || (match.status_second === 0 && (match.sender_id === match.id_user && match.message))
                         }"
                 class="match-message"
-              >
-                {{(match.sender_id !== match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}
-              </span>
+              >{{(match.sender_id !== match.id_user && match.message)?"You: ":""}}{{(match.message)?match.message:`Say Hello!`}}</span>
               <span class="match-time">{{time[index]}}</span>
             </div>
           </nuxt-link>
@@ -44,7 +42,8 @@ let hpr = 2,
   num,
   from,
   now,
-  that,tmp
+  that,
+  tmp;
 
 export default {
   middleware: "redirect",
@@ -90,6 +89,7 @@ export default {
       num: num + 1,
       now: null
     });
+    that = this;
     if (!res.error) {
       if (res.matches.length) {
         if (res.matches[num]) {
@@ -97,7 +97,6 @@ export default {
           res.matches.pop();
         } else this.more = false;
         this.matches = res.matches;
-        that = this;
         this.matches.forEach((element, index) => {
           this.time.push(moment(element.sent_at).fromNow());
           socket.emit("isConnected", element.login);
@@ -107,26 +106,24 @@ export default {
             that.connected = tmp;
           });
         });
-        socket.on("msg"+res.loggedUser, ( users ) => {
-          if(that.matches.length)
-            {
-              that.matches.forEach((element,index) => {
-                if(element.login === users.data.from){
-                  let newMsg = element
-                  that.matches.splice(index,1)
-                  newMsg.message = users.data.msg
-                  newMsg.status_first = 0
-                  newMsg.status_first = 0
-                  newMsg.sender_id = users.sender
-                  newMsg.sent_at = Date.now()
-                  that.matches.splice(0,0,newMsg)
-                  return
-                  }
-              });
-              that.updateTime()
-              
-            }
-        })
+        socket.on("msg" + res.loggedUser, users => {
+          if (that.matches.length) {
+            that.matches.forEach((element, index) => {
+              if (element.login === users.data.from) {
+                let newMsg = element;
+                that.matches.splice(index, 1);
+                newMsg.message = users.data.msg;
+                newMsg.status_first = 0;
+                newMsg.status_first = 0;
+                newMsg.sender_id = users.sender;
+                newMsg.sent_at = Date.now();
+                that.matches.splice(0, 0, newMsg);
+                return;
+              }
+            });
+            that.updateTime();
+          }
+        });
       } else this.matches = null;
       setInterval(function() {
         that.updateTime();
@@ -162,9 +159,11 @@ export default {
     },
     updateTime() {
       this.time = [];
-      this.matches.forEach(element => {
-        this.time.push(moment(element.sent_at).fromNow());
-      });
+      if (this.matches && this.matches.length) {
+        this.matches.forEach(element => {
+          this.time.push(moment(element.sent_at).fromNow());
+        });
+      }
     }
   }
 };
@@ -206,18 +205,18 @@ export default {
   padding-top: 20px;
   font-size: 1.3rem;
 }
-.profile-img{
+.profile-img {
   transform: translateY(-25%);
 }
-.match-info{
-    display: grid;
-    grid-template-areas:
-        "img nme tme"
-        "img msg tme";
-    grid-template-columns: 25% 50% 25%;
-    padding: 5px 8px;
-    margin: 20px 0px 20px 0px;
-    border-radius: 50px;
+.match-info {
+  display: grid;
+  grid-template-areas:
+    "img nme tme"
+    "img msg tme";
+  grid-template-columns: 25% 50% 25%;
+  padding: 5px 8px;
+  margin: 20px 0px 20px 0px;
+  border-radius: 50px;
 }
 .match-img {
   grid-area: img;

@@ -20,13 +20,13 @@
           </p>
           <p v-if="item.type === 'match1'">
             <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link> liked you back.
-            <nuxt-link :to="`/messages/${item.login_from}`">Begin a conversation</nuxt-link>.
+            <nuxt-link :to="`/messages/${item.login_from}`"> Begin a conversation</nuxt-link>.
             <span class="match-time">{{time[index]}}</span>
           </p>
           <p v-if="item.type === 'match2'">
             You and
             <nuxt-link :to="`/profile/${item.login_from}`">{{item.login_from}}</nuxt-link> are Connected.
-            <nuxt-link :to="`/messages/${item.login_from}`">Begin a conversation</nuxt-link>.
+            <nuxt-link :to="`/messages/${item.login_from}`"> Begin a conversation</nuxt-link>.
             <span class="match-time">{{time[index]}}</span>
           </p>
         </li>
@@ -112,9 +112,11 @@ export default {
     },
     updateTime() {
       this.time = [];
-      this.notifications.forEach(element => {
-        this.time.push(moment(element.created_at).fromNow());
-      });
+      if (this.notifications && this.notifications.length) {
+        this.notifications.forEach(element => {
+          this.time.push(moment(element.created_at).fromNow());
+        });
+      }
     }
   },
   async fetch() {
@@ -137,7 +139,7 @@ export default {
           from: 0,
           num: num + 1
         });
-        this.$store.commit('notifications/clearNotifs')
+        this.$store.commit("notifications/clearNotifs");
         this.notifications.forEach((element, index) => {
           this.time.push(moment(element.created_at).fromNow());
         });
@@ -146,35 +148,35 @@ export default {
         }, 60000);
       } else this.notifications = null;
     }
-    socket.on("like"+ret.to, async (socketResult) => {
-        that.time.splice(0, 0, moment(Date.now()).fromNow());
-        that.notifications.splice(0, 0, {
-          type: "like",
-          created_at: Date.now(),
-          login_from: socketResult.liker
-        });
-        await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
+    socket.on("like" + ret.to, async socketResult => {
+      that.time.splice(0, 0, moment(Date.now()).fromNow());
+      that.notifications.splice(0, 0, {
+        type: "like",
+        created_at: Date.now(),
+        login_from: socketResult.liker
+      });
+      await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
-    socket.on("dislike" + ret.to, async (socketResult) => {
-        that.time.splice(0, 0, moment(Date.now()).fromNow());
-        that.notifications.splice(0, 0, {
-          type: "dislike",
-          created_at: Date.now(),
-          login_from: socketResult.unliker
-        });
-        await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
+    socket.on("dislike" + ret.to, async socketResult => {
+      that.time.splice(0, 0, moment(Date.now()).fromNow());
+      that.notifications.splice(0, 0, {
+        type: "dislike",
+        created_at: Date.now(),
+        login_from: socketResult.unliker
+      });
+      await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
 
-    socket.on("match1" + ret.to, async (socketResult) => {
-        that.time.splice(0, 0, moment(Date.now()).fromNow());
-        that.notifications.splice(0, 0, {
-          type: "match1",
-          created_at: Date.now(),
-          login_from: socketResult.liker
-        });
-        await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
+    socket.on("match1" + ret.to, async socketResult => {
+      that.time.splice(0, 0, moment(Date.now()).fromNow());
+      that.notifications.splice(0, 0, {
+        type: "match1",
+        created_at: Date.now(),
+        login_from: socketResult.liker
+      });
+      await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
-    socket.on("match2" + ret.to, async (socketResult) => {
+    socket.on("match2" + ret.to, async socketResult => {
       that.time.splice(0, 0, moment(Date.now()).fromNow());
       that.notifications.splice(0, 0, {
         type: "match2",
@@ -183,16 +185,14 @@ export default {
       });
       await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
-    socket.on("visit" + ret.to, async (socketResult) => {
-      
-        that.time.splice(0, 0, moment(Date.now()).fromNow());
-        that.notifications.splice(0, 0, {
-          type: "visit",
-          created_at: Date.now(),
-          login_from: socketResult.visitor
-        });
-        await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
-      
+    socket.on("visit" + ret.to, async socketResult => {
+      that.time.splice(0, 0, moment(Date.now()).fromNow());
+      that.notifications.splice(0, 0, {
+        type: "visit",
+        created_at: Date.now(),
+        login_from: socketResult.visitor
+      });
+      await that.$axios.$put("/matcha/setNotifStatus", { from: 0, num: 1 });
     });
   }
 };

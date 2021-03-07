@@ -7,10 +7,12 @@
       <ul v-if="history">
         <li v-for="(item, index) in history" :key="item.id_history">
           You visited
-          <nuxt-link :to="`/profile/${item.login}`">{{ item.login }}</nuxt-link>
-          profile. <span class="match-time">{{time[index]}}</span>
+          <nuxt-link :to="`/profile/${item.login}`">{{ item.login }}</nuxt-link>profile.
+          <span class="match-time">{{time[index]}}</span>
         </li>
-        <div id="loader-cnt" v-if="showmore"><div class="loader"></div></div>
+        <div id="loader-cnt" v-if="showmore">
+          <div class="loader"></div>
+        </div>
       </ul>
       <div id="empty-msg" v-else>No profile visited yet!</div>
     </div>
@@ -30,7 +32,7 @@ export default {
       time: [],
       moment: moment,
       more: false,
-      showmore: false,
+      showmore: false
     };
   },
   async mounted() {
@@ -38,13 +40,13 @@ export default {
     //     setTimeout(r, 400)
     // });
     const listElm = document.querySelector("#page-cnt");
-    listElm.addEventListener("scroll", async (e) => {
+    listElm.addEventListener("scroll", async e => {
       if (listElm.scrollTop + listElm.clientHeight >= listElm.scrollHeight) {
-        await new Promise((r) => {
+        await new Promise(r => {
           setTimeout(r, 300);
         });
         if (this.more) this.showmore = true;
-        await new Promise((r) => {
+        await new Promise(r => {
           setTimeout(r, 600);
         });
         await this.fetchNew();
@@ -62,7 +64,7 @@ export default {
     async fetchNew() {
       const ret = await this.$axios.$post("/matcha/gethistory", {
         from: from,
-        num: num + 1,
+        num: num + 1
       });
       from += num;
       if (!ret.error) {
@@ -71,17 +73,19 @@ export default {
           ret.data.pop();
         } else this.more = false;
         this.history = this.history.concat(ret.data);
-        this.time = []
-        this.history.forEach((element) => {
+        this.time = [];
+        this.history.forEach(element => {
           this.time.push(moment(element.created_at).fromNow());
         });
       }
     },
-    updateTime(){
-        this.time = []
+    updateTime() {
+      this.time = [];
+      if (this.history && this.history.length) {
         this.history.forEach(element => {
-            this.time.push(moment(element.created_at).fromNow())
-        })
+          this.time.push(moment(element.created_at).fromNow());
+        });
+      }
     }
   },
   async fetch() {
@@ -90,7 +94,7 @@ export default {
     from = 0;
     const ret = await this.$axios.$post("/matcha/gethistory", {
       from: 0,
-      num: num + 1,
+      num: num + 1
     });
     if (!ret.error) {
       if (ret.data.length) {
@@ -99,18 +103,18 @@ export default {
           ret.data.pop();
         } else this.more = false;
         this.history = ret.data;
-        this.history.forEach((element) => {
+        this.history.forEach(element => {
           this.time.push(moment(element.created_at).fromNow());
         });
         const that = this;
-        setInterval(function () {
+        setInterval(function() {
           that.updateTime();
         }, 60000);
       } else this.history = null;
     }
     from = num;
     num = hpr;
-  },
+  }
 };
 </script>
 
@@ -166,7 +170,7 @@ export default {
 #loader-cnt {
   margin-top: 20px;
 }
-.match-time{
+.match-time {
   margin-left: 5px;
   color: #909090;
 }
