@@ -71,9 +71,11 @@ io.on('connection', function(socket){
     redis.get(data.to, async (err, res) =>{
       if(res){
         socket.broadcast.emit(data.from+"=>"+data.to, data.msg)
-        const [check] = await Message.ifSendMessage(data.to)
-        if(!check.length)
-          socket.broadcast.emit("msg"+data.to, data)
+        socket.broadcast.emit("msg"+data.to, data)
+        const [check] = await Message.ifSendMessage(data.to, data.from)
+        if(!check.length){
+          socket.broadcast.emit("msgNotif"+data.to, data)
+        }
       }
     })
   })

@@ -82,8 +82,9 @@ exports.getSearchedUser = async (req, res) => {
 
 exports.getMessages = (req,res) => {
     Message.getMatchesByIdUser(req.id_user, req.body.from, req.body.num, req.body.now)
-        .then(([matches]) => {
-            res.status(200).send({matches, error: false})
+        .then( async ([matches]) => {
+            const [[loggedUsr]] = await User.getById(req.id_user)
+            res.status(200).send({matches, loggedUser: loggedUsr.login, error: false})
         })
         .catch(err => res.status(200).send({ message: err.message, error: true } ))
 }
