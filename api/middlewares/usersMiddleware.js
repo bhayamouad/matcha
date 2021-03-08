@@ -85,28 +85,48 @@ exports.fbOauth = (req, res, next) => {
       })
 } 
 
-exports.registerValidation = (req, res, next) => { 
-    const { email, login } = req.body;
-    User.ifUnique(email, login) 
-        .then((ret) => {
-            if (ret[0][0][0] || ret[1][0][0]) {
-                let emailerr = false
-                let loginerr = false
-                if (ret[0][0][0])
-                    emailerr = true;
-                if (ret[1][0][0])
-                    loginerr = true;
-                res.status(200).send({ emailerr, loginerr })
-                return
-            }
-            else
-                next()
-        })
-        .catch(err => res.status(200).send({ error: "Something went Wrong! Please try Later" }))
+exports.registerValidation = (req, res, next) => {
+
+    const {fname, lname, email, login, password, cpassword } = req.body;
+    let err = true
+
+    if (!fname || fname.length < 3 || !fname.match(/^[a-zA-Z]+$/))
+        err = false
+    if (!lname || lname.length < 3 || !lname.match(/^[a-zA-Z]+$/))
+      err = false
+    if (!email || !email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/))
+      err = false
+    if (!login || login.length > 14 || !login.match(/^[a-zA-Z0-9]+$/))
+      err = false
+    if (!password || !password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[^A-Za-z0-9\s]).{8,}/))
+      err = false
+    if(cpassword !== password)
+        err = false
+    if(!err)
+        res.status(200).send("validation error")
+    else{
+        User.ifUnique(email, login) 
+            .then((ret) => {
+                if (ret[0][0][0] || ret[1][0][0]) {
+                    let emailerr = false
+                    let loginerr = false
+                    if (ret[0][0][0])
+                        emailerr = true;
+                    if (ret[1][0][0])
+                        loginerr = true;
+                    res.status(200).send({ emailerr, loginerr })
+                    return
+                }
+                else
+                    next()
+            })
+            .catch(err => res.status(200).send({ error: "Something went Wrong! Please try Later" }))
+    }
 }
 
 exports.checkIfExist = (req, res, next) => { 
-    const { email, login } = req.body;
+    const {email, login } = req.body;
+
     User.checkIfExist(req.id_user, email, login) 
         .then((ret) => {
             if (ret[0][0][0] || ret[1][0][0]) {

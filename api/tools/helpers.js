@@ -35,8 +35,7 @@ const wrapedSendMail = (mailOptions) => {
         })
         mailConfig.sendMail(mailOptions, function(error, info){
             if (error) {
-                console.log("error is "+error);
-                resolve(false); // or rejcet(false) but then we have to handle errors
+                resolve(false);
             } 
             else {
                 console.log('Email sent: ' + info.response);

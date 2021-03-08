@@ -33,7 +33,9 @@ services:
         networks:
             - default
         cap_add:
-            - SYS_NICE 
+            - SYS_NICE
+        logging:
+            driver: none
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         links: 
@@ -44,9 +46,13 @@ services:
             MYSQL_USER: tirach
             MYSQL_PASSWORD: rach
             MYSQL_ROOT_PASSWORD: rach
+        logging:
+            driver: none
     redis:
         image: redis
         ports:
             - 6379:6379
+        logging:
+            driver: none
 volumes:
     persistent:

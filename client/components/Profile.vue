@@ -112,7 +112,7 @@
               <span
                 >Active
                 {{
-                  moment(data.user.last_connection).calendar(null, {
+                  moment(lastconnection).calendar(null, {
                     sameDay: "[today at] LT",
                     lastDay: "[yesterday at] LT",
                     lastWeek: "[last] dddd [at] LT",
@@ -160,8 +160,8 @@ export default {
     });
     this.fetched = true;
     if (!data.block && data.user) this.rate = (this.data.user.rating * 5) / 100;
-
     if (!data.is_me && data.user && !data.block) {
+      this.lastconnection = data.user.last_connection
       if (data.sendNotif)
         socket.emit("visit", {
           visited: this.data.user.login,
@@ -169,9 +169,11 @@ export default {
         });
       const that = this;
       socket.emit("isConnected", this.$route.params.profile);
-
       socket.on(this.$route.params.profile, (message) => {
         that.connected = message;
+        if(!message && that.flag)
+          that.lastconnection = new Date(Date.now())
+        that.flag = true
       });
     }
   },
@@ -189,6 +191,8 @@ export default {
       moment: moment,
       connected: false,
       fetched: false,
+      lastconnection: null,
+      flag: false
     };
   },
   beforeDestroy() {

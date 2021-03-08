@@ -9,7 +9,7 @@
     }
   },
   "scripts": {
-    "dev": "npm install && nuxt",
+    "dev": "npm install --no-optional && nuxt",
     "build": "nuxt build",
     "start": "nuxt build && nuxt start",
     "generate": "nuxt generate",

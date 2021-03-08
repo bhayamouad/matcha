@@ -220,23 +220,20 @@ export default {
   color: #950740;
   margin-top: 5px;
 }
-// .button-wrapper {
-//   display: flex;
-//   justify-content: center;
-//   margin-top: 17px;
-// }
-// .content{
-//   margin-top: -10px;
-// }
-// .card-content{
-//   min-height: 427px!important;
-// }
-// #thecroper{
-//   height: 70vh;
-// }
-// #croper-cnt{
-//   height: 60vh;
-// }
+.iconz:hover{
+  cursor: pointer;
+}
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 17px;
+}
+#thecroper{
+  height: 70vh;
+}
+#croper-cnt{
+  height: 60vh;
+}
 @media (max-width: 800px)
 {
   .card-content{

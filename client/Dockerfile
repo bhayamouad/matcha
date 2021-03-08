@@ -7,5 +7,3 @@ RUN openssl req -x509 -nodes -days 365 \
      -newkey rsa:2048 -keyout /etc/ssl/private/matchasigned.key \
      -out /etc/ssl/certs/matchasigned.crt
 CMD ["npm", "run", "dev"]
-#production
-#CMD ["npm", "start"] 

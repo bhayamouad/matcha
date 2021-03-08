@@ -118,6 +118,7 @@ io.on('connection', function(socket){
       User.UpdateLastConnection(usr)
       socket.broadcast.emit(usr, false);
       redis.del(usr)
+      socket.broadcast.emit(usr+"*reconnect")
     }
   }); 
 });

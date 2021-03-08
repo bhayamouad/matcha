@@ -66,6 +66,8 @@
         valid: false,
         error: "The First name must have more than 2 characters",
       };
+    if (!fname.match(/^[a-zA-Z]+$/))
+      return { valid: false, error: "First name must contain only letters!" };
     return { valid: true, error: null };
   };
   const validateLname = (lname) => {
@@ -75,6 +77,8 @@
         valid: false,
         error: "The Last name must have more than 2 characters",
       };
+    if (!lname.match(/^[a-zA-Z]+$/))
+      return { valid: false, error: "Last name must contain only letters!" };
     return { valid: true, error: null };
   };
   const validateEmail = (email) => {
@@ -91,6 +95,8 @@
     if (!login) return { valid: false, error: "The login is required" };
     if (login.length > 14)
       return { valid: false, error: "Login must have maximum 14 characteres" };
+    if (!login.match(/^[a-zA-Z0-9]+$/))
+      return { valid: false, error: "Login must contain only numbers and letters!" };
     return { valid: true, error: null };
   };
   const validatePassword = (password) => {

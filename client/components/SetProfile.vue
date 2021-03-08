@@ -115,6 +115,8 @@ const validateLogin = (login) => {
     if (!login) return { valid: false, error: "The login is required" };
     if (login.length > 14)
       return { valid: false, error: "Login must have maximum 14 characteres" };
+    if (!login.match(/^[a-zA-Z0-9]+$/))
+      return { valid: false, error: "Login must contain only numbers and letters!" };
     return { valid: true, error: null };
   };
 
