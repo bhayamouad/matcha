@@ -17,8 +17,12 @@ export default {
       );
       if (!res.error)
         this.$snoast.toast(this.$buefy, res.message, "is-success");
-      if (res.special)
-        this.$snoast.snackbar(this.$buefy,res.message,'is-danger','Verify Now','/verify')
+      else{
+        if (res.special)
+          this.$snoast.snackbar(this.$buefy,res.error,'is-danger','Verify Now','/verify')
+        else
+          this.$snoast.toast(this.$buefy, res.error, 'is-danger')
+      }
     }
   },
   layout: "auth",

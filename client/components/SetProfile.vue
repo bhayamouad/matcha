@@ -184,17 +184,21 @@ export default {
       lng = false
     }
     const result = await this.$axios.$get('/account/getDataUser')
-    tagsList = result.data.tagsList
-    this.user.fname = result.data.user.fname
-    this.user.lname = result.data.user.lname
-    this.user.email = result.data.user.email
-    this.user.login = result.data.user.login
-    this.user.gender = (result.data.user.gender === '0') ? null : result.data.user.gender
-    this.user.interest = result.data.user.interest
-    this.user.birthdate = (result.data.user.birthdate) ? new Date(result.data.user.birthdate) : null
-    this.user.bio = result.data.user.biography
-    this.user.tags = result.data.userTags,
-    this.isLogin = !!result.data.user.oauth_id
+    if(!result.error){
+      tagsList = result.data.tagsList
+      this.user.fname = result.data.user.fname
+      this.user.lname = result.data.user.lname
+      this.user.email = result.data.user.email
+      this.user.login = result.data.user.login
+      this.user.gender = (result.data.user.gender === '0') ? null : result.data.user.gender
+      this.user.interest = result.data.user.interest
+      this.user.birthdate = (result.data.user.birthdate) ? new Date(result.data.user.birthdate) : null
+      this.user.bio = result.data.user.biography
+      this.user.tags = result.data.userTags,
+      this.isLogin = !!result.data.user.oauth_id
+    }
+    else
+      this.$snoast.toast(this.$buefy, res.error, 'is-danger')
   },
   beforeDestroy() {
     this.$snoast.close()
@@ -285,7 +289,7 @@ export default {
           return true
         }
         if(res.error && this.valid)
-          this.$snoast.toast(this.$buefy, res.message , 'is-danger')
+          this.$snoast.toast(this.$buefy, res.error , 'is-danger')
       }
       
         this.user = {

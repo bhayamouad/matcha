@@ -60,7 +60,10 @@ export default {
   },
   async fetch(){
         const res = await this.$axios.$get("/account/isOauth")
-        this.isPass = res.pass
+        if(!res.error)
+          this.isPass = res.pass
+        else
+          this.$snoast.toast(this.$buefy, res.error, 'is-danger')
   },
   methods: {
     async save() {

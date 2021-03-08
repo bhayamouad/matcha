@@ -78,6 +78,8 @@ export default {
           this.time.push(moment(element.created_at).fromNow());
         });
       }
+      else
+       this.$snoast.toast(this.$buefy, res.error, 'is-danger')
     },
     updateTime() {
       this.time = [];
@@ -111,9 +113,12 @@ export default {
           that.updateTime();
         }, 60000);
       } else this.history = null;
-    }
     from = num;
     num = hpr;
+    }
+    else
+      this.$snoast.toast(this.$buefy, res.error, 'is-danger')
+    
   }
 };
 </script>

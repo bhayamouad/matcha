@@ -79,6 +79,8 @@ export default {
       const trr = await this.$axios.$put("/matcha/setMessageStatus", {status: 1, profile: this.user})
       if(!trr.read)
         this.$store.commit('notifications/clearMessages')
+      if(trr.error)
+        this.$snoast.toast(this.$buefy, res.error, 'is-danger')
     },
     async mounted(){
       await new Promise(r => {

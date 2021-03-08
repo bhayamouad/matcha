@@ -265,10 +265,13 @@ export default {
               setTimeout(r, 1000)
             });
     data = await this.$axios.$get("/matcha/getSuggestedUser");
-    this.users = Array.from(data.users);
-    if(this.users)
-      this.loading = false
-    
+    if(!data.error){
+      this.users = Array.from(data.users);
+      if(this.users)
+        this.loading = false
+    }
+    else
+      this.$snoast.toast(this.$buefy, res.error, 'is-danger')
   },
   computed: {
     current() {
@@ -294,23 +297,30 @@ export default {
     },
     async emitAndNext(event, status) {
       if (status === 3) {
+        let res
         this.$emit(event, this.index);
         if (event === "like") {
-          const res = await this.$axios.$post("/matcha/like", {
+          res = await this.$axios.$post("/matcha/like", {
             idLiked: this.users[this.index].id_user
           });
-          if(res.like === 'like')
-            socket.emit("like", {liker: res.liker, liked: res.liked})
-          if(res.like === 'match')
-          {
-            socket.emit("match1", {liker: res.liker, liked: res.liked})
-            socket.emit("match2", {liked: res.liked, liker: res.liker}) 
+          if(!res.error){
+            if(res.like === 'like')
+              socket.emit("like", {liker: res.liker, liked: res.liked})
+            if(res.like === 'match')
+            {
+              socket.emit("match1", {liker: res.liker, liked: res.liked})
+              socket.emit("match2", {liked: res.liked, liker: res.liker}) 
+            }
           }
+          else
+            this.$snoast.toast(this.$buefy, res.error, 'is-danger')
         }
         if (event === "reject") {
-          await this.$axios.$post("/matcha/reject", {
+          res = await this.$axios.$post("/matcha/reject", {
             idDisliked: this.users[this.index].id_user
           });
+          if(res.error)
+            this.$snoast.toast(this.$buefy, res.error, 'is-danger')
         }
         setTimeout(() => {
           this.isVisible = false        

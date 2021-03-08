@@ -69,7 +69,9 @@ export default {
   methods: {
     async search(){
       const data = await this.$axios.$post("/matcha/search",{ageGap:this.ageGap,rateGap: this.rateGap, distance: this.distance, tags:this.tags})
-      this.$emit('clicked', data.users)
+      if(!data.error)
+        this.$emit('clicked', data.users)
+      else this.$snoast.toast(this.$buefy, res.error, 'is-danger')
     }
   },
 };

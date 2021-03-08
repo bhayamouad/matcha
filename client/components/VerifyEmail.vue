@@ -1,6 +1,5 @@
 <template>
   <div class="the-box">
-   <div id="blogo-container"><a :href=link><img id="blogo" src="~/assets/blogo.png" /></a></div>
     <div id="login-form" @keyup.enter="sendEmail">
       <b-field
         label="Email or Username"
@@ -51,7 +50,7 @@ export default {
       if (this.valid) {
         const res = await this.$axios.$post("/account/verify", this.user);
         if(res.redirect) this.$router.push('/')
-        if (res.error) this.$snoast.toast(this.$buefy, res.message, 'is-danger')
+        if (res.error) this.$snoast.toast(this.$buefy, res.error, 'is-danger')
         else this.$snoast.toast(this.$buefy, res.message, 'is-success')
       }
     }

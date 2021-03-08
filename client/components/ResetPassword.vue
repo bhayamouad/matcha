@@ -38,6 +38,9 @@ export default {
       errorLogin: "",
     };
   },
+  destroyed(){
+    this.$snoast.close()
+  },
   methods: {
     async sendEmail() {
       this.errorLogin = "";
@@ -49,7 +52,11 @@ export default {
 
       if (this.valid) {
         const res = await this.$axios.$post("/account/reset", this.username);
-        if (res.error) this.$snoast.toast(this.$buefy, res.message, 'is-danger')
+        if (res.error) {
+          if(res.special)
+            if (res.special) this.$snoast.snackbar(this.$buefy,res.error,'is-danger','Request a Verification Link','/verify')
+            else this.$snoast.toast(this.$buefy, res.error, 'is-danger')
+        }
         else this.$snoast.toast(this.$buefy, res.message, 'is-success')
       }
     }

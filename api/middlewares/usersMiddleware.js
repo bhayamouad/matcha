@@ -42,7 +42,7 @@ exports.e42Oauth = (req, res, next) => {
     }).then((ret)=>{
       req.userdata = ret
       next() 
-  }).catch((e)=> res.status(200).send({error: '42 oauth Error'}))
+  }).catch((e)=> res.status(200).send({error: 'There is an error in 42 API'}))
 }
 
 exports.fbOauth = (req, res, next) => {
@@ -81,12 +81,11 @@ exports.fbOauth = (req, res, next) => {
         req.userdata = ret
         next() 
     }).catch((e)=>{ 
-        res.status(200).send({error: 'fb oauth Error'})
+        res.status(200).send({error: 'There is an error on Facebook API'})
       })
 } 
 
 exports.registerValidation = (req, res, next) => { 
-    // if (!req.body) res.status('400').send({ message: `content prob` }) // to discuss validation 
     const { email, login } = req.body;
     User.ifUnique(email, login) 
         .then((ret) => {
@@ -103,7 +102,7 @@ exports.registerValidation = (req, res, next) => {
             else
                 next()
         })
-        .catch(err => res.status(500).send({ message: err.message, error: true }))
+        .catch(err => res.status(200).send({ error: "Something went Wrong! Please try Later" }))
 }
 
 exports.checkIfExist = (req, res, next) => { 
@@ -123,7 +122,7 @@ exports.checkIfExist = (req, res, next) => {
             else
                 next()
         })
-        .catch(err => res.status(500).send({ message: err.message, error: true }))
+        .catch(err => res.status(500).send({ error: "Something went Wrong! Please try Later" }))
 }
 
 exports.checkIfValidPass = (req, res, next) => {
@@ -137,9 +136,9 @@ exports.checkIfValidPass = (req, res, next) => {
                     if (!passCompare) res.status(200).send({passError: true})
                     else next()
                 } catch (e) {
-                    res.status(500).send({message:"Something Went Wrong Please try Later", error: true})
+                    res.status(500).send({error: "Something went Wrong! Please try Later"})
                 }
             })
-            .catch(err => res.status(500).send({ message: "Something Went Wrong Please try Later", error: true }))
+            .catch(err => res.status(500).send({ error: "Something went Wrong! Please try Later" }))
     }
 }

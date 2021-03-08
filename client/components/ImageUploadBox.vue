@@ -45,8 +45,8 @@
       <div id="thecroper">
         <cropper id="croper-cnt"
           ref="cropper"
-          v-if="uploadImages[openModal]"
-          :src="uploadImages[openModal].url"
+          v-if="image"
+          :src="image.src"
           :auto-zoom="true"
           :stencil-props="{
 		        aspectRatio: 2/3,
@@ -86,10 +86,12 @@ export default {
       drag: false,
       isImageModalActive: false,
       openModal: null,
+      image: null
     };
   },
   async fetch() {
     const res = await this.$axios.$get('/account/getImages')
+    if(!res.error){
       res.images.forEach((url,index) => {
           dataUriToFile(url, `user-image${index}.png`, 'png')
             .then(file => {
@@ -99,6 +101,9 @@ export default {
                   this.uploadImages.push({url, position: index, file: null})
               })
       })
+    }
+    else
+      this.$snoast.toast(this.$buefy, res.error, 'is-danger')
   },
   computed: {
     dragOptions() {
@@ -137,16 +142,16 @@ export default {
       if (files.length && files[0].type.match('image.*')) {
         const fileReader = new FileReader();
         fileReader.addEventListener("load", e => {
-          let image = new Image()          
+          this.image = new Image()          
           let that = this
-          image.onload = function (){
+          this.image.onload = function (){
             that.uploadImages[index].url = e.target.result;
             that.uploadImages[index].file = event.target.files[0];
             that.isImageModalActive = true;
             that.openModal = index;
           }
-          image.onerror = () => that.$snoast.toast(this.$buefy, "Please choose a valid image", 'is-danger')
-          image.src = e.target.result
+          this.image.onerror = () => that.$snoast.toast(this.$buefy, "Please choose a valid image", 'is-danger')
+          this.image.src = e.target.result
         });
         fileReader.readAsDataURL(event.target.files[0]);
       } 
@@ -170,7 +175,7 @@ export default {
         return true;
       }
       else
-          this.$snoast.toast(this.$buefy, "Oups There is an Error", 'is-danger')
+          this.$snoast.toast(this.$buefy, res.error, 'is-danger')
       return false;
     },
     crop(index) {

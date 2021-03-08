@@ -109,6 +109,8 @@ export default {
           num: num + 1
         });
       }
+      else
+        this.$snoast.toast(this.$buefy, res.error, 'is-danger')
     },
     updateTime() {
       this.time = [];
@@ -148,6 +150,9 @@ export default {
         }, 60000);
       } else this.notifications = null;
     }
+    else
+      this.$snoast.toast(this.$buefy, res.error, 'is-danger')
+      
     socket.on("like" + ret.to, async socketResult => {
       that.time.splice(0, 0, moment(Date.now()).fromNow());
       that.notifications.splice(0, 0, {

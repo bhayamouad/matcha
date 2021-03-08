@@ -129,6 +129,8 @@ export default {
         that.updateTime();
       }, 60000);
     }
+    else
+      this.$snoast.toast(this.$buefy, res.error, 'is-danger')
   },
   methods: {
     async fetchNew() {
@@ -156,6 +158,8 @@ export default {
           });
         });
       }
+      else
+        this.$snoast.toast(this.$buefy, res.error, 'is-danger')
     },
     updateTime() {
       this.time = [];

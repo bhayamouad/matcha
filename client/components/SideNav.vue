@@ -80,29 +80,39 @@ export default {
     const res = await this.$axios.$get('/account/loggedUser')
     const notif = await this.$axios.get('/matcha/getNewNotification')
     const messages = await this.$axios.get('/matcha/getNewMessages')
-    this.$store.commit('notifications/countNotif', parseInt(notif.data.number))
-    this.$store.commit('notifications/countMessages', parseInt(messages.data.number))
-    this.loggedUser = res.loggedUser
-    this.nolink = (this.loggedUser.status>1) ? false : true
-    socket.emit("connectUser", this.loggedUser.username)
-    socket.on("like"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif') )
-    socket.on("dislike"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
-    socket.on("match1"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
-    socket.on("match2"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
-    socket.on("visit"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
-    socket.on("msgNotif"+this.loggedUser.username, async ( users ) => {
-      if(this.$route.params.inbox !== users.from){
-        await this.$axios.$put("/matcha/setMessageStatus", {status: 0, profile: users.from})
-        this.$store.commit('notifications/addNewMessage')
-      }
-    })
+    if(res.error || notif.error || messages.error)
+      this.$snoast.toast(this.$buefy, res.error, 'is-danger')
+    else{
+      this.$store.commit('notifications/countNotif', parseInt(notif.data.number))
+      this.$store.commit('notifications/countMessages', parseInt(messages.data.number))
+      this.loggedUser = res.loggedUser
+      this.nolink = (this.loggedUser.status>1) ? false : true
+      socket.emit("connectUser", this.loggedUser.username)
+      socket.on("like"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif') )
+      socket.on("dislike"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
+      socket.on("match1"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
+      socket.on("match2"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
+      socket.on("visit"+this.loggedUser.username, () => this.$store.commit('notifications/addNewNotif'))
+      socket.on("msgNotif"+this.loggedUser.username, async ( users ) => {
+        if(this.$route.params.inbox !== users.from){
+          const add = await this.$axios.$put("/matcha/setMessageStatus", {status: 0, profile: users.from})
+          if(add.error)
+            this.$snoast.toast(this.$buefy, res.error, 'is-danger')
+          else this.$store.commit('notifications/addNewMessage')
+        }
+      })
+    }
   },
   methods: {
     async logout()
     {
         const res = await this.$axios.get('/account/logout')
-        this.$store.commit('auth/logOut')
-        this.$router.go()
+        if(res.error)
+          this.$snoast.toast(this.$buefy, res.error, 'is-danger')
+        else{
+          this.$store.commit('auth/logOut')
+          this.$router.go()
+        }
     }
   },
 

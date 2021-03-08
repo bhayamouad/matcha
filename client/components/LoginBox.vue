@@ -70,9 +70,11 @@ export default {
 
       if (this.valid) {
         const res = await this.$axios.$post("/account/login", this.user);
-        if (res.special) this.$snoast.snackbar(this.$buefy,res.message,'is-danger','Verify Now','/verify')
-        if (res.error && !res.special) this.$snoast.toast(this.$buefy, res.message, 'is-danger')
-        if (!res.error) this.$router.go()
+        if(res.error){
+          if (res.special) this.$snoast.snackbar(this.$buefy,res.error,'is-danger','Verify Now','/verify')
+          if (!res.special) this.$snoast.toast(this.$buefy, res.error, 'is-danger')
+        }
+        else this.$router.go()
       }
     }
   }

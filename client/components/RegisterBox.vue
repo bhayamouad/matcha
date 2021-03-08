@@ -87,7 +87,6 @@
       return { valid: false, error: "Please enter a valid email" };
     return { valid: true, error: null };
   };
-
   const validateLogin = (login) => {
     if (!login) return { valid: false, error: "The login is required" };
     if (login.length > 14)
@@ -172,7 +171,7 @@ export default {
         }
         else {
           if(response.error)
-            this.$snoast.toast(this.$buefy, response.message, 'is-danger')
+            this.$snoast.toast(this.$buefy, response.error, 'is-danger')
           else
           {
             this.$snoast.toast(this.$buefy, response.message, 'is-success')

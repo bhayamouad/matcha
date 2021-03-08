@@ -11,7 +11,7 @@ export default {
      const res = await this.$axios.$get(`/account/reset/${this.$route.params.token}`)
     if(res.error)
     { 
-      this.$snoast.toast(this.$buefy,res.message,'is-danger')
+      this.$snoast.toast(this.$buefy,res.error,'is-danger')
       this.$router.push('/reset')
     }
     else 

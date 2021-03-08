@@ -102,7 +102,7 @@ export default {
         "/account/setPosition",
         this.newPosition
       );
-      return res.message;
+      return res.error;
     },
     geolocation() {
       this.loading= true

@@ -128,7 +128,7 @@ export default {
               this.$router.push('/')
           }
           else{
-            this.$snoast.toast(this.$buefy, res.message, 'is-danger')
+            this.$snoast.toast(this.$buefy, res.error, 'is-danger')
             if (this.passwords.token)
               this.$router.push('/reset')
           }

@@ -26,7 +26,10 @@ export default {
   },
   async fetch () {
     const res = await this.$axios.$get('/account/getStatus')
+    if(!res.error)
       this.status = res.status;
+    else
+      this.$snoast.toast(this.$buefy, res.error, 'is-danger')
   },
   methods: {
   },
