@@ -2,11 +2,4 @@ api/node_modules/*
 
 !api/node_modules/.tirachrach
 
-api/uploads/*
-
-!api/uploads/.tirachrach
-
-
-api/.env
-
 .DS_Store
